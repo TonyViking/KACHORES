@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Chores">
+<title>Chores</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:        #f5f0e8;
+    --surface:   #fdfaf4;
+    --ink:       #2c2416;
+    --ink-soft:  #7a6e5f;
+    --border:    #e2d9c8;
+
+    /* urgency spectrum: calm green → amber → brown → red */
+    --c-fresh:   #5a8a5e;
+    --c-ok:      #8ab87c;
+    --c-soon:    #c9a84c;
+    --c-due:     #b5703a;
+    --c-over:    #a03030;
+
+    --radius:    18px;
+    --safe-top:  env(safe-area-inset-top, 0px);
+    --safe-bot:  env(safe-area-inset-bottom, 0px);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    min-height: 100dvh;
+    /* subtle linen texture */
+    background-image:
+      repeating-linear-gradient(0deg,   transparent, transparent 39px, rgba(180,160,120,.07) 40px),
+      repeating-linear-gradient(90deg,  transparent, transparent 39px, rgba(180,160,120,.05) 40px);
+  }
+
+  /* ── Header ── */
+  header {
+    padding: calc(var(--safe-top) + 18px) 24px 14px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: linear-gradient(to bottom, var(--bg) 80%, transparent);
+  }
+
+  .wordmark {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    font-weight: 600;
+    letter-spacing: -.5px;
+    line-height: 1;
+  }
+  .wordmark span { color: var(--c-due); }
+
+  .subtitle {
+    font-size: 12px;
+    color: var(--ink-soft);
+    font-weight: 300;
+    letter-spacing: .5px;
+    text-transform: uppercase;
+    padding-bottom: 2px;
+  }
+
+  .refresh-btn {
+    background: none;
+    border: 1.5px solid var(--border);
+    border-radius: 50%;
+    width: 38px; height: 38px;
+    display: grid; place-items: center;
+    cursor: pointer;
+    color: var(--ink-soft);
+    transition: all .2s;
+    flex-shrink: 0;
+  }
+  .refresh-btn:active { transform: rotate(180deg); }
+  .refresh-btn svg { width: 16px; height: 16px; }
+
+  /* ── Config Banner ── */
+  #config-banner {
+    margin: 0 16px 8px;
+    background: #fff8e8;
+    border: 1.5px solid #e8d48a;
+    border-radius: 12px;
+    padding: 14px 16px;
+    font-size: 13px;
+    line-height: 1.5;
+    color: #6b5a1e;
+  }
+  #config-banner strong { display: block; margin-bottom: 4px; font-size: 14px; }
+  #config-banner a { color: #a07c20; }
+  #config-banner.hidden { display: none; }
+
+  /* ── Legend ── */
+  .legend {
+    display: flex;
+    gap: 12px;
+    padding: 0 20px 16px;
+    flex-wrap: wrap;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: var(--ink-soft);
+    font-weight: 400;
+    letter-spacing: .3px;
+  }
+  .legend-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  /* ── Chore List ── */
+  #chore-list {
+    padding: 0 16px calc(var(--safe-bot) + 24px);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .chore-card {
+    background: var(--surface);
+    border-radius: var(--radius);
+    border: 1.5px solid var(--border);
+    overflow: hidden;
+    transition: transform .15s, box-shadow .15s;
+    box-shadow: 0 2px 8px rgba(0,0,0,.04);
+  }
+  .chore-card:active { transform: scale(.985); }
+
+  .chore-inner {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 16px 10px;
+  }
+
+  .chore-name {
+    flex: 1;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 1.2;
+  }
+
+  .done-btn {
+    flex-shrink: 0;
+    background: var(--ink);
+    color: var(--bg);
+    border: none;
+    border-radius: 10px;
+    padding: 7px 14px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    letter-spacing: .2px;
+    transition: background .15s, transform .1s;
+  }
+  .done-btn:active { transform: scale(.93); }
+  .done-btn:disabled {
+    opacity: .45;
+    cursor: not-allowed;
+  }
+  .done-btn.saving { background: var(--c-fresh); }
+
+  /* urgency bar */
+  .urgency-bar {
+    height: 5px;
+    border-radius: 0 0 var(--radius) var(--radius);
+    transition: background .6s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  .urgency-bar::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, rgba(255,255,255,.18) 0%, transparent 60%);
+  }
+  /* fill animation */
+  .urgency-fill {
+    height: 100%;
+    width: 0%;
+    transition: width 1s cubic-bezier(.25,.8,.25,1);
+  }
+
+  .last-done {
+    font-size: 11px;
+    color: var(--ink-soft);
+    padding: 0 16px 10px;
+    font-weight: 300;
+  }
+
+  /* ── States ── */
+  #loading, #error {
+    text-align: center;
+    padding: 60px 24px;
+    color: var(--ink-soft);
+    font-size: 15px;
+    line-height: 1.6;
+  }
+  #error { color: var(--c-over); }
+
+  .spinner {
+    width: 32px; height: 32px;
+    border: 3px solid var(--border);
+    border-top-color: var(--c-due);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 16px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── Toast ── */
+  #toast {
+    position: fixed;
+    bottom: calc(var(--safe-bot) + 20px);
+    left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: var(--ink);
+    color: var(--bg);
+    padding: 10px 20px;
+    border-radius: 40px;
+    font-size: 13px;
+    font-weight: 500;
+    transition: transform .3s cubic-bezier(.34,1.56,.64,1), opacity .3s;
+    opacity: 0;
+    z-index: 100;
+    white-space: nowrap;
+  }
+  #toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+  /* ── Section dividers ── */
+  .section-label {
+    font-size: 10px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: var(--ink-soft);
+    padding: 4px 4px 6px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <div class="wordmark">Home<span>.</span></div>
+    <div class="subtitle">Chore tracker</div>
+  </div>
+  <button class="refresh-btn" onclick="loadChores()" title="Refresh">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+    </svg>
+  </button>
+</header>
+
+<div id="config-banner">
+  <strong>⚙️ Setup needed</strong>
+  Open this file and fill in your <code>SHEET_ID</code> and <code>API_KEY</code> at the top of the &lt;script&gt;. 
+  See comments for instructions. <a href="#" onclick="document.getElementById('config-banner').classList.add('hidden');return false;">Dismiss</a>
+</div>
+
+<div class="legend">
+  <div class="legend-item"><div class="legend-dot" style="background:var(--c-fresh)"></div> Recently done</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--c-ok)"></div> All good</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--c-soon)"></div> Due soon</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--c-due)"></div> Needs doing</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--c-over)"></div> Overdue</div>
+</div>
+
+<div id="loading"><div class="spinner"></div>Loading chores…</div>
+<div id="error" style="display:none"></div>
+<div id="chore-list" style="display:none"></div>
+<div id="toast"></div>
+
+<script>
+/* ═══════════════════════════════════════════════
+   CONFIGURATION — fill these in!
+   ═══════════════════════════════════════════════
+
+   SHEET_ID:
+     Open your Google Sheet. The URL looks like:
+     https://docs.google.com/spreadsheets/d/XXXXXXXXXXX/edit
+     Copy the XXXXXXXXXXX part.
+
+   SHEET_NAME:
+     The tab name at the bottom of your sheet (e.g. "Sheet1").
+
+   API_KEY:
+     1. Go to https://console.cloud.google.com
+     2. Create a project → Enable "Google Sheets API"
+     3. APIs & Services → Credentials → Create API Key
+     4. Restrict it to "Google Sheets API" + your domain.
+     Make the Google Sheet "Anyone with link can view" (Viewer).
+     For writing, you'll need OAuth — see WRITE_MODE below.
+
+   COLUMN MAP (1-indexed, matching your sheet columns):
+     A=1, B=2, C=3, D=4, E=5 …
+
+   ═══════════════════════════════════════════════ */
+
+const CONFIG = {
+  SHEET_ID:    'YOUR_SHEET_ID_HERE',
+  SHEET_NAME:  'Sheet1',
+  API_KEY:     'YOUR_API_KEY_HERE',
+
+  // Column positions in your sheet (1-indexed)
+  COL_NAME:     1,   // Chore name
+  COL_MIN_DAYS: 2,   // Minimum days between tasks
+  COL_MAX_DAYS: 3,   // Maximum days between tasks
+  COL_LAST_DONE:4,   // Last completed date (will be written here)
+
+  // Row where data starts (skip header row)
+  DATA_START_ROW: 2,
+
+  // Date format written back to sheet: 'ISO' or 'READABLE'
+  DATE_FORMAT: 'READABLE', // e.g. "22 Mar 2025 14:30"
+};
+
+/* ═══════════════════════════════════════════════
+   GOOGLE SHEETS OAUTH WRITE SETUP
+   ═══════════════════════════════════════════════
+   Reading works with just an API key (sheet set to public).
+   Writing requires OAuth 2.0. Steps:
+   1. In Google Cloud Console, create an OAuth 2.0 Client ID
+      (Application type: Web application)
+   2. Add your page's URL to "Authorised JavaScript origins"
+   3. Paste the Client ID below.
+   On first "Done" press, users will be asked to sign in once.
+   ═══════════════════════════════════════════════ */
+
+const OAUTH_CLIENT_ID = 'YOUR_OAUTH_CLIENT_ID_HERE.apps.googleusercontent.com';
+const SCOPES = 'https://www.googleapis.com/auth/spreadsheets';
+
+// ─── State ───────────────────────────────────────
+let tokenClient = null;
+let accessToken  = null;
+let pendingWrite = null; // { rowIndex, colLetter, value, onSuccess }
+
+// ─── Helpers ─────────────────────────────────────
+const colLetter = (n) => String.fromCharCode(64 + n); // 1→A, 2→B …
+
+function formatDate(d) {
+  if (CONFIG.DATE_FORMAT === 'ISO') return d.toISOString();
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const pad = (n) => String(n).padStart(2,'0');
+  return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
+function parseDate(str) {
+  if (!str) return null;
+  const d = new Date(str);
+  return isNaN(d) ? null : d;
+}
+
+function daysSince(date) {
+  if (!date) return Infinity;
+  return (Date.now() - date.getTime()) / 86400000;
+}
+
+function urgencyRatio(minDays, maxDays, daysSinceDone) {
+  // 0 = fresh, 1 = exactly at max, >1 = overdue
+  if (!isFinite(daysSinceDone)) return 1.5;
+  if (maxDays <= 0) return 0;
+  return daysSinceDone / maxDays;
+}
+
+function urgencyColor(ratio) {
+  if (ratio <= 0.35) return 'var(--c-fresh)';
+  if (ratio <= 0.65) return 'var(--c-ok)';
+  if (ratio <= 0.85) return 'var(--c-soon)';
+  if (ratio <= 1.0)  return 'var(--c-due)';
+  return 'var(--c-over)';
+}
+
+function urgencyBarWidth(ratio) {
+  return Math.min(ratio * 100, 100) + '%';
+}
+
+function relativeTime(date) {
+  if (!date) return 'Never done';
+  const days = daysSince(date);
+  if (days < 1) return 'Done today';
+  if (days < 2) return 'Done yesterday';
+  return `Done ${Math.floor(days)} days ago`;
+}
+
+function showToast(msg, duration = 2200) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), duration);
+}
+
+// ─── Load Chores (READ) ──────────────────────────
+async function loadChores() {
+  if (CONFIG.SHEET_ID === 'YOUR_SHEET_ID_HERE') {
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('config-banner').classList.remove('hidden');
+    document.getElementById('chore-list').innerHTML = '';
+    document.getElementById('chore-list').style.display = 'flex';
+    renderDemo();
+    return;
+  }
+
+  document.getElementById('loading').style.display = 'block';
+  document.getElementById('error').style.display   = 'none';
+  document.getElementById('chore-list').style.display = 'none';
+
+  const range = encodeURIComponent(`${CONFIG.SHEET_NAME}!A${CONFIG.DATA_START_ROW}:Z`);
+  const url = `https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.SHEET_ID}/values/${range}?key=${CONFIG.API_KEY}`;
+
+  try {
+    const res  = await fetch(url);
+    const data = await res.json();
+
+    if (data.error) throw new Error(data.error.message);
+
+    const rows = (data.values || []).filter(r => r[CONFIG.COL_NAME - 1]);
+    renderChores(rows);
+  } catch (e) {
+    document.getElementById('loading').style.display = 'none';
+    const err = document.getElementById('error');
+    err.style.display = 'block';
+    err.innerHTML = `<strong>Couldn't load chores</strong><br>${e.message}<br><br>Check your Sheet ID, API key, and that the sheet is public.`;
+  }
+}
+
+// ─── Render ──────────────────────────────────────
+function renderChores(rows) {
+  const list = document.getElementById('chore-list');
+  list.innerHTML = '';
+
+  const chores = rows.map((row, i) => {
+    const name      = row[CONFIG.COL_NAME - 1]      || '';
+    const minDays   = parseFloat(row[CONFIG.COL_MIN_DAYS  - 1]) || 1;
+    const maxDays   = parseFloat(row[CONFIG.COL_MAX_DAYS  - 1]) || 7;
+    const lastDone  = parseDate(row[CONFIG.COL_LAST_DONE - 1]);
+    const days      = daysSince(lastDone);
+    const ratio     = urgencyRatio(minDays, maxDays, days);
+    const sheetRow  = CONFIG.DATA_START_ROW + i;
+    return { name, minDays, maxDays, lastDone, days, ratio, sheetRow };
+  });
+
+  // Sort: most urgent first
+  chores.sort((a, b) => b.ratio - a.ratio);
+
+  document.getElementById('loading').style.display = 'none';
+  list.style.display = 'flex';
+
+  chores.forEach(chore => {
+    list.appendChild(buildCard(chore));
+  });
+
+  // Animate bars in after paint
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    list.querySelectorAll('.urgency-fill').forEach(el => {
+      el.style.width = el.dataset.target;
+    });
+  }));
+}
+
+function buildCard({ name, lastDone, ratio, sheetRow }) {
+  const color = urgencyColor(ratio);
+  const width  = urgencyBarWidth(ratio);
+
+  const card = document.createElement('div');
+  card.className = 'chore-card';
+  card.dataset.row = sheetRow;
+
+  card.innerHTML = `
+    <div class="chore-inner">
+      <div class="chore-name">${name}</div>
+      <button class="done-btn" onclick="markDone(this, ${sheetRow})">Done</button>
+    </div>
+    <div class="last-done">${relativeTime(lastDone)}</div>
+    <div class="urgency-bar" style="background:${color}20">
+      <div class="urgency-fill" style="background:${color}" data-target="${width}"></div>
+    </div>
+  `;
+  return card;
+}
+
+// ─── Demo mode (no config) ───────────────────────
+function renderDemo() {
+  const demo = [
+    { name: 'Vacuum living room', minDays: 3, maxDays: 7,  lastDone: new Date(Date.now() - 8*86400000), sheetRow: 2 },
+    { name: 'Clean bathrooms',    minDays: 5, maxDays: 10, lastDone: new Date(Date.now() - 9*86400000), sheetRow: 3 },
+    { name: 'Take out bins',      minDays: 6, maxDays: 7,  lastDone: new Date(Date.now() - 7*86400000), sheetRow: 4 },
+    { name: 'Mop kitchen floor',  minDays: 5, maxDays: 10, lastDone: new Date(Date.now() - 6*86400000), sheetRow: 5 },
+    { name: 'Clean oven',         minDays:14, maxDays: 30, lastDone: new Date(Date.now() - 15*86400000), sheetRow: 6 },
+    { name: 'Water plants',       minDays: 3, maxDays: 5,  lastDone: new Date(Date.now() - 4*86400000), sheetRow: 7 },
+    { name: 'Wipe down benches',  minDays: 1, maxDays: 3,  lastDone: new Date(Date.now() - 1*86400000), sheetRow: 8 },
+    { name: 'Do laundry',         minDays: 2, maxDays: 4,  lastDone: new Date(Date.now() - 1*86400000), sheetRow: 9 },
+  ].map(c => ({ ...c, days: daysSince(c.lastDone), ratio: urgencyRatio(c.minDays, c.maxDays, daysSince(c.lastDone)) }))
+   .sort((a,b) => b.ratio - a.ratio);
+
+  const list = document.getElementById('chore-list');
+  list.style.display = 'flex';
+
+  const demoLabel = document.createElement('div');
+  demoLabel.className = 'section-label';
+  demoLabel.textContent = '✦ Demo mode — configure to use your sheet';
+  list.appendChild(demoLabel);
+
+  demo.forEach(chore => list.appendChild(buildCard(chore)));
+
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    list.querySelectorAll('.urgency-fill').forEach(el => {
+      el.style.width = el.dataset.target;
+    });
+  }));
+}
+
+// ─── Mark Done (WRITE) ───────────────────────────
+async function markDone(btn, sheetRow) {
+  if (CONFIG.SHEET_ID === 'YOUR_SHEET_ID_HERE') {
+    showToast('Demo mode — configure your sheet to save ✓');
+    return;
+  }
+
+  btn.disabled = true;
+  const now    = new Date();
+  const value  = formatDate(now);
+  const col    = colLetter(CONFIG.COL_LAST_DONE);
+  const range  = `${CONFIG.SHEET_NAME}!${col}${sheetRow}`;
+
+  // If we already have a token, write directly
+  if (accessToken) {
+    await writeToSheet(range, value, btn, sheetRow, now);
+  } else {
+    // Trigger OAuth flow
+    pendingWrite = { range, value, btn, sheetRow, timestamp: now };
+    initOAuth();
+  }
+}
+
+async function writeToSheet(range, value, btn, sheetRow, timestamp) {
+  const url = `https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.SHEET_ID}/values/${encodeURIComponent(range)}?valueInputOption=RAW`;
+  try {
+    const res = await fetch(url, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ values: [[value]] }),
+    });
+    const data = await res.json();
+    if (data.error) throw new Error(data.error.message);
+
+    // Update UI
+    btn.classList.add('saving');
+    btn.textContent = '✓';
+    setTimeout(() => {
+      btn.classList.remove('saving');
+      btn.textContent = 'Done';
+      btn.disabled = false;
+    }, 1800);
+
+    // Update last-done text and re-sort
+    const card = btn.closest('.chore-card');
+    card.querySelector('.last-done').textContent = 'Done just now';
+    const fill  = card.querySelector('.urgency-fill');
+    const bar   = card.querySelector('.urgency-bar');
+    const color = 'var(--c-fresh)';
+    fill.style.width      = '5%';
+    fill.style.background = color;
+    bar.style.background  = 'var(--c-fresh)20';
+
+    showToast('Marked as done ✓');
+  } catch (e) {
+    showToast('Save failed — ' + e.message);
+    btn.disabled = false;
+  }
+}
+
+// ─── OAuth ───────────────────────────────────────
+function initOAuth() {
+  if (OAUTH_CLIENT_ID === 'YOUR_OAUTH_CLIENT_ID_HERE.apps.googleusercontent.com') {
+    showToast('Set OAUTH_CLIENT_ID to enable saving');
+    if (pendingWrite) pendingWrite.btn.disabled = false;
+    return;
+  }
+
+  if (!window.google) {
+    const s = document.createElement('script');
+    s.src = 'https://accounts.google.com/gsi/client';
+    s.onload = () => startTokenFlow();
+    document.head.appendChild(s);
+  } else {
+    startTokenFlow();
+  }
+}
+
+function startTokenFlow() {
+  tokenClient = google.accounts.oauth2.initTokenClient({
+    client_id: OAUTH_CLIENT_ID,
+    scope: SCOPES,
+    callback: async (resp) => {
+      if (resp.error) {
+        showToast('Sign-in cancelled');
+        if (pendingWrite) pendingWrite.btn.disabled = false;
+        return;
+      }
+      accessToken = resp.access_token;
+      if (pendingWrite) {
+        const { range, value, btn, sheetRow, timestamp } = pendingWrite;
+        pendingWrite = null;
+        await writeToSheet(range, value, btn, sheetRow, timestamp);
+      }
+    },
+  });
+  tokenClient.requestAccessToken({ prompt: 'consent' });
+}
+
+// ─── Init ─────────────────────────────────────────
+loadChores();
+</script>
+</body>
+</html>
