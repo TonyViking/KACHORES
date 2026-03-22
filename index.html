@@ -454,14 +454,17 @@ function renderChores(rows) {
     const sheetRow  = CONFIG.DATA_START_ROW + i;
     return { name, minDays, maxDays, lastDone, days, ratio, sheetRow };
   });
-
-  // Sort: most urgent first
+// Sort: most urgent first, only show due within 4 days
   chores.sort((a, b) => b.ratio - a.ratio);
+  const filtered = chores.filter(c => {
+    const daysUntilDue = c.maxDays - c.days;
+    return daysUntilDue <= 4 || c.ratio >= 1;
+  });
 
   document.getElementById('loading').style.display = 'none';
   list.style.display = 'flex';
 
-  chores.forEach(chore => {
+  filtered.forEach(chore => {
     list.appendChild(buildCard(chore));
   });
 
