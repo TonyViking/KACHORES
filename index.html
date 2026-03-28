@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -33,209 +34,210 @@
     --border:    #3a3228;
   }
 
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  body {
-    font-family: 'DM Sans', sans-serif;
-    background: var(--bg);
-    color: var(--ink);
-    min-height: 100dvh;
-    background-image:
-      linear-gradient(135deg, #fce4f0 0%, #e8d5f5 25%, #d5e8f5 50%, #f5e4d5 75%, #fce4f0 100%),
-      repeating-linear-gradient(0deg,   transparent, transparent 39px, rgba(200,150,180,.07) 40px),
-      repeating-linear-gradient(90deg,  transparent, transparent 39px, rgba(200,150,180,.05) 40px);
-    background-blend-mode: normal, overlay, overlay;
-    background-size: 400% 400%, auto, auto;
-    animation: iridescent 8s ease infinite;
-    transition: color .3s;
-  }
-  :root.dark body {
-    background-image: none;
-    animation: none;
-    background-color: var(--bg);
-    background-size: auto;
-  }
-  @keyframes iridescent {
-    0%   { background-position: 0% 50%,   0 0, 0 0; }
-    50%  { background-position: 100% 50%, 0 0, 0 0; }
-    100% { background-position: 0% 50%,   0 0, 0 0; }
-  }
+body {
+font-family: ‘DM Sans’, sans-serif;
+background: var(–bg);
+color: var(–ink);
+min-height: 100dvh;
+background-image:
+linear-gradient(135deg, #fce4f0 0%, #e8d5f5 25%, #d5e8f5 50%, #f5e4d5 75%, #fce4f0 100%),
+repeating-linear-gradient(0deg,   transparent, transparent 39px, rgba(200,150,180,.07) 40px),
+repeating-linear-gradient(90deg,  transparent, transparent 39px, rgba(200,150,180,.05) 40px);
+background-blend-mode: normal, overlay, overlay;
+background-size: 400% 400%, auto, auto;
+animation: iridescent 8s ease infinite;
+transition: color .3s;
+}
+:root.dark body {
+background-image: none;
+animation: none;
+background-color: var(–bg);
+background-size: auto;
+}
+@keyframes iridescent {
+0%   { background-position: 0% 50%,   0 0, 0 0; }
+50%  { background-position: 100% 50%, 0 0, 0 0; }
+100% { background-position: 0% 50%,   0 0, 0 0; }
+}
 
-  /* ── Header ── */
-  header {
-    padding: calc(var(--safe-top) + 18px) 20px 14px;
-    display: flex; align-items: flex-end; justify-content: space-between;
-    position: sticky; top: 0; z-index: 10;
-    background: linear-gradient(to bottom, rgba(252,228,240,.96) 80%, transparent);
-    transition: background .3s;
-  }
-  :root.dark header { background: linear-gradient(to bottom, var(--bg) 80%, transparent); }
-  .wordmark { font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 600; letter-spacing: -.5px; line-height: 1; }
-  .wordmark span { color: var(--c-due); }
-  .subtitle { font-size: 12px; color: var(--ink-soft); font-weight: 300; letter-spacing: .5px; text-transform: uppercase; padding-bottom: 2px; }
-  .offline-badge {
-    display: inline-block; background: rgba(197,115,58,.15); color: var(--c-due);
-    border: 1px solid rgba(197,115,58,.3); border-radius: 8px;
-    font-size: 9px; padding: 1px 6px; margin-left: 6px;
-    vertical-align: middle; letter-spacing: .5px;
-  }
-  .header-btns { display: flex; gap: 8px; align-items: center; }
-  .icon-btn {
-    background: none; border: 1.5px solid var(--border); border-radius: 50%;
-    width: 38px; height: 38px; display: grid; place-items: center;
-    cursor: pointer; color: var(--ink-soft); font-size: 16px; transition: all .2s; flex-shrink: 0;
-  }
-  .icon-btn:active { transform: scale(.88); }
-  .icon-btn svg { width: 16px; height: 16px; }
-  .refresh-btn:active { transform: rotate(180deg) !important; }
+/* ── Header ── */
+header {
+padding: calc(var(–safe-top) + 18px) 20px 14px;
+display: flex; align-items: flex-end; justify-content: space-between;
+position: sticky; top: 0; z-index: 10;
+background: linear-gradient(to bottom, rgba(252,228,240,.96) 80%, transparent);
+transition: background .3s;
+}
+:root.dark header { background: linear-gradient(to bottom, var(–bg) 80%, transparent); }
+.wordmark { font-family: ‘Playfair Display’, serif; font-size: 28px; font-weight: 600; letter-spacing: -.5px; line-height: 1; }
+.wordmark span { color: var(–c-due); }
+.subtitle { font-size: 12px; color: var(–ink-soft); font-weight: 300; letter-spacing: .5px; text-transform: uppercase; padding-bottom: 2px; }
+.offline-badge {
+display: inline-block; background: rgba(197,115,58,.15); color: var(–c-due);
+border: 1px solid rgba(197,115,58,.3); border-radius: 8px;
+font-size: 9px; padding: 1px 6px; margin-left: 6px;
+vertical-align: middle; letter-spacing: .5px;
+}
+.header-btns { display: flex; gap: 8px; align-items: center; }
+.icon-btn {
+background: none; border: 1.5px solid var(–border); border-radius: 50%;
+width: 38px; height: 38px; display: grid; place-items: center;
+cursor: pointer; color: var(–ink-soft); font-size: 16px; transition: all .2s; flex-shrink: 0;
+}
+.icon-btn:active { transform: scale(.88); }
+.icon-btn svg { width: 16px; height: 16px; }
+.refresh-btn:active { transform: rotate(180deg) !important; }
 
-  /* ── Config Banner ── */
-  #config-banner { margin: 0 16px 8px; background: #fff8e8; border: 1.5px solid #e8d48a; border-radius: 12px; padding: 14px 16px; font-size: 13px; line-height: 1.5; color: #6b5a1e; }
-  #config-banner strong { display: block; margin-bottom: 4px; font-size: 14px; }
-  #config-banner a { color: #a07c20; }
-  #config-banner.hidden { display: none; }
+/* ── Config Banner ── */
+#config-banner { margin: 0 16px 8px; background: #fff8e8; border: 1.5px solid #e8d48a; border-radius: 12px; padding: 14px 16px; font-size: 13px; line-height: 1.5; color: #6b5a1e; }
+#config-banner strong { display: block; margin-bottom: 4px; font-size: 14px; }
+#config-banner a { color: #a07c20; }
+#config-banner.hidden { display: none; }
 
-  /* ── Legend ── */
-  .legend { display: flex; gap: 12px; padding: 0 20px 10px; flex-wrap: wrap; }
-  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--ink-soft); font-weight: 400; letter-spacing: .3px; }
-  .legend-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+/* ── Legend ── */
+.legend { display: flex; gap: 12px; padding: 0 20px 10px; flex-wrap: wrap; }
+.legend-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(–ink-soft); font-weight: 400; letter-spacing: .3px; }
+.legend-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
 
-  /* ── Room Dropdown ── */
-  .room-bar { padding: 0 16px 10px; }
-  .room-select-wrap { position: relative; }
-  .room-select-wrap::after { content: '▾'; position: absolute; right: 14px; top: 50%; transform: translateY(-50%); pointer-events: none; color: var(--ink-soft); font-size: 13px; }
-  .room-select {
-    width: 100%; appearance: none; -webkit-appearance: none;
-    background: var(--surface); border: 1.5px solid var(--border); border-radius: 12px;
-    padding: 9px 36px 9px 14px; font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500;
-    color: var(--ink); cursor: pointer; outline: none; transition: border-color .15s, background .15s;
-  }
-  .room-select:focus { border-color: var(--c-due); }
-  .room-select.active { border-color: var(--c-due); color: var(--c-due); }
+/* ── Room Dropdown ── */
+.room-bar { padding: 0 16px 10px; }
+.room-select-wrap { position: relative; }
+.room-select-wrap::after { content: ‘▾’; position: absolute; right: 14px; top: 50%; transform: translateY(-50%); pointer-events: none; color: var(–ink-soft); font-size: 13px; }
+.room-select {
+width: 100%; appearance: none; -webkit-appearance: none;
+background: var(–surface); border: 1.5px solid var(–border); border-radius: 12px;
+padding: 9px 36px 9px 14px; font-family: ‘DM Sans’, sans-serif; font-size: 14px; font-weight: 500;
+color: var(–ink); cursor: pointer; outline: none; transition: border-color .15s, background .15s;
+}
+.room-select:focus { border-color: var(–c-due); }
+.room-select.active { border-color: var(–c-due); color: var(–c-due); }
 
-  /* ── Filter Bar ── */
-  .filter-bar { display: flex; gap: 8px; padding: 0 16px 14px; overflow-x: auto; scrollbar-width: none; transition: opacity .2s; }
-  .filter-bar::-webkit-scrollbar { display: none; }
-  .filter-bar.dimmed { opacity: .35; pointer-events: none; }
-  .filter-btn { flex-shrink: 0; background: var(--surface); border: 1.5px solid var(--border); border-radius: 20px; padding: 5px 14px; font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 500; color: var(--ink-soft); cursor: pointer; transition: all .15s; letter-spacing: .2px; }
-  .filter-btn.active { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+/* ── Filter Bar ── */
+.filter-bar { display: flex; gap: 8px; padding: 0 16px 14px; overflow-x: auto; scrollbar-width: none; transition: opacity .2s; }
+.filter-bar::-webkit-scrollbar { display: none; }
+.filter-bar.dimmed { opacity: .35; pointer-events: none; }
+.filter-btn { flex-shrink: 0; background: var(–surface); border: 1.5px solid var(–border); border-radius: 20px; padding: 5px 14px; font-family: ‘DM Sans’, sans-serif; font-size: 12px; font-weight: 500; color: var(–ink-soft); cursor: pointer; transition: all .15s; letter-spacing: .2px; }
+.filter-btn.active { background: var(–ink); color: var(–bg); border-color: var(–ink); }
 
-  /* ── Chore list ── */
-  #chore-list { padding: 0 16px calc(var(--safe-bot) + 100px); display: flex; flex-direction: column; gap: 10px; }
+/* ── Chore list ── */
+#chore-list { padding: 0 16px calc(var(–safe-bot) + 100px); display: flex; flex-direction: column; gap: 10px; }
 
-  /* ── Swipe wrapper ── */
-  .chore-card-wrap { position: relative; border-radius: var(--radius); overflow: hidden; }
-  .swipe-bg-done {
-    position: absolute; inset: 0;
-    background: linear-gradient(270deg, rgba(90,138,94,.35), rgba(90,138,94,.1));
-    display: flex; align-items: center; justify-content: flex-end; padding-right: 20px;
-    font-size: 20px; opacity: 0; transition: opacity .15s;
-    border-radius: var(--radius); pointer-events: none;
-  }
-  .swipe-bg-snooze {
-    position: absolute; inset: 0;
-    background: linear-gradient(90deg, rgba(201,168,76,.35), rgba(201,168,76,.1));
-    display: flex; align-items: center; padding-left: 20px;
-    font-size: 20px; opacity: 0; transition: opacity .15s;
-    border-radius: var(--radius); pointer-events: none;
-  }
-  .swipe-bg-done.visible { opacity: 1; }
-  .swipe-bg-snooze.visible { opacity: 1; }
+/* ── Swipe wrapper ── */
+.chore-card-wrap { position: relative; border-radius: var(–radius); overflow: hidden; }
+.swipe-bg-done {
+position: absolute; inset: 0;
+background: linear-gradient(270deg, rgba(90,138,94,.35), rgba(90,138,94,.1));
+display: flex; align-items: center; justify-content: flex-end; padding-right: 20px;
+font-size: 20px; opacity: 0; transition: opacity .15s;
+border-radius: var(–radius); pointer-events: none;
+}
+.swipe-bg-snooze {
+position: absolute; inset: 0;
+background: linear-gradient(90deg, rgba(201,168,76,.35), rgba(201,168,76,.1));
+display: flex; align-items: center; padding-left: 20px;
+font-size: 20px; opacity: 0; transition: opacity .15s;
+border-radius: var(–radius); pointer-events: none;
+}
+.swipe-bg-done.visible { opacity: 1; }
+.swipe-bg-snooze.visible { opacity: 1; }
 
-  /* ── Chore card ── */
-  .chore-card {
-    background: var(--surface); border-radius: var(--radius); border: 1.5px solid var(--border);
-    overflow: hidden; transition: transform .05s; box-shadow: 0 2px 8px rgba(0,0,0,.04);
-    position: relative; z-index: 1; touch-action: pan-y; -webkit-user-select: none; user-select: none;
-  }
-  .chore-card:active { transform: scale(.985); }
-  .chore-inner { display: flex; align-items: center; gap: 14px; padding: 14px 16px 10px; }
-  .chore-name { flex: 1; font-size: 16px; font-weight: 500; line-height: 1.2; }
-  .chore-room-tag { font-size: 10px; font-weight: 400; color: var(--ink-soft); letter-spacing: .3px; margin-top: 2px; }
+/* ── Chore card ── */
+.chore-card {
+background: var(–surface); border-radius: var(–radius); border: 1.5px solid var(–border);
+overflow: hidden; transition: transform .05s; box-shadow: 0 2px 8px rgba(0,0,0,.04);
+position: relative; z-index: 1; touch-action: pan-y; -webkit-user-select: none; user-select: none;
+}
+.chore-card:active { transform: scale(.985); }
+.chore-inner { display: flex; align-items: center; gap: 14px; padding: 14px 16px 10px; }
+.chore-name { flex: 1; font-size: 16px; font-weight: 500; line-height: 1.2; }
+.chore-room-tag { font-size: 10px; font-weight: 400; color: var(–ink-soft); letter-spacing: .3px; margin-top: 2px; }
 
-  .urgency-bar { height: 5px; border-radius: 0 0 var(--radius) var(--radius); transition: background .6s ease; position: relative; overflow: hidden; }
-  .urgency-bar::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(255,255,255,.18) 0%, transparent 60%); }
-  .urgency-fill { height: 100%; width: 0%; transition: width 1s cubic-bezier(.25,.8,.25,1); }
-  .last-done { font-size: 11px; color: var(--ink-soft); padding: 0 16px 10px; font-weight: 300; }
+.urgency-bar { height: 5px; border-radius: 0 0 var(–radius) var(–radius); transition: background .6s ease; position: relative; overflow: hidden; }
+.urgency-bar::after { content: ‘’; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(255,255,255,.18) 0%, transparent 60%); }
+.urgency-fill { height: 100%; width: 0%; transition: width 1s cubic-bezier(.25,.8,.25,1); }
+.last-done { font-size: 11px; color: var(–ink-soft); padding: 0 16px 10px; font-weight: 300; }
 
-  /* Swipe hint */
-  .swipe-hint { text-align: center; font-size: 10px; color: var(--ink-soft); padding: 0 0 8px; letter-spacing: .5px; opacity: .5; }
+/* Swipe hint */
+.swipe-hint { text-align: center; font-size: 10px; color: var(–ink-soft); padding: 0 0 8px; letter-spacing: .5px; opacity: .5; }
 
-  /* ── Empty / loading / error ── */
-  .empty-state { text-align: center; padding: 48px 24px; color: var(--ink-soft); font-size: 14px; line-height: 1.7; }
-  .empty-state .emoji { font-size: 36px; display: block; margin-bottom: 12px; }
-  #loading, #error { text-align: center; padding: 60px 24px; color: var(--ink-soft); font-size: 15px; line-height: 1.6; }
-  #error { color: var(--c-over); }
-  .spinner { width: 32px; height: 32px; border: 3px solid var(--border); border-top-color: var(--c-due); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 16px; }
-  @keyframes spin { to { transform: rotate(360deg); } }
+/* ── Empty / loading / error ── */
+.empty-state { text-align: center; padding: 48px 24px; color: var(–ink-soft); font-size: 14px; line-height: 1.7; }
+.empty-state .emoji { font-size: 36px; display: block; margin-bottom: 12px; }
+#loading, #error { text-align: center; padding: 60px 24px; color: var(–ink-soft); font-size: 15px; line-height: 1.6; }
+#error { color: var(–c-over); }
+.spinner { width: 32px; height: 32px; border: 3px solid var(–border); border-top-color: var(–c-due); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 16px; }
+@keyframes spin { to { transform: rotate(360deg); } }
 
-  /* ── Pull to refresh ── */
-  .ptr-indicator {
-    text-align: center; font-size: 12px; color: var(--ink-soft);
-    padding: 0; height: 0; overflow: hidden; transition: height .2s, padding .2s;
-    letter-spacing: .3px; line-height: 36px;
-  }
-  .ptr-indicator.visible { height: 36px; padding: 0 8px; }
+/* ── Pull to refresh ── */
+.ptr-indicator {
+text-align: center; font-size: 12px; color: var(–ink-soft);
+padding: 0; height: 0; overflow: hidden; transition: height .2s, padding .2s;
+letter-spacing: .3px; line-height: 36px;
+}
+.ptr-indicator.visible { height: 36px; padding: 0 8px; }
 
-  /* ── Toast ── */
-  #toast {
-    position: fixed; bottom: calc(var(--safe-bot) + 20px); left: 50%;
-    transform: translateX(-50%) translateY(80px);
-    background: var(--ink); color: var(--bg); padding: 10px 20px; border-radius: 40px;
-    font-size: 13px; font-weight: 500;
-    transition: transform .3s cubic-bezier(.34,1.56,.64,1), opacity .3s;
-    opacity: 0; z-index: 200; white-space: nowrap;
-  }
-  #toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+/* ── Toast ── */
+#toast {
+position: fixed; bottom: calc(var(–safe-bot) + 20px); left: 50%;
+transform: translateX(-50%) translateY(80px);
+background: var(–ink); color: var(–bg); padding: 10px 20px; border-radius: 40px;
+font-size: 13px; font-weight: 500;
+transition: transform .3s cubic-bezier(.34,1.56,.64,1), opacity .3s;
+opacity: 0; z-index: 200; white-space: nowrap;
+}
+#toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
 
-  /* ── Bottom sheets ── */
-  .sheet-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.4); z-index: 50; opacity: 0; pointer-events: none; transition: opacity .3s; }
-  .sheet-overlay.open { opacity: 1; pointer-events: all; }
-  .bottom-sheet {
-    position: fixed; bottom: 0; left: 0; right: 0; background: var(--surface);
-    border-radius: 24px 24px 0 0; z-index: 60;
-    transform: translateY(100%); transition: transform .35s cubic-bezier(.32,0,.67,0);
-    max-height: 92dvh; display: flex; flex-direction: column;
-  }
-  .bottom-sheet.open { transform: translateY(0); transition: transform .35s cubic-bezier(.22,1,.36,1); }
-  .sheet-handle { width: 36px; height: 4px; background: var(--border); border-radius: 4px; margin: 12px auto 0; flex-shrink: 0; }
-  .sheet-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px 12px; flex-shrink: 0; border-bottom: 1px solid var(--border); }
-  .sheet-title { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 600; }
-  .sheet-close { background: none; border: 1.5px solid var(--border); border-radius: 50%; width: 32px; height: 32px; display: grid; place-items: center; cursor: pointer; color: var(--ink-soft); font-size: 18px; line-height: 1; transition: all .15s; }
-  .sheet-close:active { transform: scale(.88); }
-  .sheet-body { overflow-y: auto; flex: 1; padding: 20px 20px calc(var(--safe-bot) + 20px); }
+/* ── Bottom sheets ── */
+.sheet-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.4); z-index: 50; opacity: 0; pointer-events: none; transition: opacity .3s; }
+.sheet-overlay.open { opacity: 1; pointer-events: all; }
+.bottom-sheet {
+position: fixed; bottom: 0; left: 0; right: 0; background: var(–surface);
+border-radius: 24px 24px 0 0; z-index: 60;
+transform: translateY(100%); transition: transform .35s cubic-bezier(.32,0,.67,0);
+max-height: 92dvh; display: flex; flex-direction: column;
+}
+.bottom-sheet.open { transform: translateY(0); transition: transform .35s cubic-bezier(.22,1,.36,1); }
+.sheet-handle { width: 36px; height: 4px; background: var(–border); border-radius: 4px; margin: 12px auto 0; flex-shrink: 0; }
+.sheet-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px 12px; flex-shrink: 0; border-bottom: 1px solid var(–border); }
+.sheet-title { font-family: ‘Playfair Display’, serif; font-size: 20px; font-weight: 600; }
+.sheet-close { background: none; border: 1.5px solid var(–border); border-radius: 50%; width: 32px; height: 32px; display: grid; place-items: center; cursor: pointer; color: var(–ink-soft); font-size: 18px; line-height: 1; transition: all .15s; }
+.sheet-close:active { transform: scale(.88); }
+.sheet-body { overflow-y: auto; flex: 1; padding: 20px 20px calc(var(–safe-bot) + 20px); }
 
-  /* ── Forms ── */
-  .form-group { margin-bottom: 18px; }
-  .form-label { display: block; font-size: 12px; font-weight: 500; text-transform: uppercase; letter-spacing: .8px; color: var(--ink-soft); margin-bottom: 8px; }
-  .form-input { width: 100%; background: var(--bg); border: 1.5px solid var(--border); border-radius: 12px; padding: 12px 14px; font-family: 'DM Sans', sans-serif; font-size: 16px; color: var(--ink); outline: none; transition: border-color .15s; -webkit-appearance: none; appearance: none; }
-  .form-input:focus { border-color: var(--c-due); }
-  .form-select-wrap { position: relative; }
-  .form-select-wrap::after { content: '▾'; position: absolute; right: 14px; top: 50%; transform: translateY(-50%); pointer-events: none; color: var(--ink-soft); font-size: 13px; }
-  .form-select { width: 100%; background: var(--bg); border: 1.5px solid var(--border); border-radius: 12px; padding: 12px 36px 12px 14px; font-family: 'DM Sans', sans-serif; font-size: 16px; color: var(--ink); outline: none; -webkit-appearance: none; appearance: none; cursor: pointer; }
-  .form-select:focus { border-color: var(--c-due); }
-  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-  .form-hint { font-size: 11px; color: var(--ink-soft); margin-top: 5px; font-weight: 300; }
-  .room-checks { display: flex; flex-direction: column; gap: 10px; }
-  .room-check-label { display: flex; align-items: center; gap: 10px; cursor: pointer; font-size: 15px; font-weight: 500; padding: 10px 14px; background: var(--bg); border: 1.5px solid var(--border); border-radius: 12px; transition: border-color .15s, background .15s; }
-  .room-check-label:has(input:checked) { border-color: var(--c-due); background: var(--surface); }
-  .room-check-label input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--c-due); cursor: pointer; flex-shrink: 0; }
-  .submit-btn { width: 100%; background: var(--ink); color: var(--bg); border: none; border-radius: 14px; padding: 15px; font-family: 'DM Sans', sans-serif; font-size: 16px; font-weight: 500; cursor: pointer; margin-top: 8px; transition: opacity .15s, transform .1s; }
-  .submit-btn:active { transform: scale(.97); }
-  .submit-btn:disabled { opacity: .5; cursor: not-allowed; }
+/* ── Forms ── */
+.form-group { margin-bottom: 18px; }
+.form-label { display: block; font-size: 12px; font-weight: 500; text-transform: uppercase; letter-spacing: .8px; color: var(–ink-soft); margin-bottom: 8px; }
+.form-input { width: 100%; background: var(–bg); border: 1.5px solid var(–border); border-radius: 12px; padding: 12px 14px; font-family: ‘DM Sans’, sans-serif; font-size: 16px; color: var(–ink); outline: none; transition: border-color .15s; -webkit-appearance: none; appearance: none; }
+.form-input:focus { border-color: var(–c-due); }
+.form-select-wrap { position: relative; }
+.form-select-wrap::after { content: ‘▾’; position: absolute; right: 14px; top: 50%; transform: translateY(-50%); pointer-events: none; color: var(–ink-soft); font-size: 13px; }
+.form-select { width: 100%; background: var(–bg); border: 1.5px solid var(–border); border-radius: 12px; padding: 12px 36px 12px 14px; font-family: ‘DM Sans’, sans-serif; font-size: 16px; color: var(–ink); outline: none; -webkit-appearance: none; appearance: none; cursor: pointer; }
+.form-select:focus { border-color: var(–c-due); }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.form-hint { font-size: 11px; color: var(–ink-soft); margin-top: 5px; font-weight: 300; }
+.room-checks { display: flex; flex-direction: column; gap: 10px; }
+.room-check-label { display: flex; align-items: center; gap: 10px; cursor: pointer; font-size: 15px; font-weight: 500; padding: 10px 14px; background: var(–bg); border: 1.5px solid var(–border); border-radius: 12px; transition: border-color .15s, background .15s; }
+.room-check-label:has(input:checked) { border-color: var(–c-due); background: var(–surface); }
+.room-check-label input[type=“checkbox”] { width: 18px; height: 18px; accent-color: var(–c-due); cursor: pointer; flex-shrink: 0; }
+.submit-btn { width: 100%; background: var(–ink); color: var(–bg); border: none; border-radius: 14px; padding: 15px; font-family: ‘DM Sans’, sans-serif; font-size: 16px; font-weight: 500; cursor: pointer; margin-top: 8px; transition: opacity .15s, transform .1s; }
+.submit-btn:active { transform: scale(.97); }
+.submit-btn:disabled { opacity: .5; cursor: not-allowed; }
 
-  /* ── View All ── */
-  .all-chore-row { display: flex; align-items: center; gap: 10px; padding: 13px 0; border-bottom: 1px solid var(--border); cursor: pointer; transition: opacity .15s; }
-  .all-chore-row:last-child { border-bottom: none; }
-  .all-chore-row:active { opacity: .7; }
-  .all-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
-  .all-chore-name { flex: 1; font-size: 15px; font-weight: 500; line-height: 1.3; }
-  .all-chore-room { font-size: 11px; font-weight: 300; color: var(--ink-soft); }
-  .all-chore-meta { font-size: 11px; color: var(--ink-soft); font-weight: 300; text-align: right; line-height: 1.4; }
-  .all-done-btn { flex-shrink: 0; background: none; border: 1.5px solid var(--border); border-radius: 8px; padding: 5px 10px; font-family: 'DM Sans', sans-serif; font-size: 12px; color: var(--ink-soft); cursor: pointer; transition: all .15s; margin-left: 4px; }
-  .all-done-btn:active { transform: scale(.9); background: var(--c-fresh); color: white; border-color: var(--c-fresh); }
-  .section-label { font-size: 10px; font-weight: 500; text-transform: uppercase; letter-spacing: 1.2px; color: var(--ink-soft); padding: 4px 4px 6px; }
+/* ── View All ── */
+.all-chore-row { display: flex; align-items: center; gap: 10px; padding: 13px 0; border-bottom: 1px solid var(–border); cursor: pointer; transition: opacity .15s; }
+.all-chore-row:last-child { border-bottom: none; }
+.all-chore-row:active { opacity: .7; }
+.all-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.all-chore-name { flex: 1; font-size: 15px; font-weight: 500; line-height: 1.3; }
+.all-chore-room { font-size: 11px; font-weight: 300; color: var(–ink-soft); }
+.all-chore-meta { font-size: 11px; color: var(–ink-soft); font-weight: 300; text-align: right; line-height: 1.4; }
+.all-done-btn { flex-shrink: 0; background: none; border: 1.5px solid var(–border); border-radius: 8px; padding: 5px 10px; font-family: ‘DM Sans’, sans-serif; font-size: 12px; color: var(–ink-soft); cursor: pointer; transition: all .15s; margin-left: 4px; }
+.all-done-btn:active { transform: scale(.9); background: var(–c-fresh); color: white; border-color: var(–c-fresh); }
+.section-label { font-size: 10px; font-weight: 500; text-transform: uppercase; letter-spacing: 1.2px; color: var(–ink-soft); padding: 4px 4px 6px; }
 </style>
+
 </head>
 <body>
 
@@ -245,11 +247,7 @@
     <div class="subtitle">Chore tracker<span class="offline-badge" id="offline-badge" style="display:none">OFFLINE</span></div>
   </div>
   <div class="header-btns">
-    <button id="user-switcher" onclick="switchUser()" title="Switch user" style="
-      background:none; border:1.5px solid var(--border); border-radius:20px;
-      padding:5px 12px; font-family:'DM Sans',sans-serif; font-size:12px; font-weight:500;
-      color:var(--ink-soft); cursor:pointer; transition:all .15s; white-space:nowrap;
-    "></button>
+        <button id="user-switcher" onclick="switchUser()" title="Switch user" style="background:none;border:1.5px solid var(--border);border-radius:20px;padding:5px 12px;font-family:DM Sans,sans-serif;font-size:12px;font-weight:500;color:var(--ink-soft);cursor:pointer;transition:all .15s;white-space:nowrap"></button>
     <button class="icon-btn" onclick="toggleNight()" title="Night mode" id="night-btn">🌙</button>
     <button class="icon-btn" onclick="openViewAll()" title="View all chores">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -287,6 +285,7 @@
 <div class="ptr-indicator" id="ptr-indicator"></div>
 
 <!-- Room filter -->
+
 <div class="room-bar">
   <div class="room-select-wrap">
     <select class="room-select" id="room-select" onchange="setRoom(this.value)">
@@ -296,6 +295,7 @@
 </div>
 
 <!-- Day filter pills -->
+
 <div class="filter-bar" id="filter-bar">
   <button class="filter-btn" data-days="1"   onclick="setFilter(1)">1 day</button>
   <button class="filter-btn" data-days="2"   onclick="setFilter(2)">2 days</button>
@@ -313,6 +313,7 @@
 <div id="toast"></div>
 
 <!-- ADD CHORE SHEET -->
+
 <div class="sheet-overlay" id="add-overlay" onclick="closeAddChore()"></div>
 <div class="bottom-sheet" id="add-sheet">
   <div class="sheet-handle"></div>
@@ -356,6 +357,7 @@
 </div>
 
 <!-- VIEW ALL SHEET -->
+
 <div class="sheet-overlay" id="all-overlay" onclick="closeViewAll()"></div>
 <div class="bottom-sheet" id="all-sheet">
   <div class="sheet-handle"></div>
@@ -1206,1064 +1208,6 @@ updateOfflineBadge();
 updateUserSwitcher();
 loadChores();
 </script>
+
 </body>
-</html>  .wordmark { font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 600; letter-spacing: -.5px; line-height: 1; }
-  .wordmark span { color: var(--c-due); }
-  .subtitle { font-size: 12px; color: var(--ink-soft); font-weight: 300; letter-spacing: .5px; text-transform: uppercase; padding-bottom: 2px; }
-  .offline-badge {
-    display: inline-block; background: rgba(197,115,58,.15); color: var(--c-due);
-    border: 1px solid rgba(197,115,58,.3); border-radius: 8px;
-    font-size: 9px; padding: 1px 6px; margin-left: 6px;
-    vertical-align: middle; letter-spacing: .5px;
-  }
-  .header-btns { display: flex; gap: 8px; align-items: center; }
-  .icon-btn {
-    background: none; border: 1.5px solid var(--border); border-radius: 50%;
-    width: 38px; height: 38px; display: grid; place-items: center;
-    cursor: pointer; color: var(--ink-soft); font-size: 16px; transition: all .2s; flex-shrink: 0;
-  }
-  .icon-btn:active { transform: scale(.88); }
-  .icon-btn svg { width: 16px; height: 16px; }
-  .refresh-btn:active { transform: rotate(180deg) !important; }
-
-  /* ── Config Banner ── */
-  #config-banner { margin: 0 16px 8px; background: #fff8e8; border: 1.5px solid #e8d48a; border-radius: 12px; padding: 14px 16px; font-size: 13px; line-height: 1.5; color: #6b5a1e; }
-  #config-banner strong { display: block; margin-bottom: 4px; font-size: 14px; }
-  #config-banner a { color: #a07c20; }
-  #config-banner.hidden { display: none; }
-
-  /* ── Legend ── */
-  .legend { display: flex; gap: 12px; padding: 0 20px 10px; flex-wrap: wrap; }
-  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--ink-soft); font-weight: 400; letter-spacing: .3px; }
-  .legend-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-
-  /* ── Room Dropdown ── */
-  .room-bar { padding: 0 16px 10px; }
-  .room-select-wrap { position: relative; }
-  .room-select-wrap::after { content: '▾'; position: absolute; right: 14px; top: 50%; transform: translateY(-50%); pointer-events: none; color: var(--ink-soft); font-size: 13px; }
-  .room-select {
-    width: 100%; appearance: none; -webkit-appearance: none;
-    background: var(--surface); border: 1.5px solid var(--border); border-radius: 12px;
-    padding: 9px 36px 9px 14px; font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500;
-    color: var(--ink); cursor: pointer; outline: none; transition: border-color .15s, background .15s;
-  }
-  .room-select:focus { border-color: var(--c-due); }
-  .room-select.active { border-color: var(--c-due); color: var(--c-due); }
-
-  /* ── Filter Bar ── */
-  .filter-bar { display: flex; gap: 8px; padding: 0 16px 14px; overflow-x: auto; scrollbar-width: none; transition: opacity .2s; }
-  .filter-bar::-webkit-scrollbar { display: none; }
-  .filter-bar.dimmed { opacity: .35; pointer-events: none; }
-  .filter-btn { flex-shrink: 0; background: var(--surface); border: 1.5px solid var(--border); border-radius: 20px; padding: 5px 14px; font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 500; color: var(--ink-soft); cursor: pointer; transition: all .15s; letter-spacing: .2px; }
-  .filter-btn.active { background: var(--ink); color: var(--bg); border-color: var(--ink); }
-
-  /* ── Chore list ── */
-  #chore-list { padding: 0 16px calc(var(--safe-bot) + 100px); display: flex; flex-direction: column; gap: 10px; }
-
-  /* ── Swipe wrapper ── */
-  .chore-card-wrap { position: relative; border-radius: var(--radius); overflow: hidden; }
-  .swipe-bg {
-    position: absolute; inset: 0;
-    background: linear-gradient(90deg, rgba(90,138,94,.3), rgba(90,138,94,.1));
-    display: flex; align-items: center; padding-left: 20px;
-    font-size: 20px; opacity: 0; transition: opacity .15s;
-    border-radius: var(--radius); pointer-events: none;
-  }
-  .swipe-bg.visible { opacity: 1; }
-
-  /* ── Chore card ── */
-  .chore-card {
-    background: var(--surface); border-radius: var(--radius); border: 1.5px solid var(--border);
-    overflow: hidden; transition: transform .05s; box-shadow: 0 2px 8px rgba(0,0,0,.04);
-    position: relative; z-index: 1; touch-action: pan-y; -webkit-user-select: none; user-select: none;
-  }
-  .chore-card:active { transform: scale(.985); }
-  .chore-inner { display: flex; align-items: center; gap: 14px; padding: 14px 16px 10px; }
-  .chore-name { flex: 1; font-size: 16px; font-weight: 500; line-height: 1.2; }
-  .chore-room-tag { font-size: 10px; font-weight: 400; color: var(--ink-soft); letter-spacing: .3px; margin-top: 2px; }
-
-  .urgency-bar { height: 5px; border-radius: 0 0 var(--radius) var(--radius); transition: background .6s ease; position: relative; overflow: hidden; }
-  .urgency-bar::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(255,255,255,.18) 0%, transparent 60%); }
-  .urgency-fill { height: 100%; width: 0%; transition: width 1s cubic-bezier(.25,.8,.25,1); }
-  .last-done { font-size: 11px; color: var(--ink-soft); padding: 0 16px 10px; font-weight: 300; }
-
-  /* Swipe hint */
-  .swipe-hint { text-align: center; font-size: 10px; color: var(--ink-soft); padding: 0 0 8px; letter-spacing: .5px; opacity: .5; }
-
-  /* ── Empty / loading / error ── */
-  .empty-state { text-align: center; padding: 48px 24px; color: var(--ink-soft); font-size: 14px; line-height: 1.7; }
-  .empty-state .emoji { font-size: 36px; display: block; margin-bottom: 12px; }
-  #loading, #error { text-align: center; padding: 60px 24px; color: var(--ink-soft); font-size: 15px; line-height: 1.6; }
-  #error { color: var(--c-over); }
-  .spinner { width: 32px; height: 32px; border: 3px solid var(--border); border-top-color: var(--c-due); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 16px; }
-  @keyframes spin { to { transform: rotate(360deg); } }
-
-  /* ── Pull to refresh ── */
-  .ptr-indicator {
-    text-align: center; font-size: 12px; color: var(--ink-soft);
-    padding: 8px; height: 0; overflow: hidden; transition: height .2s;
-    letter-spacing: .3px;
-  }
-  .ptr-indicator.visible { height: 36px; }
-
-  /* ── Toast ── */
-  #toast {
-    position: fixed; bottom: calc(var(--safe-bot) + 20px); left: 50%;
-    transform: translateX(-50%) translateY(80px);
-    background: var(--ink); color: var(--bg); padding: 10px 20px; border-radius: 40px;
-    font-size: 13px; font-weight: 500;
-    transition: transform .3s cubic-bezier(.34,1.56,.64,1), opacity .3s;
-    opacity: 0; z-index: 200; white-space: nowrap;
-  }
-  #toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
-
-  /* ── Bottom sheets ── */
-  .sheet-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.4); z-index: 50; opacity: 0; pointer-events: none; transition: opacity .3s; }
-  .sheet-overlay.open { opacity: 1; pointer-events: all; }
-  .bottom-sheet {
-    position: fixed; bottom: 0; left: 0; right: 0; background: var(--surface);
-    border-radius: 24px 24px 0 0; z-index: 60;
-    transform: translateY(100%); transition: transform .35s cubic-bezier(.32,0,.67,0);
-    max-height: 92dvh; display: flex; flex-direction: column;
-  }
-  .bottom-sheet.open { transform: translateY(0); transition: transform .35s cubic-bezier(.22,1,.36,1); }
-  .sheet-handle { width: 36px; height: 4px; background: var(--border); border-radius: 4px; margin: 12px auto 0; flex-shrink: 0; }
-  .sheet-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px 12px; flex-shrink: 0; border-bottom: 1px solid var(--border); }
-  .sheet-title { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 600; }
-  .sheet-close { background: none; border: 1.5px solid var(--border); border-radius: 50%; width: 32px; height: 32px; display: grid; place-items: center; cursor: pointer; color: var(--ink-soft); font-size: 18px; line-height: 1; transition: all .15s; }
-  .sheet-close:active { transform: scale(.88); }
-  .sheet-body { overflow-y: auto; flex: 1; padding: 20px 20px calc(var(--safe-bot) + 20px); }
-
-  /* ── Forms ── */
-  .form-group { margin-bottom: 18px; }
-  .form-label { display: block; font-size: 12px; font-weight: 500; text-transform: uppercase; letter-spacing: .8px; color: var(--ink-soft); margin-bottom: 8px; }
-  .form-input { width: 100%; background: var(--bg); border: 1.5px solid var(--border); border-radius: 12px; padding: 12px 14px; font-family: 'DM Sans', sans-serif; font-size: 16px; color: var(--ink); outline: none; transition: border-color .15s; -webkit-appearance: none; appearance: none; }
-  .form-input:focus { border-color: var(--c-due); }
-  .form-select-wrap { position: relative; }
-  .form-select-wrap::after { content: '▾'; position: absolute; right: 14px; top: 50%; transform: translateY(-50%); pointer-events: none; color: var(--ink-soft); font-size: 13px; }
-  .form-select { width: 100%; background: var(--bg); border: 1.5px solid var(--border); border-radius: 12px; padding: 12px 36px 12px 14px; font-family: 'DM Sans', sans-serif; font-size: 16px; color: var(--ink); outline: none; -webkit-appearance: none; appearance: none; cursor: pointer; }
-  .form-select:focus { border-color: var(--c-due); }
-  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-  .form-hint { font-size: 11px; color: var(--ink-soft); margin-top: 5px; font-weight: 300; }
-  .room-checks { display: flex; flex-direction: column; gap: 10px; }
-  .room-check-label { display: flex; align-items: center; gap: 10px; cursor: pointer; font-size: 15px; font-weight: 500; padding: 10px 14px; background: var(--bg); border: 1.5px solid var(--border); border-radius: 12px; transition: border-color .15s, background .15s; }
-  .room-check-label:has(input:checked) { border-color: var(--c-due); background: var(--surface); }
-  .room-check-label input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--c-due); cursor: pointer; flex-shrink: 0; }
-  .submit-btn { width: 100%; background: var(--ink); color: var(--bg); border: none; border-radius: 14px; padding: 15px; font-family: 'DM Sans', sans-serif; font-size: 16px; font-weight: 500; cursor: pointer; margin-top: 8px; transition: opacity .15s, transform .1s; }
-  .submit-btn:active { transform: scale(.97); }
-  .submit-btn:disabled { opacity: .5; cursor: not-allowed; }
-
-  /* ── View All ── */
-  .all-chore-row { display: flex; align-items: center; gap: 10px; padding: 13px 0; border-bottom: 1px solid var(--border); cursor: pointer; transition: opacity .15s; }
-  .all-chore-row:last-child { border-bottom: none; }
-  .all-chore-row:active { opacity: .7; }
-  .all-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
-  .all-chore-name { flex: 1; font-size: 15px; font-weight: 500; line-height: 1.3; }
-  .all-chore-room { font-size: 11px; font-weight: 300; color: var(--ink-soft); }
-  .all-chore-meta { font-size: 11px; color: var(--ink-soft); font-weight: 300; text-align: right; line-height: 1.4; }
-  .all-done-btn { flex-shrink: 0; background: none; border: 1.5px solid var(--border); border-radius: 8px; padding: 5px 10px; font-family: 'DM Sans', sans-serif; font-size: 12px; color: var(--ink-soft); cursor: pointer; transition: all .15s; margin-left: 4px; }
-  .all-done-btn:active { transform: scale(.9); background: var(--c-fresh); color: white; border-color: var(--c-fresh); }
-  .section-label { font-size: 10px; font-weight: 500; text-transform: uppercase; letter-spacing: 1.2px; color: var(--ink-soft); padding: 4px 4px 6px; }
-</style>
-</head>
-<body>
-
-<header>
-  <div>
-    <div class="wordmark">Home<span>.</span></div>
-    <div class="subtitle">Chore tracker<span class="offline-badge" id="offline-badge" style="display:none">OFFLINE</span></div>
-  </div>
-  <div class="header-btns">
-    <button class="icon-btn" onclick="toggleNight()" title="Night mode" id="night-btn">🌙</button>
-    <button class="icon-btn" onclick="openViewAll()" title="View all chores">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/>
-        <line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/>
-      </svg>
-    </button>
-    <button class="icon-btn" onclick="openAddChore()" title="Add chore">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
-        <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
-      </svg>
-    </button>
-    <button class="icon-btn refresh-btn" onclick="loadChores(true)" title="Refresh">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
-      </svg>
-    </button>
-  </div>
-</header>
-
-<div id="config-banner" class="hidden">
-  <strong>⚙️ Setup needed</strong>
-  Fill in your <code>SHEET_ID</code>, <code>API_KEY</code>, and <code>OAUTH_CLIENT_ID</code> in the script.
-  <a href="#" onclick="document.getElementById('config-banner').classList.add('hidden');return false;">Dismiss</a>
-</div>
-
-<div class="legend">
-  <div class="legend-item"><div class="legend-dot" style="background:var(--c-fresh)"></div> Fresh</div>
-  <div class="legend-item"><div class="legend-dot" style="background:var(--c-ok)"></div> Good</div>
-  <div class="legend-item"><div class="legend-dot" style="background:var(--c-soon)"></div> Soon</div>
-  <div class="legend-item"><div class="legend-dot" style="background:var(--c-due)"></div> Due</div>
-  <div class="legend-item"><div class="legend-dot" style="background:var(--c-over)"></div> Overdue</div>
-</div>
-
-<div class="ptr-indicator" id="ptr-indicator">↓ Release to refresh</div>
-
-<!-- Room filter -->
-<div class="room-bar">
-  <div class="room-select-wrap">
-    <select class="room-select" id="room-select" onchange="setRoom(this.value)">
-      <option value="">All rooms</option>
-    </select>
-  </div>
-</div>
-
-<!-- Day filter pills -->
-<div class="filter-bar" id="filter-bar">
-  <button class="filter-btn" data-days="1"   onclick="setFilter(1)">1 day</button>
-  <button class="filter-btn" data-days="2"   onclick="setFilter(2)">2 days</button>
-  <button class="filter-btn active" data-days="4" onclick="setFilter(4)">4 days</button>
-  <button class="filter-btn" data-days="7"   onclick="setFilter(7)">7 days</button>
-  <button class="filter-btn" data-days="14"  onclick="setFilter(14)">14 days</button>
-  <button class="filter-btn" data-days="999" onclick="setFilter(999)">All due</button>
-</div>
-
-<div id="loading"><div class="spinner"></div>Loading chores…</div>
-<div id="error" style="display:none"></div>
-<div id="chore-list" style="display:none">
-  <div class="swipe-hint" id="swipe-hint">← swipe right to mark done</div>
-</div>
-<div id="toast"></div>
-
-<!-- ADD CHORE SHEET -->
-<div class="sheet-overlay" id="add-overlay" onclick="closeAddChore()"></div>
-<div class="bottom-sheet" id="add-sheet">
-  <div class="sheet-handle"></div>
-  <div class="sheet-header">
-    <div class="sheet-title">Add chore</div>
-    <button class="sheet-close" onclick="closeAddChore()">×</button>
-  </div>
-  <div class="sheet-body">
-    <div class="form-group">
-      <label class="form-label">Chore name</label>
-      <input class="form-input" id="new-name" type="text" placeholder="e.g. Clean windows" autocomplete="off">
-    </div>
-    <div class="form-row">
-      <div class="form-group">
-        <label class="form-label">Min days</label>
-        <input class="form-input" id="new-min" type="number" placeholder="3" min="1">
-        <div class="form-hint">Earliest to repeat</div>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Max days</label>
-        <input class="form-input" id="new-max" type="number" placeholder="7" min="1">
-        <div class="form-hint">Due by this many days</div>
-      </div>
-    </div>
-    <div class="form-group">
-      <label class="form-label">Who did it last</label>
-      <div class="form-select-wrap">
-        <select class="form-select" id="new-who">
-          <option value="">— optional —</option>
-          <option value="Me">Me</option>
-          <option value="Partner">Partner</option>
-        </select>
-      </div>
-    </div>
-    <div class="form-group">
-      <label class="form-label">Room</label>
-      <div class="room-checks" id="new-room-checks"></div>
-    </div>
-    <button class="submit-btn" id="add-submit-btn" onclick="submitNewChore()">Add to list</button>
-  </div>
-</div>
-
-<!-- VIEW ALL SHEET -->
-<div class="sheet-overlay" id="all-overlay" onclick="closeViewAll()"></div>
-<div class="bottom-sheet" id="all-sheet">
-  <div class="sheet-handle"></div>
-  <div class="sheet-header">
-    <div class="sheet-title">All chores</div>
-    <button class="sheet-close" onclick="closeViewAll()">×</button>
-  </div>
-  <div class="sheet-body" id="all-list"></div>
-</div>
-
-<script>
-/* ═══════════════════════════════════════
-   CONFIGURATION
-   ═══════════════════════════════════════
-   Sheet layout:
-     A = Chore name
-     B = Min days
-     C = Max days
-     D = Last done (written by app, format: "22 Mar 2025 14:30 · Me")
-     E = Room code(s), space-separated e.g. "k bt"
-     F = Who did it last (written separately for clarity)
-     I = Legend  e.g. "k = Kitchen"
-   DATA_START_ROW: first data row (skip header)
-═══════════════════════════════════════ */
-const CONFIG = {
-  SHEET_ID:      '19-CYQBlORzRx_no9o9Hk31kuQyvWYGCGhRKnJ6LZaSE',
-  SHEET_NAME:    'Sheet1',
-  API_KEY:       'AIzaSyDx50f2EyVKs6YEStDEDugEowN7yplhrLE',
-  COL_NAME:      1,
-  COL_MIN_DAYS:  2,
-  COL_MAX_DAYS:  3,
-  COL_LAST_DONE: 4,
-  COL_ROOM:      5,
-  COL_WHO:       6,
-  COL_LEGEND:    9,
-  DATA_START_ROW: 2,
-  YOUR_NAME:     'Anthony',
-  PARTNER_NAME:  'Kathrina',
-};
-
-const OAUTH_CLIENT_ID = '910424254552-q29kncg9tni3a7nqcvqbd3kjm1kuche0.apps.googleusercontent.com';
-const SCOPES = 'https://www.googleapis.com/auth/spreadsheets';
-
-// ─── Legend cache ─────────────────────────────────
-const LEGEND_KEY    = 'chores_legend_v1';
-const LEGEND_TTL_MS = 24 * 60 * 60 * 1000;
-
-function saveLegendCache(legend) {
-  try { localStorage.setItem(LEGEND_KEY, JSON.stringify({ ts: Date.now(), legend })); } catch(e) {}
-}
-function loadLegendCache() {
-  try {
-    const raw = localStorage.getItem(LEGEND_KEY);
-    if (!raw) return null;
-    const { ts, legend } = JSON.parse(raw);
-    if (Date.now() - ts > LEGEND_TTL_MS) return null;
-    return legend;
-  } catch(e) { return null; }
-}
-function bustLegendCache() {
-  try { localStorage.removeItem(LEGEND_KEY); } catch(e) {}
-}
-
-// ─── Offline write queue ──────────────────────────
-const QUEUE_KEY = 'chores_write_queue_v1';
-function getQueue() { try { return JSON.parse(localStorage.getItem(QUEUE_KEY)) || []; } catch { return []; } }
-function saveQueue(q) { try { localStorage.setItem(QUEUE_KEY, JSON.stringify(q)); } catch {} }
-function enqueue(sheetRow, value, whoValue) {
-  const q = getQueue().filter(i => i.sheetRow !== sheetRow);
-  q.push({ sheetRow, value, whoValue, ts: Date.now() });
-  saveQueue(q);
-}
-function dequeue(sheetRow) {
-  saveQueue(getQueue().filter(i => i.sheetRow !== sheetRow));
-}
-async function flushQueue() {
-  if (!accessToken) return;
-  const q = getQueue();
-  if (!q.length) return;
-  let flushed = 0;
-  for (const item of q) {
-    try {
-      await writeCellToSheet(item.sheetRow, CONFIG.COL_LAST_DONE, item.value);
-      if (item.whoValue) await writeCellToSheet(item.sheetRow, CONFIG.COL_WHO, item.whoValue);
-      dequeue(item.sheetRow);
-      flushed++;
-    } catch(e) {}
-  }
-  if (flushed > 0) showToast(`${flushed} queued update${flushed > 1 ? 's' : ''} synced ✓`);
-}
-window.addEventListener('online', () => { setTimeout(flushQueue, 800); updateOfflineBadge(); });
-window.addEventListener('offline', updateOfflineBadge);
-
-function updateOfflineBadge() {
-  const b = document.getElementById('offline-badge');
-  if (!b) return;
-  const q = getQueue();
-  if (!navigator.onLine) {
-    b.style.display = 'inline-block';
-    b.textContent = q.length > 0 ? `OFFLINE · ${q.length} queued` : 'OFFLINE';
-  } else {
-    b.style.display = 'none';
-  }
-}
-
-// ─── Undo queue ───────────────────────────────────
-let undoTimer = null;
-let pendingUndo = null; // { sheetRow, prevLastDone, prevWho, card }
-
-function scheduleUndo(sheetRow, prevLastDone, prevWho, card) {
-  clearPendingUndo();
-  pendingUndo = { sheetRow, prevLastDone, prevWho, card };
-  // Show toast with undo
-  const t = document.getElementById('toast');
-  t.innerHTML = 'Marked as done — <button onclick="triggerUndo()" style="background:none;border:none;color:inherit;font-weight:700;cursor:pointer;text-decoration:underline;font-family:inherit;font-size:inherit">Undo</button>';
-  t.classList.add('show');
-  undoTimer = setTimeout(() => {
-    t.classList.remove('show');
-    pendingUndo = null;
-  }, 5000);
-}
-
-function clearPendingUndo() {
-  if (undoTimer) { clearTimeout(undoTimer); undoTimer = null; }
-  document.getElementById('toast').classList.remove('show');
-}
-
-function triggerUndo() {
-  if (!pendingUndo) return;
-  const { sheetRow, prevLastDone, prevWho, card } = pendingUndo;
-  clearPendingUndo();
-  pendingUndo = null;
-
-  // Revert in-memory
-  const chore = allChores.find(c => c.sheetRow === sheetRow);
-  if (chore) {
-    chore.lastDone = prevLastDone;
-    chore.who = prevWho;
-    chore.days  = daysSince(prevLastDone);
-    chore.ratio = urgencyRatio(chore.minDays, chore.maxDays, chore.days);
-  }
-
-  // Revert card UI
-  if (card && card.isConnected) {
-    const prevValue = prevLastDone ? formatDate(prevLastDone) : '';
-    const color = urgencyColor(chore ? chore.ratio : 1);
-    const width = urgencyBarWidth(chore ? chore.ratio : 1);
-    card.querySelector('.last-done').textContent = relativeTime(prevLastDone);
-    card.querySelector('.urgency-fill').style.width = width;
-    card.querySelector('.urgency-fill').style.background = color;
-    card.querySelector('.urgency-bar').style.background = color + '20';
-    const btn = card.querySelector('.done-btn');
-    if (btn) { btn.textContent = 'Done'; btn.disabled = false; btn.classList.remove('saving'); }
-  }
-
-  // Write revert to sheet (or queue)
-  const revertValue = prevLastDone ? formatDate(prevLastDone) : '';
-  const revertWho   = prevWho || '';
-  if (!navigator.onLine) {
-    enqueue(sheetRow, revertValue, revertWho);
-    showToast('Undone — will sync when online 📶');
-  } else {
-    const doRevert = async () => {
-      try {
-        await writeCellToSheet(sheetRow, CONFIG.COL_LAST_DONE, revertValue);
-        if (CONFIG.COL_WHO) await writeCellToSheet(sheetRow, CONFIG.COL_WHO, revertWho);
-        showToast('Undone ✓');
-      } catch(e) { showToast('Undo failed — ' + e.message); }
-    };
-    if (accessToken) { doRevert(); }
-    else { pendingWrite = { customCallback: doRevert }; initOAuth(); }
-  }
-}
-
-// ─── State ────────────────────────────────────────
-let tokenClient  = null;
-let accessToken  = null;
-let pendingWrite = null;
-let allChores    = [];
-let roomLegend   = {};
-let filterDays   = 4;
-let filterRoom   = '';
-
-// ─── Helpers ─────────────────────────────────────
-const colLetter = (n) => String.fromCharCode(64 + n);
-
-function formatDate(d) {
-  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  const pad = n => String(n).padStart(2, '0');
-  return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
-}
-
-function parseDate(str) {
-  if (!str) return null;
-  // Strip who suffix if present e.g. "22 Mar 2025 14:30 · Me"
-  const cleaned = str.split(' · ')[0].trim();
-  const d = new Date(cleaned);
-  return isNaN(d) ? null : d;
-}
-
-function daysSince(date) {
-  if (!date) return Infinity;
-  return (Date.now() - date.getTime()) / 86400000;
-}
-
-function urgencyRatio(minDays, maxDays, days) {
-  if (!isFinite(days)) return 1.5;
-  if (maxDays <= 0) return 0;
-  return days / maxDays;
-}
-
-function urgencyColor(ratio) {
-  if (ratio <= 0.35) return 'var(--c-fresh)';
-  if (ratio <= 0.65) return 'var(--c-ok)';
-  if (ratio <= 0.85) return 'var(--c-soon)';
-  if (ratio <= 1.0)  return 'var(--c-due)';
-  return 'var(--c-over)';
-}
-
-function urgencyBarWidth(ratio) { return Math.min(ratio * 100, 100) + '%'; }
-
-function relativeTime(date) {
-  if (!date) return 'Never done';
-  const days = daysSince(date);
-  if (days < 1) return 'Done today';
-  if (days < 2) return 'Done yesterday';
-  return `Done ${Math.floor(days)} days ago`;
-}
-
-function showToast(msg, duration = 2200) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), duration);
-}
-
-function roomName(codes) {
-  if (!codes) return '';
-  return codes.split(' ').filter(Boolean).map(c => roomLegend[c.toLowerCase()] || c).join(', ');
-}
-
-// ─── Legend parsing ───────────────────────────────
-function parseLegend(rows) {
-  const legend = {};
-  rows.forEach(row => {
-    const cell = (row[CONFIG.COL_LEGEND - 1] || '').trim();
-    if (!cell) return;
-    const match = cell.match(/^([^\s=]+)\s*=\s*(.+)$/);
-    if (match) legend[match[1].toLowerCase()] = match[2].trim();
-  });
-  return legend;
-}
-
-// ─── Room dropdowns ───────────────────────────────
-function populateRoomDropdowns() {
-  const mainSel = document.getElementById('room-select');
-  while (mainSel.options.length > 1) mainSel.remove(1);
-  Object.entries(roomLegend).sort((a,b) => a[1].localeCompare(b[1])).forEach(([code, name]) => {
-    mainSel.appendChild(new Option(name, code));
-  });
-  if (filterRoom) mainSel.value = filterRoom;
-}
-
-// ─── Load chores ──────────────────────────────────
-async function loadChores(forceRefresh = false) {
-  if (CONFIG.SHEET_ID === 'YOUR_SHEET_ID_HERE') {
-    document.getElementById('loading').style.display = 'none';
-    document.getElementById('config-banner').classList.remove('hidden');
-    document.getElementById('chore-list').style.display = 'flex';
-    renderDemo(); return;
-  }
-
-  document.getElementById('loading').style.display = 'block';
-  document.getElementById('error').style.display   = 'none';
-  document.getElementById('chore-list').style.display = 'none';
-
-  if (forceRefresh) bustLegendCache();
-  const cachedLegend = loadLegendCache();
-
-  try {
-    if (cachedLegend) {
-      // Fast path: only fetch task data (A–F)
-      roomLegend = cachedLegend;
-      populateRoomDropdowns();
-      const range = encodeURIComponent(`${CONFIG.SHEET_NAME}!A${CONFIG.DATA_START_ROW}:F`);
-      const url   = `https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.SHEET_ID}/values/${range}?key=${CONFIG.API_KEY}`;
-      const res   = await fetch(url);
-      const data  = await res.json();
-      if (data.error) throw new Error(data.error.message);
-      parseAndCacheChores(data.values || []);
-    } else {
-      // Full fetch (A–I) to get legend
-      const range = encodeURIComponent(`${CONFIG.SHEET_NAME}!A${CONFIG.DATA_START_ROW}:I`);
-      const url   = `https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.SHEET_ID}/values/${range}?key=${CONFIG.API_KEY}`;
-      const res   = await fetch(url);
-      const data  = await res.json();
-      if (data.error) throw new Error(data.error.message);
-      const rows = data.values || [];
-      roomLegend = parseLegend(rows);
-      saveLegendCache(roomLegend);
-      populateRoomDropdowns();
-      parseAndCacheChores(rows);
-    }
-    document.getElementById('loading').style.display = 'none';
-    document.getElementById('chore-list').style.display = 'flex';
-    applyFilterAndRender();
-    // Update page title with overdue count
-    updatePageTitle();
-  } catch(e) {
-    document.getElementById('loading').style.display = 'none';
-    const err = document.getElementById('error');
-    err.style.display = 'block';
-    err.innerHTML = `<strong>Couldn't load chores</strong><br>${e.message}<br><br>Check your Sheet ID, API key, and that the sheet is public.`;
-  }
-}
-
-function parseAndCacheChores(rows) {
-  allChores = rows.filter(r => r[CONFIG.COL_NAME - 1]).map((row, i) => {
-    const name     = row[CONFIG.COL_NAME - 1]     || '';
-    const minDays  = parseFloat(row[CONFIG.COL_MIN_DAYS  - 1]) || 1;
-    const maxDays  = parseFloat(row[CONFIG.COL_MAX_DAYS  - 1]) || 7;
-    const lastDone = parseDate(row[CONFIG.COL_LAST_DONE - 1]);
-    const room     = (row[CONFIG.COL_ROOM - 1] || '').trim().toLowerCase();
-    const who      = (row[CONFIG.COL_WHO - 1] || '').trim();
-    const days     = daysSince(lastDone);
-    const ratio    = urgencyRatio(minDays, maxDays, days);
-    return { name, minDays, maxDays, lastDone, room, who, days, ratio, sheetRow: CONFIG.DATA_START_ROW + i };
-  }).sort((a, b) => b.ratio - a.ratio);
-}
-
-function updatePageTitle() {
-  const overdue = allChores.filter(c => c.ratio >= 1).length;
-  document.title = overdue > 0 ? `(${overdue}) Chores` : 'Chores';
-}
-
-// ─── Filters ──────────────────────────────────────
-function setRoom(code) {
-  filterRoom = code;
-  document.getElementById('room-select').classList.toggle('active', !!code);
-  document.getElementById('filter-bar').classList.toggle('dimmed', !!code);
-  applyFilterAndRender();
-}
-
-function setFilter(days) {
-  filterDays = days;
-  document.querySelectorAll('.filter-btn').forEach(b => {
-    b.classList.toggle('active', parseInt(b.dataset.days) === days);
-  });
-  applyFilterAndRender();
-}
-
-function applyFilterAndRender() {
-  const list = document.getElementById('chore-list');
-  // Keep swipe hint, clear the rest
-  const hint = document.getElementById('swipe-hint');
-  list.innerHTML = '';
-  if (hint) list.appendChild(hint);
-
-  let filtered;
-  if (filterRoom) {
-    filtered = allChores.filter(c => {
-      const codes = (c.room || '').toLowerCase().split(' ').filter(Boolean);
-      return codes.includes(filterRoom.toLowerCase());
-    });
-  } else {
-    filtered = allChores.filter(c => {
-      const daysUntilDue = c.maxDays - c.days;
-      if (filterDays === 999) return c.ratio >= 1;
-      return daysUntilDue <= filterDays || c.ratio >= 1;
-    });
-  }
-
-  if (filtered.length === 0) {
-    const label = filterRoom
-      ? `in ${roomName(filterRoom)}`
-      : `due within ${filterDays === 999 ? 'deadline' : filterDays + ' day' + (filterDays !== 1 ? 's' : '')}`;
-    list.innerHTML += `<div class="empty-state"><span class="emoji">✨</span>All caught up!<br><span style="font-size:12px">Nothing ${label}.</span></div>`;
-  } else {
-    filtered.forEach(chore => {
-      const wrap = buildCardWrap(chore);
-      list.appendChild(wrap);
-    });
-    requestAnimationFrame(() => requestAnimationFrame(() => {
-      list.querySelectorAll('.urgency-fill').forEach(el => { el.style.width = el.dataset.target; });
-    }));
-  }
-}
-
-// ─── Build card with swipe wrapper ────────────────
-function buildCardWrap(chore, readOnly = false) {
-  const { name, lastDone, ratio, sheetRow, room, who } = chore;
-  const color  = urgencyColor(ratio);
-  const width  = urgencyBarWidth(ratio);
-  const rLabel = roomName(room);
-  const whoLine = who ? `<div class="chore-room-tag">👤 Last done by ${who}</div>` : '';
-
-  if (readOnly) {
-    const card = document.createElement('div');
-    card.className = 'chore-card';
-    card.innerHTML = `
-      <div class="chore-inner">
-        <div>
-          <div class="chore-name">${name}</div>
-          ${rLabel ? `<div class="chore-room-tag">📍 ${rLabel}</div>` : ''}
-          ${whoLine}
-        </div>
-      </div>
-      <div class="last-done">${relativeTime(lastDone)}</div>
-      <div class="urgency-bar" style="background:${color}20">
-        <div class="urgency-fill" style="background:${color}" data-target="${width}"></div>
-      </div>`;
-    return card;
-  }
-
-  const wrap = document.createElement('div');
-  wrap.className = 'chore-card-wrap';
-
-  const bg = document.createElement('div');
-  bg.className = 'swipe-bg';
-  bg.innerHTML = '✓';
-
-  const card = document.createElement('div');
-  card.className = 'chore-card';
-  card.dataset.row = sheetRow;
-  card.innerHTML = `
-    <div class="chore-inner">
-      <div>
-        <div class="chore-name">${name}</div>
-        ${rLabel ? `<div class="chore-room-tag">📍 ${rLabel}</div>` : ''}
-        ${whoLine}
-      </div>
-    </div>
-    <div class="last-done">${relativeTime(lastDone)}</div>
-    <div class="urgency-bar" style="background:${color}20">
-      <div class="urgency-fill" style="background:${color}" data-target="${width}"></div>
-    </div>`;
-
-  wrap.appendChild(bg);
-  wrap.appendChild(card);
-  attachSwipe(card, bg, sheetRow);
-  return wrap;
-}
-
-// ─── Swipe to done ────────────────────────────────
-function attachSwipe(card, bg, sheetRow) {
-  let startX = 0, startY = 0, dx = 0, tracking = false;
-  const THRESHOLD = 90;
-
-  card.addEventListener('touchstart', e => {
-    startX = e.touches[0].clientX; startY = e.touches[0].clientY;
-    tracking = true; dx = 0;
-  }, { passive: true });
-
-  card.addEventListener('touchmove', e => {
-    if (!tracking) return;
-    const mx = e.touches[0].clientX - startX;
-    const my = e.touches[0].clientY - startY;
-    if (Math.abs(my) > Math.abs(mx) + 10) { tracking = false; card.style.transform = ''; bg.classList.remove('visible'); return; }
-    dx = Math.max(0, Math.min(mx, 140));
-    card.style.transform = `translateX(${dx}px)`;
-    card.style.transition = 'none';
-    bg.classList.toggle('visible', dx > 30);
-  }, { passive: true });
-
-  card.addEventListener('touchend', () => {
-    if (!tracking) return;
-    tracking = false;
-    card.style.transition = '';
-    if (dx >= THRESHOLD) {
-      card.style.transform = 'translateX(110%)';
-      card.style.opacity = '0';
-      bg.classList.remove('visible');
-      markDone(null, sheetRow, card);
-      setTimeout(() => card.closest('.chore-card-wrap')?.remove(), 400);
-    } else {
-      card.style.transform = '';
-      bg.classList.remove('visible');
-    }
-    dx = 0;
-  });
-}
-
-// ─── Mark Done ────────────────────────────────────
-async function markDone(btn, sheetRow, cardOverride) {
-  if (CONFIG.SHEET_ID === 'YOUR_SHEET_ID_HERE') { showToast('Demo mode — configure your sheet to save ✓'); return; }
-  if (btn) btn.disabled = true;
-
-  const chore = allChores.find(c => c.sheetRow === sheetRow);
-  const prevLastDone = chore ? chore.lastDone : null;
-  const prevWho      = chore ? chore.who : '';
-
-  const now      = new Date();
-  const whoName  = CONFIG.YOUR_NAME;
-  const value    = formatDate(now);
-  const whoValue = whoName;
-
-  // Update in-memory immediately
-  if (chore) { chore.lastDone = now; chore.who = whoName; chore.days = 0; chore.ratio = 0; }
-
-  // Update card UI immediately
-  const card = cardOverride || (btn ? btn.closest('.chore-card') : null);
-  if (card && btn) {
-    btn.classList.add('saving'); btn.textContent = '✓';
-    setTimeout(() => { btn.classList.remove('saving'); btn.textContent = 'Done'; btn.disabled = false; }, 1800);
-  }
-  if (card) {
-    card.querySelector('.last-done').textContent = 'Done just now';
-    card.querySelector('.urgency-fill').style.width = '5%';
-    card.querySelector('.urgency-fill').style.background = 'var(--c-fresh)';
-    card.querySelector('.urgency-bar').style.background  = 'var(--c-fresh)20';
-  }
-
-  // Update page title
-  updatePageTitle();
-
-  // Schedule undo (5s window before write)
-  scheduleUndo(sheetRow, prevLastDone, prevWho, card);
-
-  // Offline: queue it
-  if (!navigator.onLine) {
-    enqueue(sheetRow, value, whoValue);
-    updateOfflineBadge();
-    return;
-  }
-
-  // Online: write after undo window (5s)
-  setTimeout(async () => {
-    if (pendingUndo && pendingUndo.sheetRow === sheetRow) return; // undo was triggered
-    const doWrite = async () => {
-      try {
-        await writeCellToSheet(sheetRow, CONFIG.COL_LAST_DONE, value);
-        await writeCellToSheet(sheetRow, CONFIG.COL_WHO, whoValue);
-        dequeue(sheetRow);
-      } catch(e) {
-        enqueue(sheetRow, value, whoValue);
-        showToast('Queued — will sync when online 📶');
-        updateOfflineBadge();
-      }
-    };
-    if (accessToken) { await doWrite(); }
-    else { pendingWrite = { customCallback: doWrite }; initOAuth(); }
-  }, 5200);
-}
-
-async function writeCellToSheet(sheetRow, col, value) {
-  const range = `${CONFIG.SHEET_NAME}!${colLetter(col)}${sheetRow}`;
-  const url   = `https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.SHEET_ID}/values/${encodeURIComponent(range)}?valueInputOption=RAW`;
-  const res   = await fetch(url, {
-    method: 'PUT',
-    headers: { 'Authorization': `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ values: [[value]] }),
-  });
-  const data = await res.json();
-  if (data.error) throw new Error(data.error.message);
-}
-
-// ─── Demo mode ────────────────────────────────────
-function renderDemo() {
-  roomLegend = { k: 'Kitchen', b: 'Bedroom', l: 'Living room', bt: 'Bathroom' };
-  populateRoomDropdowns();
-  allChores = [
-    { name: 'Vacuum living room', minDays: 3,  maxDays: 7,  room: 'l',    who: 'Partner', lastDone: new Date(Date.now() - 8*86400000),  sheetRow: 2 },
-    { name: 'Clean bathrooms',    minDays: 5,  maxDays: 10, room: 'bt',   who: 'Me',      lastDone: new Date(Date.now() - 9*86400000),  sheetRow: 3 },
-    { name: 'Take out bins',      minDays: 6,  maxDays: 7,  room: 'k',    who: '',         lastDone: new Date(Date.now() - 7*86400000),  sheetRow: 4 },
-    { name: 'Mop kitchen floor',  minDays: 5,  maxDays: 10, room: 'k',    who: 'Partner', lastDone: new Date(Date.now() - 6*86400000),  sheetRow: 5 },
-    { name: 'Clean oven',         minDays: 14, maxDays: 30, room: 'k',    who: 'Me',      lastDone: new Date(Date.now() - 15*86400000), sheetRow: 6 },
-    { name: 'Water plants',       minDays: 3,  maxDays: 5,  room: 'l',    who: '',         lastDone: new Date(Date.now() - 4*86400000),  sheetRow: 7 },
-    { name: 'Wipe down benches',  minDays: 1,  maxDays: 3,  room: 'k bt', who: 'Me',      lastDone: new Date(Date.now() - 1*86400000),  sheetRow: 8 },
-    { name: 'Do laundry',         minDays: 2,  maxDays: 4,  room: 'b',    who: 'Partner', lastDone: new Date(Date.now() - 1*86400000),  sheetRow: 9 },
-  ].map(c => ({ ...c, days: daysSince(c.lastDone), ratio: urgencyRatio(c.minDays, c.maxDays, daysSince(c.lastDone)) }))
-   .sort((a, b) => b.ratio - a.ratio);
-  applyFilterAndRender();
-  updatePageTitle();
-}
-
-// ─── Add chore ────────────────────────────────────
-function openAddChore() {
-  const container = document.getElementById('new-room-checks');
-  container.innerHTML = '';
-  Object.entries(roomLegend).sort((a,b) => a[1].localeCompare(b[1])).forEach(([code, name]) => {
-    const label = document.createElement('label');
-    label.className = 'room-check-label';
-    // Pre-check if a room filter is active
-    const checked = filterRoom && (filterRoom === code || filterRoom.split(' ').includes(code)) ? 'checked' : '';
-    label.innerHTML = `<input type="checkbox" value="${code}" ${checked}> ${name}`;
-    container.appendChild(label);
-  });
-  document.getElementById('add-overlay').classList.add('open');
-  document.getElementById('add-sheet').classList.add('open');
-  setTimeout(() => document.getElementById('new-name').focus(), 400);
-}
-
-function closeAddChore() {
-  document.getElementById('add-overlay').classList.remove('open');
-  document.getElementById('add-sheet').classList.remove('open');
-}
-
-async function submitNewChore() {
-  const name = document.getElementById('new-name').value.trim();
-  const min  = parseInt(document.getElementById('new-min').value);
-  const max  = parseInt(document.getElementById('new-max').value);
-  const room = Array.from(document.querySelectorAll('#new-room-checks input:checked')).map(cb => cb.value).join(' ');
-
-  if (!name)        { showToast('Please enter a chore name'); return; }
-  if (!min || !max) { showToast('Please enter min and max days'); return; }
-  if (min > max)    { showToast('Min days must be ≤ max days'); return; }
-  if (CONFIG.SHEET_ID === 'YOUR_SHEET_ID_HERE') { showToast('Demo mode — configure your sheet to save'); return; }
-
-  const btn = document.getElementById('add-submit-btn');
-  btn.disabled = true; btn.textContent = 'Saving…';
-
-  const range = encodeURIComponent(`${CONFIG.SHEET_NAME}!A:F`);
-  const url   = `https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.SHEET_ID}/values/${range}:append?valueInputOption=RAW&insertDataOption=INSERT_ROWS`;
-
-  const doAppend = async () => {
-    try {
-      const res = await fetch(url, {
-        method: 'POST',
-        headers: { 'Authorization': `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ values: [[name, min, max, '', room, '']] }),
-      });
-      const data = await res.json();
-      if (data.error) throw new Error(data.error.message);
-      showToast(`"${name}" added ✓`);
-      closeAddChore();
-      document.getElementById('new-name').value = '';
-      document.getElementById('new-min').value  = '';
-      document.getElementById('new-max').value  = '';
-      document.querySelectorAll('#new-room-checks input').forEach(cb => cb.checked = false);
-      await loadChores();
-    } catch(e) {
-      showToast('Failed to add — ' + e.message);
-    } finally {
-      btn.disabled = false; btn.textContent = 'Add to list';
-    }
-  };
-
-  if (accessToken) { await doAppend(); }
-  else { pendingWrite = { customCallback: doAppend }; initOAuth(); }
-}
-
-// ─── View All ─────────────────────────────────────
-function openViewAll() {
-  const container = document.getElementById('all-list');
-  container.innerHTML = '';
-  if (allChores.length === 0) {
-    container.innerHTML = '<div class="empty-state"><span class="emoji">🧹</span>No chores loaded yet.</div>';
-  } else {
-    [...allChores].sort((a,b) => a.name.localeCompare(b.name)).forEach(chore => {
-      const color  = urgencyColor(chore.ratio);
-      const rLabel = roomName(chore.room);
-      const row = document.createElement('div');
-      row.className = 'all-chore-row';
-      row.innerHTML = `
-        <div class="all-dot" style="background:${color}"></div>
-        <div class="all-chore-name">
-          ${chore.name}
-          ${rLabel ? `<div class="all-chore-room">📍 ${rLabel}</div>` : ''}
-          ${chore.who ? `<div class="all-chore-room">👤 ${chore.who}</div>` : ''}
-        </div>
-        <div class="all-chore-meta">Every ${chore.minDays}–${chore.maxDays}d<br>${relativeTime(chore.lastDone)}</div>
-        <button class="all-done-btn" onclick="markDoneFromViewAll(${chore.sheetRow}, this)">Done</button>
-      `;
-      container.appendChild(row);
-    });
-  }
-  document.getElementById('all-overlay').classList.add('open');
-  document.getElementById('all-sheet').classList.add('open');
-}
-
-async function markDoneFromViewAll(sheetRow, btn) {
-  btn.textContent = '✓';
-  btn.disabled = true;
-  await markDone(null, sheetRow, null);
-  // Update the row text
-  const meta = btn.closest('.all-chore-row').querySelector('.all-chore-meta');
-  if (meta) meta.innerHTML = `Every ${(allChores.find(c=>c.sheetRow===sheetRow)||{}).minDays||'?'}–${(allChores.find(c=>c.sheetRow===sheetRow)||{}).maxDays||'?'}d<br>Done just now`;
-}
-
-function closeViewAll() {
-  document.getElementById('all-overlay').classList.remove('open');
-  document.getElementById('all-sheet').classList.remove('open');
-}
-
-// ─── Night mode ───────────────────────────────────
-function toggleNight() {
-  const isDark = document.documentElement.classList.toggle('dark');
-  localStorage.setItem('nightMode', isDark);
-  document.getElementById('night-btn').textContent = isDark ? '☀️' : '🌙';
-}
-if (localStorage.getItem('nightMode') === 'true') {
-  document.documentElement.classList.add('dark');
-  document.addEventListener('DOMContentLoaded', () => {
-    document.getElementById('night-btn').textContent = '☀️';
-  });
-}
-
-// ─── Pull to refresh ──────────────────────────────
-(function() {
-  let startY = 0, pulling = false, triggered = false;
-  const indicator = document.getElementById('ptr-indicator');
-
-  document.addEventListener('touchstart', e => {
-    if (window.scrollY === 0) { startY = e.touches[0].clientY; pulling = true; triggered = false; }
-  }, { passive: true });
-
-  document.addEventListener('touchmove', e => {
-    if (!pulling) return;
-    const dy = e.touches[0].clientY - startY;
-    if (dy > 60 && !triggered) {
-      indicator.classList.add('visible');
-      indicator.textContent = '↑ Release to refresh';
-    } else if (dy > 10) {
-      indicator.classList.add('visible');
-      indicator.textContent = '↓ Pull to refresh';
-    }
-  }, { passive: true });
-
-  document.addEventListener('touchend', e => {
-    if (!pulling) return;
-    pulling = false;
-    const dy = e.changedTouches[0].clientY - startY;
-    indicator.classList.remove('visible');
-    if (dy > 60) {
-      indicator.textContent = 'Refreshing…';
-      indicator.classList.add('visible');
-      loadChores(true).then(() => { indicator.classList.remove('visible'); });
-    }
-  });
-})();
-
-// ─── Auto-refresh on foreground ───────────────────
-document.addEventListener('visibilitychange', () => {
-  if (!document.hidden && CONFIG.SHEET_ID !== 'YOUR_SHEET_ID_HERE') {
-    loadChores();
-  }
-});
-
-// ─── OAuth ────────────────────────────────────────
-function initOAuth() {
-  if (OAUTH_CLIENT_ID.includes('YOUR_OAUTH_CLIENT_ID_HERE')) {
-    showToast('Set OAUTH_CLIENT_ID to enable saving');
-    if (pendingWrite?.btn) pendingWrite.btn.disabled = false;
-    return;
-  }
-  if (!window.google) {
-    const s = document.createElement('script');
-    s.src = 'https://accounts.google.com/gsi/client';
-    s.onload = () => startTokenFlow();
-    document.head.appendChild(s);
-  } else { startTokenFlow(); }
-}
-
-function startTokenFlow() {
-  tokenClient = google.accounts.oauth2.initTokenClient({
-    client_id: OAUTH_CLIENT_ID,
-    scope: SCOPES,
-    callback: async (resp) => {
-      if (resp.error) {
-        showToast('Sign-in cancelled');
-        if (pendingWrite?.btn) pendingWrite.btn.disabled = false;
-        return;
-      }
-      accessToken = resp.access_token;
-      await flushQueue();
-      if (pendingWrite) {
-        const pw = pendingWrite; pendingWrite = null;
-        if (pw.customCallback) { await pw.customCallback(); }
-        else { await writeCellToSheet(pw.sheetRow, CONFIG.COL_LAST_DONE, pw.value); }
-      }
-    },
-  });
-  tokenClient.requestAccessToken({ prompt: 'consent' });
-}
-
-// ─── Swipe hint: hide after first use ─────────────
-if (localStorage.getItem('swipeUsed')) {
-  const hint = document.getElementById('swipe-hint');
-  if (hint) hint.style.display = 'none';
-}
-
-// ─── Init ─────────────────────────────────────────
-updateOfflineBadge();
-loadChores();
-</script>
-</body>
-  </html>
+</html>
