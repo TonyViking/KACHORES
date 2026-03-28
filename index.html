@@ -144,15 +144,7 @@
   .chore-inner { display: flex; align-items: center; gap: 14px; padding: 14px 16px 10px; }
   .chore-name { flex: 1; font-size: 16px; font-weight: 500; line-height: 1.2; }
   .chore-room-tag { font-size: 10px; font-weight: 400; color: var(--ink-soft); letter-spacing: .3px; margin-top: 2px; }
-  .done-btn {
-    flex-shrink: 0; background: var(--ink); color: var(--bg); border: none; border-radius: 10px;
-    padding: 7px 14px; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500;
-    cursor: pointer; letter-spacing: .2px; transition: background .15s, transform .1s;
-  }
-  .done-btn:active { transform: scale(.93); }
-  .done-btn:disabled { opacity: .45; cursor: not-allowed; }
-  .done-btn.saving { background: var(--c-fresh); }
-  .done-btn.undoing { background: var(--c-due); }
+
   .urgency-bar { height: 5px; border-radius: 0 0 var(--radius) var(--radius); transition: background .6s ease; position: relative; overflow: hidden; }
   .urgency-bar::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(255,255,255,.18) 0%, transparent 60%); }
   .urgency-fill { height: 100%; width: 0%; transition: width 1s cubic-bezier(.25,.8,.25,1); }
@@ -782,7 +774,6 @@ function buildCardWrap(chore, readOnly = false) {
         ${rLabel ? `<div class="chore-room-tag">📍 ${rLabel}</div>` : ''}
         ${whoLine}
       </div>
-      <button class="done-btn" onclick="markDone(this, ${sheetRow})">Done</button>
     </div>
     <div class="last-done">${relativeTime(lastDone)}</div>
     <div class="urgency-bar" style="background:${color}20">
@@ -1138,4 +1129,4 @@ updateOfflineBadge();
 loadChores();
 </script>
 </body>
-  </html>
+                                                      </html>
