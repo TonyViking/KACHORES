@@ -575,10 +575,27 @@ function urgencyBarWidth(ratio) { return Math.min(ratio * 100, 100) + '%'; }
 
 function relativeTime(date) {
   if (!date) return 'Never done';
-  const days = daysSince(date);
-  if (days < 1) return 'Done today';
-  if (days < 2) return 'Done yesterday';
-  return `Done ${Math.floor(days)} days ago`;
+  const d   = daysSince(date);
+  const now = new Date();
+  const hr  = now.getHours();
+
+  if (d < 0.04) return 'Done just now';
+
+  if (d < 1) {
+    const doneHr = new Date(date).getHours();
+    if (doneHr < 12 && hr >= 12) return 'Done this morning';
+    return 'Done today';
+  }
+
+  if (d < 2) {
+    const doneHr = new Date(date).getHours();
+    if (doneHr >= 18) return 'Done last night';
+    if (doneHr >= 12) return 'Done yesterday afternoon';
+    return 'Done yesterday';
+  }
+
+  const days = Math.floor(d);
+  return `Done ${days} day${days !== 1 ? 's' : ''} ago`;
 }
 
 function showToast(msg, duration = 2200) {
@@ -1388,4 +1405,4 @@ applyProfile(getActiveUser());
 loadChores();
 </script>
 </body>
-  </html>
+</html>
