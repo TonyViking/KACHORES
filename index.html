@@ -421,33 +421,33 @@
   /* ── How To screen (chores) ── */
   #howto-screen {
     position: fixed; inset: 0; z-index: 9001;
-    background: var(--bg); overflow-y: auto; display: none;
+    background: #fdfaf6; overflow-y: auto; display: none;
     animation: fadeUp .3s ease;
   }
   #howto-screen.show { display: block; }
   .howto-header {
     padding: calc(var(--safe-top) + 16px) 20px 14px;
     display: flex; align-items: center; justify-content: space-between;
-    position: sticky; top: 0; background: var(--bg); z-index: 10;
-    border-bottom: 1px solid var(--border);
+    position: sticky; top: 0; background: #fdfaf6;
+    z-index: 10; border-bottom: 1px solid #ece6dc;
   }
-  .howto-title { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 600; }
+  .howto-title { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 600; color: #2c2416; }
   .howto-body { padding: 24px 24px calc(var(--safe-bot) + 40px); }
   .howto-section { margin-bottom: 28px; }
   .howto-section-title {
     font-size: 10px; font-weight: 600; letter-spacing: 2px;
-    color: var(--c-due); text-transform: uppercase; margin-bottom: 10px;
+    color: #b5703a; text-transform: uppercase; margin-bottom: 10px;
   }
-  .howto-section p { font-size: 14px; color: var(--ink-soft); line-height: 1.75; font-weight: 300; }
-  .howto-section p strong { color: var(--ink); font-weight: 500; }
+  .howto-section p { font-size: 14px; color: #7a6e5f; line-height: 1.75; font-weight: 300; }
+  .howto-section p strong { color: #2c2416; font-weight: 500; }
   .howto-tip {
     display: flex; align-items: flex-start; gap: 12px; margin-top: 10px;
-    background: var(--surface); border: 1.5px solid var(--border);
+    background: #f5f0e8; border: 1.5px solid #e2d9c8;
     border-radius: 12px; padding: 12px 14px;
   }
   .howto-tip-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
-  .howto-tip-text { font-size: 13px; color: var(--ink-soft); line-height: 1.6; }
-  .howto-tip-text strong { color: var(--ink); }
+  .howto-tip-text { font-size: 13px; color: #7a6e5f; line-height: 1.6; }
+  .howto-tip-text strong { color: #2c2416; }
 
   @keyframes cardSnap {
     0%   { transform: translateX(-110%) scale(1); }
@@ -717,6 +717,8 @@
 </div>
 
 <script>
+
+
 
 
 
@@ -1005,13 +1007,15 @@ function applyFilterAndRender() {
     list.innerHTML += `<div class="empty-state"><span class="emoji">✨</span>All caught up!<br><span style="font-size:12px">Nothing ${label}.</span></div>`;
   } else {
     const _prevCount = filtered.filter(c=>!isSnoozed(c.sheetRow)).length;
-    filtered.filter(c => !isSnoozed(c.sheetRow)).forEach(chore => {
+    const _visible = filtered.filter(c => !isSnoozed(c.sheetRow));
+    _visible.forEach(chore => {
       const wrap = buildCardWrap(chore);
       list.appendChild(wrap);
     });
     requestAnimationFrame(() => requestAnimationFrame(() => {
       list.querySelectorAll('.urgency-fill').forEach(el => { el.style.width = el.dataset.target; });
     }));
+    checkAllCaughtUp(_visible.length);
   }
 }
 
@@ -1114,8 +1118,7 @@ function attachSwipe(card, bgDone, bgSnooze, sheetRow) {
 
     if (dx <= -THRESHOLD) {
       // Swipe left — mark done
-      card.style.transform = 'translateX(-110%)';
-      card.style.opacity = '0';
+      card.style.animation = 'cardSnap .3s ease forwards';
       // Fire particles immediately at touch point
       const pMode = isAnthony() ? 'fire' : 'rainbow';
       burstParticles(pMode, startX, startY, isAnthony() ? 35 : 40);
@@ -1123,8 +1126,7 @@ function attachSwipe(card, bgDone, bgSnooze, sheetRow) {
       setTimeout(() => card.closest('.chore-card-wrap')?.remove(), 400);
     } else if (dx >= THRESHOLD) {
       // Swipe right — snooze 1 day
-      card.style.transform = 'translateX(110%)';
-      card.style.opacity = '0';
+      card.style.animation = 'cardSnapRight .3s ease forwards';
       snoozeChore(sheetRow);
       setTimeout(() => card.closest('.chore-card-wrap')?.remove(), 400);
     } else {
@@ -1197,23 +1199,7 @@ async function writeCellToSheet(sheetRow, col, value) {
 }
 
 
-function renderDemo() {
-  roomLegend = { k: 'Kitchen', b: 'Bedroom', l: 'Living room', bt: 'Bathroom' };
-  populateRoomDropdowns();
-  allChores = [
-    { name: 'Vacuum living room', minDays: 3,  maxDays: 7,  room: 'l',    who: 'Partner', lastDone: new Date(Date.now() - 8*86400000),  sheetRow: 2 },
-    { name: 'Clean bathrooms',    minDays: 5,  maxDays: 10, room: 'bt',   who: 'Me',      lastDone: new Date(Date.now() - 9*86400000),  sheetRow: 3 },
-    { name: 'Take out bins',      minDays: 6,  maxDays: 7,  room: 'k',    who: '',         lastDone: new Date(Date.now() - 7*86400000),  sheetRow: 4 },
-    { name: 'Mop kitchen floor',  minDays: 5,  maxDays: 10, room: 'k',    who: 'Partner', lastDone: new Date(Date.now() - 6*86400000),  sheetRow: 5 },
-    { name: 'Clean oven',         minDays: 14, maxDays: 30, room: 'k',    who: 'Me',      lastDone: new Date(Date.now() - 15*86400000), sheetRow: 6 },
-    { name: 'Water plants',       minDays: 3,  maxDays: 5,  room: 'l',    who: '',         lastDone: new Date(Date.now() - 4*86400000),  sheetRow: 7 },
-    { name: 'Wipe down benches',  minDays: 1,  maxDays: 3,  room: 'k bt', who: 'Me',      lastDone: new Date(Date.now() - 1*86400000),  sheetRow: 8 },
-    { name: 'Do laundry',         minDays: 2,  maxDays: 4,  room: 'b',    who: 'Partner', lastDone: new Date(Date.now() - 1*86400000),  sheetRow: 9 },
-  ].map(c => ({ ...c, days: daysSince(c.lastDone), ratio: urgencyRatio(c.minDays, c.maxDays, daysSince(c.lastDone)) }))
-   .sort((a, b) => b.ratio - a.ratio);
-  applyFilterAndRender();
-  updatePageTitle();
-}
+
 
 // ─── Add chore ────────────────────────────────────
 function openAddChore() {
@@ -1543,7 +1529,7 @@ function startTokenFlow() {
         return;
       }
       accessToken = resp.access_token;
-      await flushQueue();
+      // offline queue removed
       if (pendingWrite) {
         const pw = pendingWrite; pendingWrite = null;
         if (pw.customCallback) { await pw.customCallback(); }
@@ -1926,21 +1912,12 @@ function getChoresWelcomeBack() {
 }
 
 // ─── All caught up celebration ─────────────────────
-function checkAllCaughtUp(prevFiltered) {
-  if (prevFiltered > 0) {
-    const nowFiltered = allChores.filter(c => {
-      if (isSnoozed(c.sheetRow)) return false;
-      const d = c.maxDays - c.days;
-      return filterRoom
-        ? (c.room||'').toLowerCase().split(' ').includes(filterRoom)
-        : (filterDays===999 ? c.ratio>=1 : d<=filterDays||c.ratio>=1);
-    }).length;
-    if (nowFiltered === 0) {
-      setTimeout(() => {
-        burstParticles(innerWidth/2, innerHeight/2, 50, isAnthony() ? 'fire' : 'rainbow');
-        showToast('All caught up! 🏠✨');
-      }, 400);
-    }
+function checkAllCaughtUp(visibleCount) {
+  if (visibleCount === 0 && allChores.length > 0) {
+    setTimeout(() => {
+      burstParticles(innerWidth/2, innerHeight/2, 45, isAnthony() ? 'fire' : 'rainbow');
+      showToast('All caught up! 🏠✨');
+    }, 300);
   }
 }
 
@@ -1951,6 +1928,8 @@ function getGreeting() {
   if (h < 17) return 'Good afternoon';
   return 'Good evening';
 }
+
+
 
 </script>
 </body>
