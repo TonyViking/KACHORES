@@ -231,9 +231,316 @@
   .all-chore-meta { font-size: 11px; color: var(--ink-soft); font-weight: 300; text-align: right; line-height: 1.4; }
   .all-done-btn { flex-shrink: 0; background: none; border: 1.5px solid var(--border); border-radius: 8px; padding: 5px 10px; font-family: 'DM Sans', sans-serif; font-size: 12px; color: var(--ink-soft); cursor: pointer; transition: all .15s; margin-left: 4px; }
   .all-done-btn:active { transform: scale(.9); background: var(--c-fresh); color: white; border-color: var(--c-fresh); }
+
+  /* ── Landing screen ── */
+  #landing-screen {
+    position: fixed; inset: 0; z-index: 9000;
+    display: flex; align-items: stretch;
+    transition: opacity .4s, transform .4s;
+    overflow: hidden;
+  }
+  #landing-screen.hide { opacity: 0; transform: scale(.97); pointer-events: none; }
+
+  /* Left half — Kathrina: iridescent rainbow */
+  .landing-half {
+    flex: 1; display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: calc(var(--safe-top) + 32px) 20px calc(var(--safe-bot) + 40px);
+    text-align: center; cursor: pointer;
+    transition: flex .4s cubic-bezier(.4,0,.2,1);
+    position: relative; overflow: hidden;
+  }
+  .landing-half:active { flex: 1.08; }
+
+  .landing-kathrina {
+    background:
+      linear-gradient(160deg, #fce4f0 0%, #f0d5ff 20%, #d5e8ff 40%, #d5ffe8 60%, #fff5d5 80%, #fce4f0 100%);
+    background-size: 300% 300%;
+    animation: iriLand 8s ease infinite;
+  }
+  @keyframes iriLand {
+    0%,100% { background-position: 0% 50%; }
+    50%      { background-position: 100% 50%; }
+  }
+
+  /* Rainbow shimmer overlay */
+  .landing-kathrina::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(
+      135deg,
+      rgba(255,100,180,.18) 0%,
+      rgba(180,100,255,.14) 20%,
+      rgba(100,180,255,.12) 40%,
+      rgba(100,255,200,.10) 60%,
+      rgba(255,220,100,.12) 80%,
+      rgba(255,100,180,.18) 100%
+    );
+    animation: shimmer 4s ease-in-out infinite alternate;
+    pointer-events: none;
+  }
+  @keyframes shimmer {
+    0%   { opacity: .6; }
+    100% { opacity: 1; }
+  }
+
+  /* Divider line */
+  .landing-divider {
+    width: 1.5px;
+    background: linear-gradient(to bottom,
+      transparent 0%,
+      rgba(180,120,60,.3) 20%,
+      rgba(180,120,60,.5) 50%,
+      rgba(180,120,60,.3) 80%,
+      transparent 100%
+    );
+    flex-shrink: 0;
+    z-index: 1;
+  }
+
+  /* Right half — Anthony: dark gothic */
+  .landing-anthony {
+    background:
+      radial-gradient(ellipse at 50% 0%, #2a1a0a 0%, #0d0808 50%, #050305 100%);
+    position: relative;
+  }
+
+  /* Gothic texture overlay */
+  .landing-anthony::before {
+    content: '';
+    position: absolute; inset: 0;
+    background-image:
+      repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 3px,
+        rgba(180,60,0,.03) 3px,
+        rgba(180,60,0,.03) 4px
+      ),
+      repeating-linear-gradient(
+        90deg,
+        transparent,
+        transparent 20px,
+        rgba(80,20,0,.04) 20px,
+        rgba(80,20,0,.04) 21px
+      );
+    pointer-events: none;
+  }
+
+  /* Subtle castle silhouette at bottom */
+  .landing-anthony::after {
+    content: '';
+    position: absolute; bottom: 0; left: 0; right: 0; height: 160px;
+    background:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 160'%3E%3Cpath d='M0,160 L0,100 L20,100 L20,80 L30,80 L30,60 L40,60 L40,80 L50,80 L50,70 L60,70 L60,100 L80,100 L80,80 L90,80 L90,60 L95,60 L95,40 L100,40 L100,20 L105,20 L105,40 L110,40 L110,60 L115,60 L115,80 L120,80 L120,100 L140,100 L140,80 L150,80 L150,100 L170,100 L170,80 L180,80 L180,60 L185,60 L185,40 L190,40 L190,50 L195,50 L195,40 L200,40 L200,60 L205,60 L205,80 L210,80 L210,100 L230,100 L230,80 L240,80 L240,60 L245,60 L245,40 L250,40 L250,20 L255,20 L255,40 L260,40 L260,60 L265,60 L265,80 L270,80 L270,100 L290,100 L290,80 L300,80 L300,70 L310,70 L310,80 L320,80 L320,100 L340,100 L340,80 L350,80 L350,60 L360,60 L360,80 L370,80 L370,100 L400,100 L400,160 Z' fill='%23000000' opacity='0.9'/%3E%3C/svg%3E")
+      no-repeat bottom center;
+    background-size: 100% auto;
+    pointer-events: none;
+    opacity: .7;
+  }
+
+  /* User card content */
+  .landing-user-content { position: relative; z-index: 2; width: 100%; }
+
+  .landing-user-emoji {
+    font-size: 52px; display: block; margin-bottom: 16px;
+    filter: drop-shadow(0 4px 12px rgba(0,0,0,.2));
+    animation: emojiFloat 3.5s ease-in-out infinite;
+  }
+  .landing-kathrina .landing-user-emoji { animation-delay: 0s; }
+  .landing-anthony  .landing-user-emoji { animation-delay: .8s; }
+  @keyframes emojiFloat { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-7px)} }
+
+  .landing-user-name {
+    font-size: 22px; font-weight: 700; display: block; margin-bottom: 6px;
+    font-family: 'Playfair Display', serif;
+  }
+  .landing-kathrina .landing-user-name { color: #a0206a; }
+  .landing-anthony  .landing-user-name { color: #f97316; }
+
+  .landing-user-vibe {
+    font-size: 11px; display: block; letter-spacing: .8px;
+    text-transform: uppercase; font-weight: 400; margin-bottom: 24px;
+  }
+  .landing-kathrina .landing-user-vibe { color: #c060a0; }
+  .landing-anthony  .landing-user-vibe { color: #8a5030; }
+
+  .landing-user-btn {
+    display: inline-block; padding: 11px 22px;
+    border-radius: 40px; border: none; cursor: pointer;
+    font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600;
+    transition: transform .15s, box-shadow .15s; letter-spacing: .3px;
+  }
+  .landing-user-btn:active { transform: scale(.94); }
+  .landing-kathrina .landing-user-btn {
+    background: linear-gradient(135deg, #ff6eb4, #c084fc, #60c0f0);
+    color: white; box-shadow: 0 6px 24px rgba(192,84,252,.3);
+  }
+  .landing-anthony .landing-user-btn {
+    background: linear-gradient(135deg, #7a1a00, #cc4400);
+    color: #ffddaa; box-shadow: 0 6px 24px rgba(180,60,0,.4);
+    border: 1px solid rgba(255,120,40,.2);
+  }
+
+  /* Rainbow accent bar along bottom of Kathrina side */
+  .kathrina-rainbow-bar {
+    position: absolute; bottom: 0; left: 0; right: 0; height: 4px;
+    background: linear-gradient(90deg,
+      #ff6eb4, #ffa060, #ffe060, #60e880, #60c0f0, #c084fc, #ff6eb4
+    );
+    background-size: 200% 100%;
+    animation: rainbowSlide 3s linear infinite;
+  }
+  @keyframes rainbowSlide { 0%{background-position:0%} 100%{background-position:200%} }
+
+  /* Fire embers on Anthony side */
+  .ember {
+    position: absolute; border-radius: 50%;
+    animation: emberRise linear infinite;
+    pointer-events: none; z-index: 1;
+  }
+  @keyframes emberRise {
+    0%   { transform: translateY(0) translateX(0) scale(1); opacity: .8; }
+    100% { transform: translateY(-300px) translateX(var(--drift)) scale(0); opacity: 0; }
+  }
+
+  /* How To button at very bottom centre */
+  .landing-howto-strip {
+    position: absolute; bottom: calc(var(--safe-bot) + 16px); left: 0; right: 0;
+    display: flex; justify-content: center; z-index: 10;
+  }
+  .landing-howto-btn-chores {
+    background: rgba(255,255,255,.12); backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,.2); border-radius: 40px;
+    padding: 8px 22px; color: rgba(255,255,255,.7);
+    font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 500;
+    cursor: pointer; transition: all .2s; letter-spacing: .3px;
+  }
+  .landing-howto-btn-chores:active { background: rgba(255,255,255,.2); color: white; }
+
+  /* ── How To screen (chores) ── */
+  #howto-screen {
+    position: fixed; inset: 0; z-index: 9001;
+    background: var(--bg); overflow-y: auto; display: none;
+    animation: fadeUp .3s ease;
+  }
+  #howto-screen.show { display: block; }
+  .howto-header {
+    padding: calc(var(--safe-top) + 16px) 20px 14px;
+    display: flex; align-items: center; justify-content: space-between;
+    position: sticky; top: 0; background: var(--bg); z-index: 10;
+    border-bottom: 1px solid var(--border);
+  }
+  .howto-title { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 600; }
+  .howto-body { padding: 24px 24px calc(var(--safe-bot) + 40px); }
+  .howto-section { margin-bottom: 28px; }
+  .howto-section-title {
+    font-size: 10px; font-weight: 600; letter-spacing: 2px;
+    color: var(--c-due); text-transform: uppercase; margin-bottom: 10px;
+  }
+  .howto-section p { font-size: 14px; color: var(--ink-soft); line-height: 1.75; font-weight: 300; }
+  .howto-section p strong { color: var(--ink); font-weight: 500; }
+  .howto-tip {
+    display: flex; align-items: flex-start; gap: 12px; margin-top: 10px;
+    background: var(--surface); border: 1.5px solid var(--border);
+    border-radius: 12px; padding: 12px 14px;
+  }
+  .howto-tip-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+  .howto-tip-text { font-size: 13px; color: var(--ink-soft); line-height: 1.6; }
+  .howto-tip-text strong { color: var(--ink); }
+
+  @keyframes cardSnap {
+    0%   { transform: translateX(-110%) scale(1); }
+    15%  { transform: translateX(-85%) scale(1.04); }
+    100% { transform: translateX(-110%) scale(1); opacity:0; }
+  }
+  @keyframes cardSnapRight {
+    0%   { transform: translateX(110%) scale(1); }
+    15%  { transform: translateX(85%) scale(1.04); }
+    100% { transform: translateX(110%) scale(1); opacity:0; }
+  }
 </style>
 </head>
 <body>
+
+<!-- ══ LANDING SCREEN ══ -->
+<div id="landing-screen">
+
+  <!-- Kathrina — left half -->
+  <div class="landing-half landing-kathrina" onclick="selectUser('Kathrina')">
+    <div class="landing-user-content">
+      <span class="landing-user-emoji">🦄</span>
+      <span class="landing-user-name">Kathrina</span>
+      <span class="landing-user-vibe">babygirl</span>
+      <button class="landing-user-btn">Choose me</button>
+    </div>
+    <div class="kathrina-rainbow-bar"></div>
+  </div>
+
+  <!-- Divider -->
+  <div class="landing-divider"></div>
+
+  <!-- Anthony — right half -->
+  <div class="landing-half landing-anthony" onclick="selectUser('Anthony')">
+    <div class="landing-user-content">
+      <span class="landing-user-emoji">🐉</span>
+      <span class="landing-user-name">Anthony</span>
+      <span class="landing-user-vibe">my man</span>
+      <button class="landing-user-btn">Choose me</button>
+    </div>
+  </div>
+
+  <!-- How To button at bottom -->
+  <div class="landing-howto-strip">
+    <button class="landing-howto-btn-chores" onclick="event.stopPropagation();showHowTo()">How to use</button>
+  </div>
+
+</div>
+
+<!-- ══ HOW TO SCREEN ══ --><!-- ══ HOW TO SCREEN ══ -->
+<div id="howto-screen">
+  <div class="howto-header">
+    <div class="howto-title">How to use</div>
+    <button class="icon-btn" onclick="closeHowTo()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+  <div class="howto-body">
+    <div class="howto-section">
+      <div class="howto-section-title">Your chores</div>
+      <p>Each chore has a <strong>min days</strong> (earliest to repeat) and <strong>max days</strong> (when it becomes due). The app tracks when it was last done and by whom.</p>
+    </div>
+    <div class="howto-section">
+      <div class="howto-section-title">Filters</div>
+      <p>Use the <strong>room dropdown</strong> to see all chores in a specific room. Use the <strong>day pills</strong> to see chores due within a time window.</p>
+    </div>
+    <div class="howto-section">
+      <div class="howto-section-title">Marking done</div>
+      <div class="howto-tip">
+        <div class="howto-tip-icon">←</div>
+        <div class="howto-tip-text"><strong>Swipe left</strong> to mark done — writes your name and time to the sheet instantly.</div>
+      </div>
+      <div class="howto-tip" style="margin-top:8px">
+        <div class="howto-tip-icon">→</div>
+        <div class="howto-tip-text"><strong>Swipe right</strong> to hide until midnight — reappears tomorrow as normal.</div>
+      </div>
+    </div>
+    <div class="howto-section">
+      <div class="howto-section-title">Urgency colours</div>
+      <div class="howto-tip"><div class="howto-tip-icon">🟢</div><div class="howto-tip-text"><strong>Green</strong> — recently done.</div></div>
+      <div class="howto-tip" style="margin-top:8px"><div class="howto-tip-icon">🟡</div><div class="howto-tip-text"><strong>Yellow/orange</strong> — coming up soon.</div></div>
+      <div class="howto-tip" style="margin-top:8px"><div class="howto-tip-icon">🔴</div><div class="howto-tip-text"><strong>Red</strong> — overdue.</div></div>
+    </div>
+    <div class="howto-section">
+      <div class="howto-section-title">🐝 Working Bee</div>
+      <p>Tap the <strong>clock icon</strong> in the header. Set your time budget and choose <strong>Priority first</strong> or <strong>Most tasks</strong>. Only chores with a duration (column G) appear.</p>
+    </div>
+    <div class="howto-section">
+      <div class="howto-section-title">View All</div>
+      <p>Tap the <strong>list icon</strong> in the header to see every chore alphabetically with Done buttons for quick access.</p>
+    </div>
+  </div>
+</div>
 
 <header>
   <div>
@@ -246,6 +553,11 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/>
         <line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/>
+      </svg>
+    </button>
+    <button class="icon-btn" onclick="openWorkingBee()" title="Working Bee" id="bee-btn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
       </svg>
     </button>
     <button class="icon-btn" onclick="openAddChore()" title="Add chore">
@@ -299,6 +611,52 @@
 </div>
 <div id="toast"></div>
 
+<!-- WORKING BEE SCREEN -->
+<div id="bee-screen" style="display:none;position:fixed;inset:0;z-index:100;overflow-y:auto;background:var(--bg);animation:fadeUp .25s ease">
+  <div style="padding:calc(var(--safe-top)+16px) 20px 14px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:linear-gradient(to bottom,var(--bg) 80%,transparent);z-index:10">
+    <div>
+      <div style="font-family:'Playfair Display',serif;font-size:22px;font-weight:600">🐝 Working Bee</div>
+      <div style="font-size:11px;color:var(--ink-soft);letter-spacing:1px;text-transform:uppercase;margin-top:1px">What can I do today?</div>
+    </div>
+    <button class="icon-btn" onclick="closeWorkingBee()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+
+  <!-- Time budget picker -->
+  <div style="padding:0 20px 16px">
+    <div style="background:var(--surface);border:1.5px solid var(--border);border-radius:16px;padding:16px">
+      <div style="font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.8px;color:var(--ink-soft);margin-bottom:12px">Time available</div>
+      <div style="display:flex;gap:10px;align-items:center">
+        <div style="flex:1">
+          <input class="form-input" id="bee-hours" type="number" placeholder="0" min="0" max="12" style="text-align:center;font-size:20px;font-weight:600" oninput="updateBee()">
+          <div style="text-align:center;font-size:11px;color:var(--ink-mute);margin-top:4px">hours</div>
+        </div>
+        <div style="font-size:24px;color:var(--ink-mute);padding-bottom:18px">:</div>
+        <div style="flex:1">
+          <input class="form-input" id="bee-mins" type="number" placeholder="30" min="0" max="59" style="text-align:center;font-size:20px;font-weight:600" oninput="updateBee()">
+          <div style="text-align:center;font-size:11px;color:var(--ink-mute);margin-top:4px">minutes</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mode toggle -->
+  <div style="padding:0 20px 16px;display:flex;gap:8px">
+    <button id="bee-mode-priority" class="filter-pill active" onclick="setBeeMode('priority')" style="flex:1;text-align:center">🔥 Priority first</button>
+    <button id="bee-mode-most" class="filter-pill" onclick="setBeeMode('most')" style="flex:1;text-align:center">📋 Most tasks</button>
+  </div>
+
+  <!-- Summary bar -->
+  <div id="bee-summary" style="margin:0 20px 14px;padding:12px 16px;background:var(--surface);border:1.5px solid var(--border);border-radius:12px;font-size:13px;color:var(--ink-soft);display:none">
+  </div>
+
+  <!-- Task list -->
+  <div id="bee-list" style="padding:0 20px calc(var(--safe-bot)+40px);display:flex;flex-direction:column;gap:10px">
+    <div class="empty-state"><span class="emoji">🐝</span>Set your time above to see what you can get done.</div>
+  </div>
+</div>
+
 <!-- ADD CHORE SHEET -->
 <div class="sheet-overlay" id="add-overlay" onclick="closeAddChore()"></div>
 <div class="bottom-sheet" id="add-sheet">
@@ -335,6 +693,11 @@
       </div>
     </div>
     <div class="form-group">
+      <label class="form-label">Duration (minutes)</label>
+      <input class="form-input" id="new-duration" type="number" placeholder="15" min="1">
+      <div class="form-hint">Approx. time to complete</div>
+    </div>
+    <div class="form-group">
       <label class="form-label">Room</label>
       <div class="room-checks" id="new-room-checks"></div>
     </div>
@@ -354,6 +717,9 @@
 </div>
 
 <script>
+
+
+
 /* ═══════════════════════════════════════
    CONFIGURATION
    ═══════════════════════════════════════
@@ -377,6 +743,7 @@ const CONFIG = {
   COL_LAST_DONE: 4,
   COL_ROOM:      5,
   COL_WHO:       6,
+  COL_DURATION:  7,   // G — minutes e.g. 15
   COL_LEGEND:    9,
   DATA_START_ROW: 2,
   YOUR_NAME:     'Anthony',
@@ -406,116 +773,7 @@ function bustLegendCache() {
   try { localStorage.removeItem(LEGEND_KEY); } catch(e) {}
 }
 
-// ─── Offline write queue ──────────────────────────
-const QUEUE_KEY = 'chores_write_queue_v1';
-function getQueue() { try { return JSON.parse(localStorage.getItem(QUEUE_KEY)) || []; } catch { return []; } }
-function saveQueue(q) { try { localStorage.setItem(QUEUE_KEY, JSON.stringify(q)); } catch {} }
-function enqueue(sheetRow, value, whoValue) {
-  const q = getQueue().filter(i => i.sheetRow !== sheetRow);
-  q.push({ sheetRow, value, whoValue, ts: Date.now() });
-  saveQueue(q);
-}
-function dequeue(sheetRow) {
-  saveQueue(getQueue().filter(i => i.sheetRow !== sheetRow));
-}
-async function flushQueue() {
-  if (!accessToken) return;
-  const q = getQueue();
-  if (!q.length) return;
-  let flushed = 0;
-  for (const item of q) {
-    try {
-      await writeCellToSheet(item.sheetRow, CONFIG.COL_LAST_DONE, item.value);
-      if (item.whoValue) await writeCellToSheet(item.sheetRow, CONFIG.COL_WHO, item.whoValue);
-      dequeue(item.sheetRow);
-      flushed++;
-    } catch(e) {}
-  }
-  if (flushed > 0) showToast(`${flushed} queued update${flushed > 1 ? 's' : ''} synced ✓`);
-}
-window.addEventListener('online', () => { setTimeout(flushQueue, 800); updateOfflineBadge(); });
-window.addEventListener('offline', updateOfflineBadge);
 
-function updateOfflineBadge() {
-  const b = document.getElementById('offline-badge');
-  if (!b) return;
-  const q = getQueue();
-  if (!navigator.onLine) {
-    b.style.display = 'inline-block';
-    b.textContent = q.length > 0 ? `OFFLINE · ${q.length} queued` : 'OFFLINE';
-  } else {
-    b.style.display = 'none';
-  }
-}
-
-// ─── Undo queue ───────────────────────────────────
-let undoTimer = null;
-let pendingUndo = null; // { sheetRow, prevLastDone, prevWho, card }
-
-function scheduleUndo(sheetRow, prevLastDone, prevWho, card) {
-  clearPendingUndo();
-  pendingUndo = { sheetRow, prevLastDone, prevWho, card };
-  // Show toast with undo
-  const t = document.getElementById('toast');
-  t.innerHTML = 'Marked as done — <button onclick="triggerUndo()" style="background:none;border:none;color:inherit;font-weight:700;cursor:pointer;text-decoration:underline;font-family:inherit;font-size:inherit">Undo</button>';
-  t.classList.add('show');
-  undoTimer = setTimeout(() => {
-    t.classList.remove('show');
-    pendingUndo = null;
-  }, 5000);
-}
-
-function clearPendingUndo() {
-  if (undoTimer) { clearTimeout(undoTimer); undoTimer = null; }
-  document.getElementById('toast').classList.remove('show');
-}
-
-function triggerUndo() {
-  if (!pendingUndo) return;
-  const { sheetRow, prevLastDone, prevWho, card } = pendingUndo;
-  clearPendingUndo();
-  pendingUndo = null;
-
-  // Revert in-memory
-  const chore = allChores.find(c => c.sheetRow === sheetRow);
-  if (chore) {
-    chore.lastDone = prevLastDone;
-    chore.who = prevWho;
-    chore.days  = daysSince(prevLastDone);
-    chore.ratio = urgencyRatio(chore.minDays, chore.maxDays, chore.days);
-  }
-
-  // Revert card UI
-  if (card && card.isConnected) {
-    const prevValue = prevLastDone ? formatDate(prevLastDone) : '';
-    const color = urgencyColor(chore ? chore.ratio : 1);
-    const width = urgencyBarWidth(chore ? chore.ratio : 1);
-    card.querySelector('.last-done').textContent = relativeTime(prevLastDone);
-    card.querySelector('.urgency-fill').style.width = width;
-    card.querySelector('.urgency-fill').style.background = color;
-    card.querySelector('.urgency-bar').style.background = color + '20';
-    const btn = card.querySelector('.done-btn');
-    if (btn) { btn.textContent = 'Done'; btn.disabled = false; btn.classList.remove('saving'); }
-  }
-
-  // Write revert to sheet (or queue)
-  const revertValue = prevLastDone ? formatDate(prevLastDone) : '';
-  const revertWho   = prevWho || '';
-  if (!navigator.onLine) {
-    enqueue(sheetRow, revertValue, revertWho);
-    showToast('Undone — will sync when online 📶');
-  } else {
-    const doRevert = async () => {
-      try {
-        await writeCellToSheet(sheetRow, CONFIG.COL_LAST_DONE, revertValue);
-        if (CONFIG.COL_WHO) await writeCellToSheet(sheetRow, CONFIG.COL_WHO, revertWho);
-        showToast('Undone ✓');
-      } catch(e) { showToast('Undo failed — ' + e.message); }
-    };
-    if (accessToken) { doRevert(); }
-    else { pendingWrite = { customCallback: doRevert }; initOAuth(); }
-  }
-}
 
 // ─── State ────────────────────────────────────────
 let tokenClient  = null;
@@ -625,6 +883,19 @@ function populateRoomDropdowns() {
 
 // ─── Load chores ──────────────────────────────────
 async function loadChores(forceRefresh = false) {
+  if (forceRefresh && !accessToken) {
+    await new Promise(resolve => {
+      const _saved = pendingWrite;
+      pendingWrite = { customCallback: async () => { pendingWrite = _saved; resolve(); } };
+      initOAuth();
+    });
+  }
+  if (CONFIG.SHEET_ID === 'YOUR_SHEET_ID_HERE') {
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('config-banner').classList.remove('hidden');
+    document.getElementById('chore-list').style.display = 'flex';
+    renderDemo(); return;
+  }
 
   document.getElementById('loading').style.display = 'block';
   document.getElementById('error').style.display   = 'none';
@@ -678,9 +949,10 @@ function parseAndCacheChores(rows) {
     const lastDone = parseDate(row[CONFIG.COL_LAST_DONE - 1]);
     const room     = (row[CONFIG.COL_ROOM - 1] || '').trim().toLowerCase();
     const who      = (row[CONFIG.COL_WHO - 1] || '').trim();
+    const duration = parseInt(row[CONFIG.COL_DURATION - 1]) || 0;
     const days     = daysSince(lastDone);
     const ratio    = urgencyRatio(minDays, maxDays, days);
-    return { name, minDays, maxDays, lastDone, room, who, days, ratio, sheetRow: CONFIG.DATA_START_ROW + i };
+    return { name, minDays, maxDays, lastDone, room, who, duration, days, ratio, sheetRow: CONFIG.DATA_START_ROW + i };
   }).sort((a, b) => b.ratio - a.ratio);
 }
 
@@ -732,6 +1004,7 @@ function applyFilterAndRender() {
       : `due within ${filterDays === 999 ? 'deadline' : filterDays + ' day' + (filterDays !== 1 ? 's' : '')}`;
     list.innerHTML += `<div class="empty-state"><span class="emoji">✨</span>All caught up!<br><span style="font-size:12px">Nothing ${label}.</span></div>`;
   } else {
+    const _prevCount = filtered.filter(c=>!isSnoozed(c.sheetRow)).length;
     filtered.filter(c => !isSnoozed(c.sheetRow)).forEach(chore => {
       const wrap = buildCardWrap(chore);
       list.appendChild(wrap);
@@ -748,7 +1021,8 @@ function buildCardWrap(chore, readOnly = false) {
   const color  = urgencyColor(ratio);
   const width  = urgencyBarWidth(ratio);
   const rLabel = roomName(room);
-  const whoLine = who ? `<div class="chore-room-tag">👤 Last done by ${who}</div>` : '';
+  const whoLine      = who      ? `<div class="chore-room-tag">👤 Last done by ${who}</div>` : '';
+  const durationLine = chore.duration ? `<div class="chore-room-tag">⏱ ~${chore.duration} min</div>` : '';
 
   if (readOnly) {
     const card = document.createElement('div');
@@ -759,6 +1033,7 @@ function buildCardWrap(chore, readOnly = false) {
           <div class="chore-name">${name}</div>
           ${rLabel ? `<div class="chore-room-tag">📍 ${rLabel}</div>` : ''}
           ${whoLine}
+          ${durationLine}
         </div>
       </div>
       <div class="last-done">${relativeTime(lastDone)}</div>
@@ -861,6 +1136,7 @@ function attachSwipe(card, bgDone, bgSnooze, sheetRow) {
 
 // ─── Mark Done ────────────────────────────────────
 async function markDone(btn, sheetRow, cardOverride) {
+  if (CONFIG.SHEET_ID === 'YOUR_SHEET_ID_HERE') { showToast('Demo mode — configure your sheet to save ✓'); return; }
   if (btn) btn.disabled = true;
 
   const chore = allChores.find(c => c.sheetRow === sheetRow);
@@ -890,34 +1166,22 @@ async function markDone(btn, sheetRow, cardOverride) {
 
   // Update page title
   updatePageTitle();
+  haptic(40);
+  checkTagTeam(chore, whoName);
+  recordLastActive(whoName);
+  updateProfilePill();
 
-  // Schedule undo (5s window before write)
-  scheduleUndo(sheetRow, prevLastDone, prevWho, card);
 
-  // Offline: queue it
-  if (!navigator.onLine) {
-    enqueue(sheetRow, value, whoValue);
-    updateOfflineBadge();
-    return;
-  }
 
-  // Online: write after undo window (5s)
-  setTimeout(async () => {
-    if (pendingUndo && pendingUndo.sheetRow === sheetRow) return; // undo was triggered
-    const doWrite = async () => {
-      try {
-        await writeCellToSheet(sheetRow, CONFIG.COL_LAST_DONE, value);
-        await writeCellToSheet(sheetRow, CONFIG.COL_WHO, whoValue);
-        dequeue(sheetRow);
-      } catch(e) {
-        enqueue(sheetRow, value, whoValue);
-        showToast('Queued — will sync when online 📶');
-        updateOfflineBadge();
-      }
-    };
-    if (accessToken) { await doWrite(); }
-    else { pendingWrite = { customCallback: doWrite }; initOAuth(); }
-  }, 5200);
+  // Write immediately
+  const doWrite = async () => {
+    try {
+      await writeCellToSheet(sheetRow, CONFIG.COL_LAST_DONE, value);
+      await writeCellToSheet(sheetRow, CONFIG.COL_WHO, whoValue);
+    } catch(e) { showToast('Save failed — ' + e.message); }
+  };
+  if (accessToken) { doWrite(); }
+  else { pendingWrite = { customCallback: doWrite }; initOAuth(); }
 }
 
 async function writeCellToSheet(sheetRow, col, value) {
@@ -932,6 +1196,24 @@ async function writeCellToSheet(sheetRow, col, value) {
   if (data.error) throw new Error(data.error.message);
 }
 
+
+function renderDemo() {
+  roomLegend = { k: 'Kitchen', b: 'Bedroom', l: 'Living room', bt: 'Bathroom' };
+  populateRoomDropdowns();
+  allChores = [
+    { name: 'Vacuum living room', minDays: 3,  maxDays: 7,  room: 'l',    who: 'Partner', lastDone: new Date(Date.now() - 8*86400000),  sheetRow: 2 },
+    { name: 'Clean bathrooms',    minDays: 5,  maxDays: 10, room: 'bt',   who: 'Me',      lastDone: new Date(Date.now() - 9*86400000),  sheetRow: 3 },
+    { name: 'Take out bins',      minDays: 6,  maxDays: 7,  room: 'k',    who: '',         lastDone: new Date(Date.now() - 7*86400000),  sheetRow: 4 },
+    { name: 'Mop kitchen floor',  minDays: 5,  maxDays: 10, room: 'k',    who: 'Partner', lastDone: new Date(Date.now() - 6*86400000),  sheetRow: 5 },
+    { name: 'Clean oven',         minDays: 14, maxDays: 30, room: 'k',    who: 'Me',      lastDone: new Date(Date.now() - 15*86400000), sheetRow: 6 },
+    { name: 'Water plants',       minDays: 3,  maxDays: 5,  room: 'l',    who: '',         lastDone: new Date(Date.now() - 4*86400000),  sheetRow: 7 },
+    { name: 'Wipe down benches',  minDays: 1,  maxDays: 3,  room: 'k bt', who: 'Me',      lastDone: new Date(Date.now() - 1*86400000),  sheetRow: 8 },
+    { name: 'Do laundry',         minDays: 2,  maxDays: 4,  room: 'b',    who: 'Partner', lastDone: new Date(Date.now() - 1*86400000),  sheetRow: 9 },
+  ].map(c => ({ ...c, days: daysSince(c.lastDone), ratio: urgencyRatio(c.minDays, c.maxDays, daysSince(c.lastDone)) }))
+   .sort((a, b) => b.ratio - a.ratio);
+  applyFilterAndRender();
+  updatePageTitle();
+}
 
 // ─── Add chore ────────────────────────────────────
 function openAddChore() {
@@ -964,6 +1246,7 @@ async function submitNewChore() {
   if (!name)        { showToast('Please enter a chore name'); return; }
   if (!min || !max) { showToast('Please enter min and max days'); return; }
   if (min > max)    { showToast('Min days must be ≤ max days'); return; }
+  if (CONFIG.SHEET_ID === 'YOUR_SHEET_ID_HERE') { showToast('Demo mode — configure your sheet to save'); return; }
 
   const btn = document.getElementById('add-submit-btn');
   btn.disabled = true; btn.textContent = 'Saving…';
@@ -973,10 +1256,11 @@ async function submitNewChore() {
 
   const doAppend = async () => {
     try {
+      const dur = parseInt(document.getElementById('new-duration').value) || '';
       const res = await fetch(url, {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ values: [[name, min, max, '', room, '']] }),
+        body: JSON.stringify({ values: [[name, min, max, '', room, '', dur]] }),
       });
       const data = await res.json();
       if (data.error) throw new Error(data.error.message);
@@ -985,6 +1269,7 @@ async function submitNewChore() {
       document.getElementById('new-name').value = '';
       document.getElementById('new-min').value  = '';
       document.getElementById('new-max').value  = '';
+      document.getElementById('new-duration').value = '';
       document.querySelectorAll('#new-room-checks input').forEach(cb => cb.checked = false);
       await loadChores();
     } catch(e) {
@@ -1094,9 +1379,10 @@ function getSnoozed() {
 
 function snoozeChore(sheetRow) {
   const snoozed = getSnoozed();
-  snoozed[sheetRow] = Date.now() + 86400000; // 24 hours
+  const midnight = new Date(); midnight.setHours(24, 0, 0, 0);
+  snoozed[sheetRow] = midnight.getTime();
   localStorage.setItem(SNOOZE_KEY, JSON.stringify(snoozed));
-  showToast('Hidden for 1 day 💤');
+  showToast('Hidden until tomorrow 💤');
 }
 
 function isSnoozed(sheetRow) {
@@ -1109,6 +1395,126 @@ function isSnoozed(sheetRow) {
     return false;
   }
   return true;
+}
+
+
+// ─── Working Bee ──────────────────────────────────────────
+let beeMode = 'priority';
+
+function openWorkingBee() {
+  document.getElementById('bee-screen').style.display = 'block';
+  document.getElementById('bee-hours').value = '';
+  document.getElementById('bee-mins').value  = '30';
+  updateBee();
+}
+
+function closeWorkingBee() {
+  document.getElementById('bee-screen').style.display = 'none';
+}
+
+function setBeeMode(mode) {
+  beeMode = mode;
+  document.getElementById('bee-mode-priority').classList.toggle('active', mode === 'priority');
+  document.getElementById('bee-mode-most').classList.toggle('active', mode === 'most');
+  updateBee();
+}
+
+function updateBee() {
+  const hours   = parseInt(document.getElementById('bee-hours').value) || 0;
+  const mins    = parseInt(document.getElementById('bee-mins').value)  || 0;
+  const budget  = hours * 60 + mins;
+
+  const listEl    = document.getElementById('bee-list');
+  const summaryEl = document.getElementById('bee-summary');
+
+  if (budget <= 0) {
+    listEl.innerHTML = '<div class="empty-state"><span class="emoji">🐝</span>Set your time above to see what you can get done.</div>';
+    summaryEl.style.display = 'none';
+    return;
+  }
+
+  // Only chores with a duration set, not snoozed
+  const withDuration = allChores.filter(c => c.duration > 0 && !isSnoozed(c.sheetRow));
+  // Also include chores with no duration (treat as 0 — show at end)
+  const noDuration   = allChores.filter(c => !c.duration && !isSnoozed(c.sheetRow));
+
+  let selected = [];
+  let timeUsed = 0;
+
+  if (beeMode === 'priority') {
+    // Most overdue first — fit as many high-priority as possible
+    const sorted = [...withDuration].sort((a, b) => b.ratio - a.ratio);
+    for (const c of sorted) {
+      if (timeUsed + c.duration <= budget) {
+        selected.push(c);
+        timeUsed += c.duration;
+      }
+    }
+  } else {
+    // Most tasks — smallest first
+    const sorted = [...withDuration].sort((a, b) => a.duration - b.duration);
+    for (const c of sorted) {
+      if (timeUsed + c.duration <= budget) {
+        selected.push(c);
+        timeUsed += c.duration;
+      }
+    }
+    // Re-sort selected by priority for display
+    selected.sort((a, b) => b.ratio - a.ratio);
+  }
+
+  const timeLeft = budget - timeUsed;
+
+  // Update summary
+  summaryEl.style.display = 'block';
+  const fmtTime = m => m >= 60 ? `${Math.floor(m/60)}h ${m%60}m`.replace(' 0m','') : `${m}m`;
+  if (selected.length === 0) {
+    summaryEl.innerHTML = `<span style="color:var(--c-over)">No tasks with durations fit in ${fmtTime(budget)}. Try adding durations to your chores.</span>`;
+  } else {
+    summaryEl.innerHTML = `
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <span><strong style="color:var(--ink)">${selected.length} chore${selected.length!==1?'s':''}</strong> · ${fmtTime(timeUsed)} used</span>
+        <span style="color:${timeLeft>0?'var(--c-fresh)':'var(--c-due)'}"><strong>${fmtTime(timeLeft)}</strong> spare</span>
+      </div>`;
+  }
+
+  // Render cards
+  listEl.innerHTML = '';
+  if (selected.length === 0) {
+    listEl.innerHTML = '<div class="empty-state"><span class="emoji">🤔</span>No tasks with durations fit in this time.<br><span style="font-size:12px">Add durations in column G or via the Add form.</span></div>';
+    return;
+  }
+
+  selected.forEach((chore, idx) => {
+    const color  = urgencyColor(chore.ratio);
+    const rLabel = roomName(chore.room);
+    const card = document.createElement('div');
+    card.style.cssText = `background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);overflow:hidden;`;
+    card.innerHTML = `
+      <div style="display:flex;align-items:center;gap:12px;padding:12px 14px 8px">
+        <div style="width:24px;height:24px;border-radius:50%;background:var(--surface2);border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--ink-mute);flex-shrink:0">${idx+1}</div>
+        <div style="flex:1">
+          <div style="font-size:15px;font-weight:500;color:var(--ink)">${chore.name}</div>
+          <div style="font-size:11px;color:var(--ink-soft);margin-top:2px">
+            ${rLabel ? `📍 ${rLabel} · ` : ''}⏱ ${chore.duration} min · ${relativeTime(chore.lastDone)}
+          </div>
+        </div>
+        <div style="font-size:11px;font-weight:600;color:${color};text-align:right;flex-shrink:0">
+          ${chore.ratio >= 1 ? '⚠️ Overdue' : chore.ratio >= 0.85 ? 'Due soon' : ''}
+        </div>
+      </div>
+      <div style="height:4px;background:${color}"></div>
+    `;
+    listEl.appendChild(card);
+  });
+
+  // If time left and there are unduration chores, show them as bonus
+  if (timeLeft > 0 && noDuration.length > 0) {
+    const bonus = document.createElement('div');
+    bonus.style.cssText = 'margin-top:4px;padding:10px 14px;background:var(--surface);border:1.5px dashed var(--border);border-radius:12px;font-size:12px;color:var(--ink-mute)';
+    bonus.innerHTML = `<strong style="color:var(--ink-soft)">You have ${fmtTime(timeLeft)} spare</strong> — these have no duration set:<br>${noDuration.slice(0,3).map(c=>`<span style="color:var(--ink)">${c.name}</span>`).join(', ')}${noDuration.length>3?` + ${noDuration.length-3} more`:''}`;
+    listEl.appendChild(bonus);
+  }
 }
 
 // ─── OAuth ────────────────────────────────────────
@@ -1169,7 +1575,7 @@ function applyProfile(user, animate = false) {
   }
   const btn = document.getElementById('profile-toggle');
   if (btn) {
-    btn.textContent = anthony ? '🔥 Anthony' : '🌈 Kathrina';
+    btn.textContent = anthony ? '🐉 Anthony' : '🦄 Kathrina';
     btn.style.color = anthony ? '#f97316' : '#e879a0';
     btn.style.borderColor = anthony ? 'rgba(249,115,22,.4)' : 'rgba(232,121,160,.4)';
   }
@@ -1334,41 +1740,218 @@ if (localStorage.getItem('swipeUsed')) {
 }
 
 // ─── Init ─────────────────────────────────────────
-updateOfflineBadge();
 applyProfile(getActiveUser());
 loadChores();
 
-
-
-// ─── Scroll-safe tap (v2) ─────────────────────────────────
-// Tracks finger movement globally. If the finger moved more than
-// THRESHOLD px, records a scroll timestamp. Any click event that
-// fires within BLOCK_MS of a scroll is silently dropped.
+// ─── Scroll-safe tap guard ────────────────────────────────
+// Prevents accidental taps on buttons/cards when the user is scrolling.
 (function() {
-  const THRESHOLD = 6;   // px of movement = scrolling
-  const BLOCK_MS  = 600; // ms to block clicks after scroll ends
-
-  let startX = 0, startY = 0, scrolledAt = 0;
+  let _touchStartY = 0, _touchStartX = 0, _didScroll = false;
+  const MOVE_THRESHOLD = 8; // px — any more than this = scrolling, not tapping
 
   document.addEventListener('touchstart', e => {
-    startX = e.touches[0].clientX;
-    startY = e.touches[0].clientY;
+    _touchStartY  = e.touches[0].clientY;
+    _touchStartX  = e.touches[0].clientX;
+    _didScroll    = false;
   }, { passive: true });
 
   document.addEventListener('touchmove', e => {
-    const dx = Math.abs(e.touches[0].clientX - startX);
-    const dy = Math.abs(e.touches[0].clientY - startY);
-    if (dx > THRESHOLD || dy > THRESHOLD) scrolledAt = Date.now();
+    const dy = Math.abs(e.touches[0].clientY - _touchStartY);
+    const dx = Math.abs(e.touches[0].clientX - _touchStartX);
+    if (dy > MOVE_THRESHOLD || dx > MOVE_THRESHOLD) _didScroll = true;
   }, { passive: true });
 
+  // Intercept clicks that fire right after a scroll
   document.addEventListener('click', e => {
-    if (Date.now() - scrolledAt < BLOCK_MS) {
+    if (_didScroll) {
       e.stopImmediatePropagation();
       e.preventDefault();
+      _didScroll = false;
     }
-  }, true);
+  }, true); // capture phase — runs before any onclick handlers
 })();
+
+
+
+
+// ─── Landing ──────────────────────────────────────────────
+// Spawn rainbow sparkles on Kathrina side
+(function spawnSparkles() {
+  const kathrina = document.querySelector('.landing-kathrina');
+  if (!kathrina) return;
+  const colors = ['#ff6eb4','#ffa0d0','#c084fc','#818cf8','#60c0f0','#60e880','#ffe060','#ffb060'];
+  function mkSparkle() {
+    const e = document.createElement('div');
+    const size  = 3 + Math.random() * 6;
+    const dur   = 2 + Math.random() * 3;
+    const left  = 10 + Math.random() * 80;
+    const bottom = 10 + Math.random() * 70;
+    const color = colors[Math.floor(Math.random() * colors.length)];
+    const drift = (Math.random() - .5) * 40;
+    e.style.cssText = `position:absolute;border-radius:50%;pointer-events:none;z-index:1;` +
+      `width:${size}px;height:${size}px;left:${left}%;bottom:${bottom}%;` +
+      `background:${color};box-shadow:0 0 ${size*1.5}px ${color};` +
+      `animation:emberRise ${dur}s linear forwards;--drift:${drift}px;`;
+    kathrina.appendChild(e);
+    setTimeout(() => e.remove(), dur * 1000 + 200);
+  }
+  setInterval(mkSparkle, 400);
+  for (let i = 0; i < 10; i++) setTimeout(mkSparkle, i * 150);
+})();
+
+// Spawn floating embers on Anthony side
+(function spawnEmbers() {
+  const anthony = document.querySelector('.landing-anthony');
+  if (!anthony) return;
+  function mkEmber() {
+    const e = document.createElement('div');
+    e.className = 'ember';
+    const size  = 2 + Math.random() * 4;
+    const drift = (Math.random() - .5) * 60;
+    const dur   = 3 + Math.random() * 4;
+    const left  = 20 + Math.random() * 60;
+    e.style.cssText = `width:${size}px;height:${size}px;left:${left}%;bottom:${20+Math.random()*30}%;` +
+      `background:hsl(${20+Math.random()*30},100%,${55+Math.random()*30}%);` +
+      `--drift:${drift}px;animation-duration:${dur}s;animation-delay:${Math.random()*3}s`;
+    anthony.appendChild(e);
+    setTimeout(() => e.remove(), (dur + 3) * 1000);
+  }
+  setInterval(mkEmber, 600);
+  for (let i = 0; i < 8; i++) mkEmber();
+})();
+
+function selectUser(name) {
+  localStorage.setItem('chores_active_user', name);
+  applyProfile(name);
+  burstParticles(innerWidth/2, innerHeight*0.5, 45, name === CONFIG.YOUR_NAME ? 'fire' : 'rainbow');
+  haptic(60);
+  // Apply dark mode for Anthony, light for Kathrina
+  const isDark = name === 'Anthony';
+  if (isDark) document.documentElement.classList.add('dark');
+  else document.documentElement.classList.remove('dark');
+  localStorage.setItem('nightMode', isDark);
+  const btn = document.getElementById('night-btn');
+  if (btn) btn.textContent = isDark ? '☀️' : '🌙';
+
+  const ls = document.getElementById('landing-screen');
+  ls.classList.add('hide');
+  setTimeout(() => {
+    ls.style.display = 'none';
+    loadChores().then(() => {
+      const days = getChoresWelcomeBack();
+      if (days) setTimeout(() => showToast(`Welcome back ${name} 👋`), 500);
+      else setTimeout(() => showToast(`${getGreeting()} ${name}! 👋`), 400);
+    });
+  }, 400);
+}
+
+function showHowTo() {
+  document.getElementById('howto-screen').classList.add('show');
+}
+
+function closeHowTo() {
+  document.getElementById('howto-screen').classList.remove('show');
+}
+
+// ─── Haptic feedback ──────────────────────────────
+function haptic(ms=40) { try { if (navigator.vibrate) navigator.vibrate(ms); } catch {} }
+
+// ─── Snap animation ────────────────────────────────
+// CSS handles it — just ensure classes exist
+
+// ─── Tag team toast ───────────────────────────────
+function checkTagTeam(chore, newWho) {
+  if (!chore || !chore.who || !newWho) return;
+  if (chore.who !== newWho && chore.who !== '') {
+    setTimeout(() => showToast('Tag team 🤝'), 700);
+  }
+}
+
+// ─── "Last active" on profile pill ─────────────────
+function getLastActive(name) {
+  const key  = 'chores_last_active_' + name;
+  const last = localStorage.getItem(key);
+  if (!last) return '';
+  const days = Math.floor((Date.now() - new Date(last).getTime()) / 86400000);
+  if (days === 0) return 'active today';
+  if (days === 1) return 'yesterday';
+  return `${days}d ago`;
+}
+function recordLastActive(name) {
+  localStorage.setItem('chores_last_active_' + name, new Date().toISOString());
+}
+function updateProfilePill() {
+  const btn  = document.getElementById('profile-toggle');
+  if (!btn) return;
+  const user = getActiveUser();
+  const emoji = user === CONFIG.YOUR_NAME ? '🐉' : '🦄';
+  const last  = getLastActive(user === CONFIG.YOUR_NAME ? CONFIG.PARTNER_NAME : CONFIG.YOUR_NAME);
+  btn.innerHTML = `${emoji} ${user}${last ? `<span style="font-size:9px;opacity:.55;margin-left:5px">${last}</span>` : ''}`;
+}
+
+// ─── Room overdue badges ───────────────────────────
+function getRoomOverdueCounts() {
+  const counts = {};
+  allChores.forEach(c => {
+    if (c.ratio < 1) return;
+    (c.room || '').toLowerCase().split(' ').filter(Boolean).forEach(code => {
+      counts[code] = (counts[code] || 0) + 1;
+    });
+  });
+  return counts;
+}
+function populateRoomDropdownsWithBadges() {
+  populateRoomDropdowns(); // call existing fn
+  const sel    = document.getElementById('room-select');
+  const counts = getRoomOverdueCounts();
+  if (!sel) return;
+  Array.from(sel.options).forEach(opt => {
+    if (!opt.value) return;
+    const n = counts[opt.value];
+    if (n) opt.text = roomLegend[opt.value] + ` (${n})`;
+  });
+}
+
+// ─── Working Bee empty state nudge ─────────────────
+// Handled inline in updateBee
+
+// ─── Welcome back on chores landing ────────────────
+function getChoresWelcomeBack() {
+  const lastOpen = localStorage.getItem('chores_last_open');
+  const today    = new Date().toDateString();
+  localStorage.setItem('chores_last_open', new Date().toISOString());
+  if (!lastOpen) return null;
+  const days = Math.floor((Date.now() - new Date(lastOpen).getTime()) / 86400000);
+  return days >= 2 ? days : null;
+}
+
+// ─── All caught up celebration ─────────────────────
+function checkAllCaughtUp(prevFiltered) {
+  if (prevFiltered > 0) {
+    const nowFiltered = allChores.filter(c => {
+      if (isSnoozed(c.sheetRow)) return false;
+      const d = c.maxDays - c.days;
+      return filterRoom
+        ? (c.room||'').toLowerCase().split(' ').includes(filterRoom)
+        : (filterDays===999 ? c.ratio>=1 : d<=filterDays||c.ratio>=1);
+    }).length;
+    if (nowFiltered === 0) {
+      setTimeout(() => {
+        burstParticles(innerWidth/2, innerHeight/2, 50, isAnthony() ? 'fire' : 'rainbow');
+        showToast('All caught up! 🏠✨');
+      }, 400);
+    }
+  }
+}
+
+// ─── Greeting ──────────────────────────────────────
+function getGreeting() {
+  const h = new Date().getHours();
+  if (h < 12) return 'Good morning';
+  if (h < 17) return 'Good afternoon';
+  return 'Good evening';
+}
 
 </script>
 </body>
-  </html>
+                                                                                    </html>
