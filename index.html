@@ -606,6 +606,11 @@
 <canvas id="particle-canvas" style="position:fixed;inset:0;pointer-events:none;z-index:9999;opacity:0;transition:opacity .3s"></canvas>
 <div id="loading"><div class="spinner"></div>Loading chores…</div>
 <div id="error" style="display:none"></div>
+<div style="padding:0 16px 10px;display:flex;gap:8px;align-items:center">
+  <span style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink-soft);font-weight:500;flex-shrink:0">Sort</span>
+  <button id="sort-urgency-btn" class="filter-btn active" onclick="setSort('urgency')" style="flex-shrink:0">&#x1F525; Urgency</button>
+  <button id="sort-duration-btn" class="filter-btn" onclick="setSort('duration')" style="flex-shrink:0">&#x23F1; Duration</button>
+</div>
 <div id="chore-list" style="display:none">
   <div class="swipe-hint" id="swipe-hint">← swipe left to done · snooze right</div>
 </div>
@@ -717,6 +722,8 @@
 </div>
 
 <script>
+var sortMode = "urgency";
+
 
 
 
@@ -971,6 +978,13 @@ function setRoom(code) {
   applyFilterAndRender();
 }
 
+function setSort(mode) {
+  sortMode = mode;
+  document.getElementById('sort-urgency-btn').classList.toggle('active', mode === 'urgency');
+  document.getElementById('sort-duration-btn').classList.toggle('active', mode === 'duration');
+  applyFilterAndRender();
+}
+
 function setFilter(days) {
   filterDays = days;
   document.querySelectorAll('.filter-btn').forEach(b => {
@@ -998,6 +1012,19 @@ function applyFilterAndRender() {
       if (filterDays === 999) return c.ratio >= 1;
       return daysUntilDue <= filterDays || c.ratio >= 1;
     });
+  }
+
+  // Apply sort
+  if (sortMode === 'duration') {
+    // Chores with duration first (ascending), then no-duration by urgency
+    filtered.sort((a, b) => {
+      if (a.duration && b.duration) return a.duration - b.duration;
+      if (a.duration) return -1;
+      if (b.duration) return 1;
+      return b.ratio - a.ratio;
+    });
+  } else {
+    filtered.sort((a, b) => b.ratio - a.ratio);
   }
 
   if (filtered.length === 0) {
@@ -1928,6 +1955,7 @@ function getGreeting() {
   if (h < 17) return 'Good afternoon';
   return 'Good evening';
 }
+
 
 
 
