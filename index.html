@@ -613,7 +613,7 @@
 
 <!-- WORKING BEE SCREEN -->
 <div id="bee-screen" style="display:none;position:fixed;inset:0;z-index:100;overflow-y:auto;background:var(--bg);animation:fadeUp .25s ease">
-  <div style="padding:calc(var(--safe-top)+16px) 20px 14px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:linear-gradient(to bottom,var(--bg) 80%,transparent);z-index:10">
+  <div style="padding:calc(25vh + var(--safe-top)) 20px 14px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:linear-gradient(to bottom,var(--bg) 80%,transparent);z-index:10">
     <div>
       <div style="font-family:'Playfair Display',serif;font-size:22px;font-weight:600">🐝 Working Bee</div>
       <div style="font-size:11px;color:var(--ink-soft);letter-spacing:1px;text-transform:uppercase;margin-top:1px">What can I do today?</div>
@@ -909,7 +909,7 @@ async function loadChores(forceRefresh = false) {
       // Fast path: only fetch task data (A–F)
       roomLegend = cachedLegend;
       populateRoomDropdowns();
-      const range = encodeURIComponent(`${CONFIG.SHEET_NAME}!A${CONFIG.DATA_START_ROW}:F`);
+      const range = encodeURIComponent(`${CONFIG.SHEET_NAME}!A${CONFIG.DATA_START_ROW}:G`);
       const url   = `https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.SHEET_ID}/values/${range}?key=${CONFIG.API_KEY}`;
       const res   = await fetch(url);
       const data  = await res.json();
@@ -1954,4 +1954,4 @@ function getGreeting() {
 
 </script>
 </body>
-                                                                                    </html>
+  </html>
