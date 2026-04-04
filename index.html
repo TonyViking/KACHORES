@@ -471,6 +471,11 @@
   .diff-easy   { background: rgba(90,138,94,.15);  color: var(--c-fresh); }
   .diff-medium { background: rgba(201,168,76,.15); color: var(--c-soon); }
   .diff-hard   { background: rgba(160,48,48,.15);  color: var(--c-over); }
+
+  @keyframes hintPulse {
+    0%,100% { opacity:.4; transform:scale(1); }
+    50%      { opacity:.8; transform:scale(1.05); }
+  }
 </style>
 </head>
 <body>
@@ -484,13 +489,17 @@
       <span class="landing-user-emoji">🦄</span>
       <span class="landing-user-name">Kathrina</span>
       <span class="landing-user-vibe">babygirl</span>
-      <button class="landing-user-btn">Choose me</button>
     </div>
     <div class="kathrina-rainbow-bar"></div>
   </div>
 
+  <!-- Swipe hint -->
+  <div style="position:absolute;bottom:calc(var(--safe-bot)+52px);left:0;right:0;text-align:center;z-index:10;pointer-events:none">
+    <div id="swipe-hint-land" style="font-size:11px;color:rgba(255,255,255,.4);letter-spacing:1px;animation:hintPulse 2.5s ease-in-out infinite">← swipe to choose →</div>
+  </div>
+
   <!-- Divider -->
-  <div class="landing-divider"></div>
+  <div class="landing-divider" id="landing-divider"></div>
 
   <!-- Anthony — right half -->
   <div class="landing-half landing-anthony" onclick="selectUser('Anthony')">
@@ -498,7 +507,6 @@
       <span class="landing-user-emoji">🐉</span>
       <span class="landing-user-name">Anthony</span>
       <span class="landing-user-vibe">my man</span>
-      <button class="landing-user-btn">Choose me</button>
     </div>
   </div>
 
@@ -746,6 +754,11 @@
 
 <script>
 
+
+
+
+
+
 var sortMode = "urgency";
 
 
@@ -767,9 +780,9 @@ var sortMode = "urgency";
    DATA_START_ROW: first data row (skip header)
 ═══════════════════════════════════════ */
 const CONFIG = {
-  SHEET_ID:      '19-CYQBlORzRx_no9o9Hk31kuQyvWYGCGhRKnJ6LZaSE',
+  SHEET_ID:      '16nGtOxBWpYW8_go2DzqBh_IXAiciwlEzDzO8N2VirvQ',
   SHEET_NAME:    'Sheet1',
-  API_KEY:       'AIzaSyDx50f2EyVKs6YEStDEDugEowN7yplhrLE',
+  API_KEY:       'AIzaSyDb065U8j5l8LhKNzcz3onSoDxknA4d7rU',
   COL_NAME:      1,
   COL_MIN_DAYS:  2,
   COL_MAX_DAYS:  3,
@@ -784,7 +797,7 @@ const CONFIG = {
   PARTNER_NAME:  'Kathrina',
 };
 
-const OAUTH_CLIENT_ID = '910424254552-q29kncg9tni3a7nqcvqbd3kjm1kuche0.apps.googleusercontent.com';
+const OAUTH_CLIENT_ID = '321304865512-53n0nqgmg7il2i7mjinni0efd025lpgi.apps.googleusercontent.com';
 const SCOPES = 'https://www.googleapis.com/auth/spreadsheets';
 
 // ─── Legend cache ─────────────────────────────────
@@ -1440,6 +1453,13 @@ function isSnoozed(sheetRow) {
 
 const BREAK_EVERY = 30;
 const BREAK_MINS  = 5;
+function getDifficulty(dur) {
+  if (!dur) return 'medium';
+  if (dur <= 10) return 'easy';
+  if (dur <= 25) return 'medium';
+  return 'hard';
+}
+
 const DIFF_LABEL  = { easy:'Easy', medium:'Medium', hard:'Hard' };
 
 function smartRotationSort(chores) {
@@ -1514,25 +1534,9 @@ function topoSort(chores) {
   return result;
 }
 // ─── Prereq checking ──────────────────────────────────
-function getScheduleNames() {
-  return new Set(schedule.filter(i => !i._isBreak).map(c => c.name.toLowerCase()));
-}
-function getScheduleRows() {
-  return new Set(schedule.filter(i => !i._isBreak).map(c => c.sheetRow));
-}
 
-function isBlockedInSession(chore) {
-  if (!chore.prereqs || !chore.prereqs.length) return [];
-  const schedRows = new Set(schedule.filter(i => !i._isBreak).map(c => c.sheetRow));
-  // Blocked if prereq is in this session and not yet completed
-  return chore.prereqs.filter(row => schedRows.has(row) && !session.doneNames.has(row));
-}
 
 // Look up a task name by its sheet row number
-function nameByRow(rowNum) {
-  const c = allChores.find(ch => ch.sheetRow === rowNum);
-  return c ? c.name : `Row ${rowNum}`;
-}
 
 // ─── Working Bee ──────────────────────────────────────────
 let beeMode = 'priority';
@@ -1686,6 +1690,433 @@ function updateBee() {
   }
 }
 
+
+
+
+// ─── Particle engine — CELEBRATION EDITION ──────────────
+const _canvas  = () => document.getElementById('particle-canvas');
+let   _rafId   = null;
+let   _particles = [];
+let   _bgFlash   = 0; // background flash intensity
+
+function burstParticles(mode, originX, originY, count = 35) {
+  const canvas = _canvas();
+  if (!canvas) return;
+  canvas.width  = window.innerWidth;
+  canvas.height = window.innerHeight;
+  canvas.style.opacity = '1';
+
+  if (_rafId) { cancelAnimationFrame(_rafId); _rafId = null; }
+  _particles = [];
+  _bgFlash = mode === 'fire' ? 0.7 : 0.5;
+
+  for (let i = 0; i < count; i++) {
+    _spawnParticle(mode, originX, originY, i / count);
+  }
+
+  _animateParticles();
+}
+
+function _spawnParticle(mode, ox, oy, t, speedMult = 1) {
+  const anthony = mode === 'fire';
+  const angle   = Math.random() * Math.PI * 2;
+  const speed   = speedMult * (3 + Math.random() * 7);
+  const size    = 3 + Math.random() * 9;
+  const life    = 0.8 + Math.random() * 0.8;
+
+  let color;
+  if (anthony) {
+    const fc = ['#ff3300','#ff6600','#ff9900','#ffcc00','#ffffff'];
+    color = fc[Math.floor(Math.random() * fc.length)];
+  } else {
+    const hue = Math.floor(Math.random() * 360);
+    color = `hsl(${hue},100%,65%)`;
+  }
+
+  // Simplified: only circles and stars (fast to draw)
+  const shape = anthony
+    ? (Math.random() > 0.4 ? 'circle' : 'ember')
+    : (Math.random() > 0.5 ? 'circle' : 'star');
+
+  _particles.push({
+    x: ox, y: oy,
+    vx: Math.cos(angle) * speed,
+    vy: Math.sin(angle) * speed - 2,
+    size, color, life, maxLife: life,
+    mode, shape,
+    rotation: Math.random() * Math.PI * 2,
+    rotSpeed: (Math.random() - 0.5) * 0.2,
+    gravity: anthony ? 0.1 : 0.15,
+    drag: 0.97,
+  });
+}
+
+function _drawHeart(ctx, x, y, size, rotation) {
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.rotate(rotation);
+  ctx.scale(size * 0.06, size * 0.06);
+  ctx.beginPath();
+  ctx.moveTo(0, 0);
+  ctx.bezierCurveTo(-10, -10, -20, 5, 0, 15);
+  ctx.bezierCurveTo(20, 5, 10, -10, 0, 0);
+  ctx.closePath();
+  ctx.fill();
+  ctx.restore();
+}
+
+function _drawStar(ctx, x, y, size, rotation, points = 5) {
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.rotate(rotation);
+  ctx.beginPath();
+  for (let i = 0; i < points * 2; i++) {
+    const a = (i * Math.PI) / points - Math.PI / 2;
+    const r = i % 2 === 0 ? size : size * 0.4;
+    i === 0 ? ctx.moveTo(Math.cos(a)*r, Math.sin(a)*r)
+            : ctx.lineTo(Math.cos(a)*r, Math.sin(a)*r);
+  }
+  ctx.closePath();
+  ctx.fill();
+  ctx.restore();
+}
+
+function _drawSparkle(ctx, x, y, size, rotation) {
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.rotate(rotation);
+  ctx.beginPath();
+  for (let i = 0; i < 4; i++) {
+    const a = (i * Math.PI) / 2;
+    ctx.moveTo(0, 0);
+    ctx.lineTo(Math.cos(a) * size, Math.sin(a) * size);
+    ctx.moveTo(0, 0);
+    ctx.lineTo(Math.cos(a + Math.PI/4) * size * 0.4, Math.sin(a + Math.PI/4) * size * 0.4);
+  }
+  ctx.closePath();
+  ctx.strokeStyle = ctx.fillStyle;
+  ctx.lineWidth   = size * 0.18;
+  ctx.stroke();
+  ctx.restore();
+}
+
+function _animateParticles() {
+  const canvas = _canvas();
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // ── Background flash ──
+  if (_bgFlash > 0.01) {
+    const anthony = _particles.length > 0 && _particles[0].mode === 'fire';
+    ctx.globalAlpha = _bgFlash * 0.18;
+    ctx.fillStyle   = anthony ? '#ff4400' : `hsl(${Date.now() * 0.3 % 360},100%,70%)`;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    _bgFlash *= 0.82;
+    ctx.globalAlpha = 1;
+  }
+
+  _particles = _particles.filter(p => p.life > 0);
+
+  for (const p of _particles) {
+    const t     = p.life / p.maxLife;
+    const alpha = t < 0.3 ? (t / 0.3) * 0.9 : t * 0.9;
+    const s     = p.size * Math.sqrt(t);
+
+    ctx.globalAlpha = alpha;
+    ctx.fillStyle   = p.color;
+
+    // Light glow only for fire
+    if (p.mode === 'fire') {
+      ctx.shadowColor = p.color;
+      ctx.shadowBlur  = 10 * t;
+    } else {
+      ctx.shadowBlur = 0;
+    }
+
+    if (p.shape === 'star') {
+      _drawStar(ctx, p.x, p.y, s, p.rotation);
+    } else if (p.shape === 'ember') {
+      ctx.beginPath();
+      ctx.ellipse(p.x, p.y, s * 0.45, s, p.rotation, 0, Math.PI * 2);
+      ctx.fill();
+    } else {
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, s, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    p.x  += p.vx;
+    p.y  += p.vy;
+    p.vy += p.gravity;
+    p.vx *= p.drag;
+    p.vy *= p.drag;
+    p.rotation += p.rotSpeed;
+    p.life -= 0.022;
+  }
+
+  ctx.globalAlpha = 1;
+  ctx.shadowBlur  = 0;
+
+  if (_particles.length > 0 || _bgFlash > 0.01) {
+    _rafId = requestAnimationFrame(_animateParticles);
+  } else {
+    canvas.style.opacity = '0';
+    _rafId = null;
+  }
+}
+
+
+
+// ─── Haptic feedback ──────────────────────────────────
+function haptic(ms=40) { try { if (navigator.vibrate) navigator.vibrate(ms); } catch {} }
+
+// ─── Tag team toast ───────────────────────────────────
+function checkTagTeam(chore, newWho) {
+  if (!chore || !chore.who || !newWho) return;
+  if (chore.who !== newWho && chore.who !== '') {
+    setTimeout(() => showToast('Tag team 🤝'), 700);
+  }
+}
+
+// ─── Landing functions ────────────────────────────────
+function selectUser(name) {
+  localStorage.setItem('chores_active_user', name);
+  applyProfile(name);
+  burstParticles(innerWidth/2, innerHeight*0.5, 45, name === CONFIG.YOUR_NAME ? 'fire' : 'rainbow');
+  haptic(60);
+  const isDark = name === CONFIG.YOUR_NAME;
+  if (isDark) document.documentElement.classList.add('dark');
+  else document.documentElement.classList.remove('dark');
+  localStorage.setItem('nightMode', isDark);
+  const btn = document.getElementById('night-btn');
+  if (btn) btn.textContent = isDark ? '☀️' : '🌙';
+  if (!accessToken) initOAuth();
+  const ls = document.getElementById('landing-screen');
+  ls.classList.add('hide');
+  setTimeout(() => {
+    ls.style.display = 'none';
+    loadChores().then(() => {
+      const days = getChoresWelcomeBack();
+      if (days) setTimeout(() => showToast('Welcome back ' + name + ' 👋'), 500);
+      else setTimeout(() => showToast(getGreeting() + ' ' + name + '! 👋'), 400);
+    });
+  }, 400);
+}
+
+function showHowTo() {
+  document.getElementById('howto-screen').classList.add('show');
+}
+
+function closeHowTo() {
+  document.getElementById('howto-screen').classList.remove('show');
+}
+
+function getChoresWelcomeBack() {
+  const lastOpen = localStorage.getItem('chores_last_open');
+  const today    = new Date().toDateString();
+  localStorage.setItem('chores_last_open', new Date().toISOString());
+  if (!lastOpen) return null;
+  const days = Math.floor((Date.now() - new Date(lastOpen).getTime()) / 86400000);
+  return days >= 2 ? days : null;
+}
+
+// ─── Profile system ──────────────────────────────────
+function getActiveUser() {
+  return localStorage.getItem('chores_active_user') || CONFIG.YOUR_NAME;
+}
+
+function isAnthony() { return getActiveUser() === CONFIG.YOUR_NAME; }
+
+function applyProfile(user, animate = false) {
+  const anthony = user === CONFIG.YOUR_NAME;
+  const btn = document.getElementById('profile-toggle');
+  if (btn) {
+    btn.innerHTML = anthony ? '🐉 Anthony' : '🦄 Kathrina';
+    btn.style.color = anthony ? '#f97316' : '#e879a0';
+    btn.style.borderColor = anthony ? 'rgba(249,115,22,.4)' : 'rgba(232,121,160,.4)';
+  }
+}
+
+function switchProfile() {
+  const current = getActiveUser();
+  const next    = current === CONFIG.YOUR_NAME ? CONFIG.PARTNER_NAME : CONFIG.YOUR_NAME;
+  localStorage.setItem('chores_active_user', next);
+  applyProfile(next, true);
+  burstParticles(next === CONFIG.YOUR_NAME ? 'fire' : 'rainbow', window.innerWidth/2, window.innerHeight/2, 40);
+  showToast(next === CONFIG.YOUR_NAME ? '🐉 Anthony mode' : '🦄 Kathrina mode');
+}
+
+function updateUserSwitcher() {
+  applyProfile(getActiveUser());
+}
+
+// ─── Last active / profile pill ──────────────────────
+function getLastActive(name) {
+  const key  = 'chores_last_active_' + name;
+  const last = localStorage.getItem(key);
+  if (!last) return '';
+  const days = Math.floor((Date.now() - new Date(last).getTime()) / 86400000);
+  if (days === 0) return 'active today';
+  if (days === 1) return 'yesterday';
+  return days + 'd ago';
+}
+
+function recordLastActive(name) {
+  localStorage.setItem('chores_last_active_' + name, new Date().toISOString());
+}
+
+function updateProfilePill() {
+  const btn  = document.getElementById('profile-toggle');
+  if (!btn) return;
+  const user  = getActiveUser();
+  const emoji = user === CONFIG.YOUR_NAME ? '🐉' : '🦄';
+  const other = user === CONFIG.YOUR_NAME ? CONFIG.PARTNER_NAME : CONFIG.YOUR_NAME;
+  const last  = getLastActive(other);
+  btn.innerHTML = emoji + ' ' + user + (last ? '<span style="font-size:9px;opacity:.55;margin-left:5px">' + last + '</span>' : '');
+}
+
+// ─── Room dropdown with overdue badges ───────────────
+function getRoomOverdueCounts() {
+  const counts = {};
+  allChores.forEach(c => {
+    if (c.ratio < 1) return;
+    (c.room || '').toLowerCase().split(' ').filter(Boolean).forEach(code => {
+      counts[code] = (counts[code] || 0) + 1;
+    });
+  });
+  return counts;
+}
+
+function populateRoomDropdownsWithBadges() {
+  populateRoomDropdowns();
+  const sel    = document.getElementById('room-select');
+  const counts = getRoomOverdueCounts();
+  if (!sel) return;
+  Array.from(sel.options).forEach(opt => {
+    if (!opt.value) return;
+    const n = counts[opt.value];
+    if (n) opt.text = (roomLegend[opt.value] || opt.value) + ' (' + n + ')';
+  });
+}
+
+// ─── Landing particles ────────────────────────────────
+(function spawnSparkles() {
+  const kathrina = document.querySelector('.landing-kathrina');
+  if (!kathrina) return;
+  const colors = ['#ff6eb4','#ffa0d0','#c084fc','#818cf8','#60c0f0','#60e880','#ffe060','#ffb060'];
+  function mkSparkle() {
+    const e    = document.createElement('div');
+    const size = 3 + Math.random() * 6;
+    const dur  = 2 + Math.random() * 3;
+    const left = 10 + Math.random() * 80;
+    const bot  = 10 + Math.random() * 70;
+    const col  = colors[Math.floor(Math.random() * colors.length)];
+    const drift = (Math.random() - .5) * 40;
+    e.style.cssText = 'position:absolute;border-radius:50%;pointer-events:none;z-index:1;' +
+      'width:'+size+'px;height:'+size+'px;left:'+left+'%;bottom:'+bot+'%;' +
+      'background:'+col+';box-shadow:0 0 '+(size*1.5)+'px '+col+';' +
+      'animation:emberRise '+dur+'s linear forwards;--drift:'+drift+'px;';
+    kathrina.appendChild(e);
+    setTimeout(() => e.remove(), dur * 1000 + 200);
+  }
+  setInterval(mkSparkle, 400);
+  for (let i = 0; i < 10; i++) setTimeout(mkSparkle, i * 150);
+})();
+
+(function spawnEmbers() {
+  const anthony = document.querySelector('.landing-anthony');
+  if (!anthony) return;
+  function mkEmber() {
+    const e     = document.createElement('div');
+    e.className = 'ember';
+    const size  = 2 + Math.random() * 4;
+    const drift = (Math.random() - .5) * 60;
+    const dur   = 3 + Math.random() * 4;
+    const left  = 20 + Math.random() * 60;
+    e.style.cssText = 'width:'+size+'px;height:'+size+'px;left:'+left+'%;bottom:'+(20+Math.random()*30)+'%;' +
+      'background:hsl('+(20+Math.random()*30)+',100%,'+(55+Math.random()*30)+'%);' +
+      '--drift:'+drift+'px;animation-duration:'+dur+'s;animation-delay:'+(Math.random()*3)+'s';
+    anthony.appendChild(e);
+    setTimeout(() => e.remove(), (dur + 3) * 1000);
+  }
+  setInterval(mkEmber, 600);
+  for (let i = 0; i < 8; i++) mkEmber();
+})();
+
+
+
+
+// ─── Landing swipe to choose ──────────────────────────
+(function() {
+  const landing = document.getElementById('landing-screen');
+  if (!landing) return;
+
+  let sx = 0, dx = 0, tracking = false;
+  const THR = 80; // px to commit
+
+  landing.addEventListener('touchstart', e => {
+    sx = e.touches[0].clientX;
+    dx = 0; tracking = true;
+  }, { passive: true });
+
+  landing.addEventListener('touchmove', e => {
+    if (!tracking) return;
+    dx = e.touches[0].clientX - sx;
+    const pct  = Math.min(Math.abs(dx) / (window.innerWidth * 0.5), 1);
+    const left  = document.querySelector('.landing-kathrina');
+    const right = document.querySelector('.landing-anthony');
+    const divider = document.getElementById('landing-divider');
+    const hint  = document.getElementById('swipe-hint-land');
+
+    if (dx > 0) {
+      // Swiping right → Kathrina expanding
+      if (left)  left.style.flex  = 1 + pct * 0.6 + '';
+      if (right) right.style.flex = 1 - pct * 0.4 + '';
+      if (hint)  hint.style.opacity = Math.max(0, 0.4 - pct);
+    } else {
+      // Swiping left → Anthony expanding
+      if (right) right.style.flex = 1 + pct * 0.6 + '';
+      if (left)  left.style.flex  = 1 - pct * 0.4 + '';
+      if (hint)  hint.style.opacity = Math.max(0, 0.4 - pct);
+    }
+    if (divider) divider.style.opacity = 1 - pct * 0.7 + '';
+  }, { passive: true });
+
+  landing.addEventListener('touchend', e => {
+    if (!tracking) return;
+    tracking = false;
+    const left  = document.querySelector('.landing-kathrina');
+    const right = document.querySelector('.landing-anthony');
+    const divider = document.getElementById('landing-divider');
+    const hint  = document.getElementById('swipe-hint-land');
+
+    if (Math.abs(dx) >= THR) {
+      // Commit — expand chosen side to full screen then select
+      const isKathrina = dx > 0;
+      const chosen = isKathrina ? left : right;
+      const other  = isKathrina ? right : left;
+      if (chosen) { chosen.style.transition = 'flex .35s ease'; chosen.style.flex = '1'; }
+      if (other)  { other.style.transition  = 'flex .35s ease'; other.style.flex  = '0'; other.style.overflow = 'hidden'; }
+      if (divider) { divider.style.transition = 'opacity .35s'; divider.style.opacity = '0'; }
+      if (hint)   hint.style.opacity = '0';
+      setTimeout(() => selectUser(isKathrina ? CONFIG.PARTNER_NAME : CONFIG.YOUR_NAME), 350);
+    } else {
+      // Snap back
+      [left, right].forEach(el => {
+        if (!el) return;
+        el.style.transition = 'flex .3s cubic-bezier(.34,1.56,.64,1)';
+        el.style.flex = '1';
+      });
+      if (divider) { divider.style.transition = 'opacity .3s'; divider.style.opacity = '1'; }
+      if (hint)   { hint.style.opacity = '0.4'; }
+      setTimeout(() => {
+        [left, right].forEach(el => { if (el) el.style.transition = ''; });
+      }, 300);
+    }
+    dx = 0;
+  });
+})();
 
 </script>
 </body>
