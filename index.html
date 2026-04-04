@@ -71,7 +71,8 @@
     display: flex; align-items: center; justify-content: space-between;
     gap: 12px;
     position: sticky; top: 0; z-index: 10;
-    background: linear-gradient(to bottom, rgba(252,228,240,.96) 80%, transparent);
+    background: linear-gradient(to bottom, rgba(252,228,240,.75) 80%, transparent);
+    backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
     transition: background .3s;
   }
   :root.dark header { background: linear-gradient(to bottom, var(--bg) 80%, transparent); }
@@ -143,9 +144,14 @@
 
   /* ── Chore card ── */
   .chore-card {
-    background: var(--surface); border-radius: var(--radius); border: 1.5px solid var(--border);
+    background: rgba(253,250,244,0.82); border-radius: var(--radius); border: 1.5px solid var(--border);
     overflow: hidden; transition: transform .05s; box-shadow: 0 2px 8px rgba(0,0,0,.04);
     position: relative; z-index: 1; touch-action: pan-y; -webkit-user-select: none; user-select: none;
+    backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+  }
+  :root.dark .chore-card {
+    background: var(--surface);
+    backdrop-filter: none; -webkit-backdrop-filter: none;
   }
   .chore-card:active { transform: scale(.985); }
   .chore-inner { display: flex; align-items: center; gap: 14px; padding: 14px 16px 10px; }
@@ -710,15 +716,15 @@
   </div>
 </div>
 
-<header>
-  <div style="flex:0 1 auto;min-width:0;overflow:hidden">
-    <div style="display:flex;align-items:baseline;gap:8px;flex-wrap:nowrap">
+<header style="flex-direction:column;align-items:flex-start;gap:10px">
+  <div>
+    <div style="display:flex;align-items:baseline;gap:8px">
       <div class="wordmark">Home<span>.</span></div>
-      <div class="subtitle" style="white-space:nowrap;flex-shrink:0">Chore tracker<span class="offline-badge" id="offline-badge" style="display:none">OFFLINE</span></div>
+      <div class="subtitle" style="white-space:nowrap">Chore tracker<span class="offline-badge" id="offline-badge" style="display:none">OFFLINE</span></div>
     </div>
-    <div style="font-size:10px;margin-top:2px;font-weight:400;letter-spacing:.3px;transition:color .4s;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" id="home-health"></div>
+    <div style="font-size:10px;margin-top:2px;font-weight:400;letter-spacing:.3px;transition:color .4s" id="home-health"></div>
   </div>
-  <div class="header-btns" style="flex-shrink:0">
+  <div class="header-btns" style="flex-shrink:0;width:100%;justify-content:flex-start">
     <button id="profile-toggle" onclick="switchProfile()" title="Switch profile" style="background:none;border:1.5px solid var(--border);border-radius:20px;padding:5px 12px;font-family:DM Sans,sans-serif;font-size:12px;font-weight:600;color:var(--ink-soft);cursor:pointer;transition:all .25s;white-space:nowrap;letter-spacing:.3px;flex-shrink:0"></button>
     <button class="icon-btn" onclick="openSettings()" title="Settings" id="settings-btn">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -966,6 +972,7 @@
 </div>
 
 <script>
+
 
 
 
@@ -2475,8 +2482,16 @@ function switchProfile() {
   const next    = current === CONFIG.YOUR_NAME ? CONFIG.PARTNER_NAME : CONFIG.YOUR_NAME;
   localStorage.setItem('chores_active_user', next);
   applyProfile(next, true);
-  burstParticles(next === CONFIG.YOUR_NAME ? 'fire' : 'rainbow', window.innerWidth/2, window.innerHeight/2, 40);
-  showToast(next === CONFIG.YOUR_NAME ? '🐉 Anthony mode' : '🦄 Kathrina mode');
+
+  // Apply theme
+  const isAnth = next === CONFIG.YOUR_NAME;
+  if (isAnth) document.documentElement.classList.add('dark');
+  else         document.documentElement.classList.remove('dark');
+  localStorage.setItem('nightMode', isAnth);
+
+  haptic(40);
+  burstParticles(isAnth ? 'fire' : 'rainbow', window.innerWidth/2, window.innerHeight/2, 40);
+  showToast(isAnth ? '🐉 Anthony mode' : '🦄 Kathrina mode');
 }
 
 function updateUserSwitcher() {
@@ -2575,6 +2590,7 @@ function populateRoomDropdownsWithBadges() {
   setInterval(mkEmber, 600);
   for (let i = 0; i < 8; i++) mkEmber();
 })();
+
 
 
 
