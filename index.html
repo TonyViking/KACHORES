@@ -484,6 +484,2082 @@
 <div id="landing-screen">
 
   <!-- Kathrina — left half -->
+  <div class="landing-half landing-kathrina" id="half-kathrina">
+    <div class="landing-user-content">
+      <span class="landing-user-emoji">🦄</span>
+      <span class="landing-user-name">Kathrina</span>
+      <span class="landing-user-vibe">babygirl</span>
+    </div>
+    <div class="kathrina-rainbow-bar"></div>
+  </div>
+
+  <!-- Swipe hint -->
+  <div style="position:absolute;bottom:calc(var(--safe-bot)+52px);left:0;right:0;text-align:center;z-index:10;pointer-events:none">
+    <div id="swipe-hint-land" style="font-size:11px;color:rgba(255,255,255,.4);letter-spacing:1px;animation:hintPulse 2.5s ease-in-out infinite">← swipe to choose →</div>
+  </div>
+
+  <!-- Divider -->
+  <div class="landing-divider" id="landing-divider"></div>
+
+  <!-- Anthony — right half -->
+  <div class="landing-half landing-anthony" id="half-anthony">
+    <div class="landing-user-content">
+      <span class="landing-user-emoji">🐉</span>
+      <span class="landing-user-name">Anthony</span>
+      <span class="landing-user-vibe">my man</span>
+    </div>
+  </div>
+
+  <!-- How To button at bottom -->
+  <div class="landing-howto-strip">
+    <button class="landing-howto-btn-chores" onclick="event.stopPropagation();showHowTo()">How to use</button>
+  </div>
+
+</div>
+
+<!-- ══ HOW TO SCREEN ══ --><!-- ══ HOW TO SCREEN ══ -->
+<div id="howto-screen">
+  <div class="howto-header">
+    <div class="howto-title">How to use</div>
+    <button class="icon-btn" onclick="closeHowTo()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+  <div class="howto-body">
+    <div class="howto-section">
+      <div class="howto-section-title">Your chores</div>
+      <p>Each chore has a <strong>min days</strong> (earliest to repeat) and <strong>max days</strong> (when it becomes due). The app tracks when it was last done and by whom.</p>
+    </div>
+    <div class="howto-section">
+      <div class="howto-section-title">Filters</div>
+      <p>Use the <strong>room dropdown</strong> to see all chores in a specific room. Use the <strong>day pills</strong> to see chores due within a time window.</p>
+    </div>
+    <div class="howto-section">
+      <div class="howto-section-title">Marking done</div>
+      <div class="howto-tip">
+        <div class="howto-tip-icon">←</div>
+        <div class="howto-tip-text"><strong>Swipe left</strong> to mark done — writes your name and time to the sheet instantly.</div>
+      </div>
+      <div class="howto-tip" style="margin-top:8px">
+        <div class="howto-tip-icon">→</div>
+        <div class="howto-tip-text"><strong>Swipe right</strong> to hide until midnight — reappears tomorrow as normal.</div>
+      </div>
+    </div>
+    <div class="howto-section">
+      <div class="howto-section-title">Urgency colours</div>
+      <div class="howto-tip"><div class="howto-tip-icon">🟢</div><div class="howto-tip-text"><strong>Green</strong> — recently done.</div></div>
+      <div class="howto-tip" style="margin-top:8px"><div class="howto-tip-icon">🟡</div><div class="howto-tip-text"><strong>Yellow/orange</strong> — coming up soon.</div></div>
+      <div class="howto-tip" style="margin-top:8px"><div class="howto-tip-icon">🔴</div><div class="howto-tip-text"><strong>Red</strong> — overdue.</div></div>
+    </div>
+    <div class="howto-section">
+      <div class="howto-section-title">🐝 Working Bee</div>
+      <p>Tap the <strong>clock icon</strong> in the header. Set your time budget and choose <strong>Priority first</strong> or <strong>Most tasks</strong>. Only chores with a duration (column G) appear.</p>
+    </div>
+    <div class="howto-section">
+      <div class="howto-section-title">View All</div>
+      <p>Tap the <strong>list icon</strong> in the header to see every chore alphabetically with Done buttons for quick access.</p>
+    </div>
+  </div>
+</div>
+
+<header>
+  <div>
+    <div class="wordmark">Home<span>.</span></div>
+    <div class="subtitle">Chore tracker<span class="offline-badge" id="offline-badge" style="display:none">OFFLINE</span></div>
+  </div>
+  <div class="header-btns">
+        <button id="profile-toggle" onclick="switchProfile()" title="Switch profile" style="background:none;border:1.5px solid var(--border);border-radius:20px;padding:5px 14px;font-family:DM Sans,sans-serif;font-size:13px;font-weight:600;color:var(--ink-soft);cursor:pointer;transition:all .25s;white-space:nowrap;letter-spacing:.3px"></button>
+    <button class="icon-btn" onclick="openViewAll()" title="View all chores">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/>
+        <line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/>
+      </svg>
+    </button>
+    <button class="icon-btn" onclick="openWorkingBee()" title="Working Bee" id="bee-btn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+      </svg>
+    </button>
+    <button class="icon-btn" onclick="openAddChore()" title="Add chore">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+        <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+      </svg>
+    </button>
+    <button class="icon-btn refresh-btn" onclick="loadChores(true)" title="Refresh">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+      </svg>
+    </button>
+  </div>
+</header>
+
+
+<div class="legend">
+  <div class="legend-item"><div class="legend-dot" style="background:var(--c-fresh)"></div> Fresh</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--c-ok)"></div> Good</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--c-soon)"></div> Soon</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--c-due)"></div> Due</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--c-over)"></div> Overdue</div>
+</div>
+
+<div class="ptr-indicator" id="ptr-indicator"></div>
+
+<!-- Room filter -->
+<div class="room-bar">
+  <div class="room-select-wrap">
+    <select class="room-select" id="room-select" onchange="setRoom(this.value)">
+      <option value="">All rooms</option>
+    </select>
+  </div>
+</div>
+
+<!-- Day filter pills -->
+<div class="filter-bar" id="filter-bar">
+  <button class="filter-btn" data-days="1"   onclick="setFilter(1)">1 day</button>
+  <button class="filter-btn" data-days="2"   onclick="setFilter(2)">2 days</button>
+  <button class="filter-btn active" data-days="4" onclick="setFilter(4)">4 days</button>
+  <button class="filter-btn" data-days="7"   onclick="setFilter(7)">7 days</button>
+  <button class="filter-btn" data-days="14"  onclick="setFilter(14)">14 days</button>
+  <button class="filter-btn" data-days="999" onclick="setFilter(999)">All due</button>
+</div>
+
+<canvas id="particle-canvas" style="position:fixed;inset:0;pointer-events:none;z-index:9999;opacity:0;transition:opacity .3s"></canvas>
+<div id="loading"><div class="spinner"></div>Loading chores…</div>
+<div id="error" style="display:none"></div>
+<div style="padding:0 16px 10px;display:flex;gap:8px;align-items:center">
+  <span style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink-soft);font-weight:500;flex-shrink:0">Sort</span>
+  <button id="sort-urgency-btn" class="filter-btn active" onclick="setSort('urgency')" style="flex-shrink:0">&#x1F525; Urgency</button>
+  <button id="sort-duration-btn" class="filter-btn" onclick="setSort('duration')" style="flex-shrink:0">&#x23F1; Duration</button>
+</div>
+<div id="chore-list" style="display:none">
+  <div class="swipe-hint" id="swipe-hint">← swipe left to done · snooze right</div>
+</div>
+<div id="toast"></div>
+
+<!-- WORKING BEE SCREEN -->
+<div id="bee-screen" style="display:none;position:fixed;inset:0;z-index:100;overflow-y:auto;background:var(--bg);animation:fadeUp .25s ease">
+  <div style="padding:calc(var(--safe-top) + 12px) 20px 14px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:linear-gradient(to bottom,var(--bg) 80%,transparent);z-index:10">
+    <div>
+      <div style="font-family:'Playfair Display',serif;font-size:22px;font-weight:600">🐝 Working Bee</div>
+      <div style="font-size:11px;color:var(--ink-soft);letter-spacing:1px;text-transform:uppercase;margin-top:1px">What can I do today?</div>
+    </div>
+    <button class="icon-btn" onclick="closeWorkingBee()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+
+  <!-- Time budget picker -->
+  <div style="padding:0 20px 16px">
+    <div style="background:var(--surface);border:1.5px solid var(--border);border-radius:16px;padding:16px">
+      <div style="font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.8px;color:var(--ink-soft);margin-bottom:12px">Time available</div>
+      <div style="display:flex;gap:10px;align-items:center">
+        <div style="flex:1">
+          <input class="form-input" id="bee-hours" type="number" placeholder="0" min="0" max="12" style="text-align:center;font-size:20px;font-weight:600" oninput="updateBee()">
+          <div style="text-align:center;font-size:11px;color:var(--ink-mute);margin-top:4px">hours</div>
+        </div>
+        <div style="font-size:24px;color:var(--ink-mute);padding-bottom:18px">:</div>
+        <div style="flex:1">
+          <input class="form-input" id="bee-mins" type="number" placeholder="30" min="0" max="59" style="text-align:center;font-size:20px;font-weight:600" oninput="updateBee()">
+          <div style="text-align:center;font-size:11px;color:var(--ink-mute);margin-top:4px">minutes</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mode toggle -->
+  <div style="padding:0 20px 10px;margin-top:4px;display:flex;gap:8px">
+    <button id="bee-mode-priority" class="filter-pill active" onclick="setBeeMode('priority')" style="flex:1;text-align:center">🔥 Priority</button>
+    <button id="bee-mode-most" class="filter-pill" onclick="setBeeMode('most')" style="flex:1;text-align:center">📋 Most</button>
+    <button id="bee-mode-smart" class="filter-pill" onclick="setBeeMode('smart')" style="flex:1;text-align:center">🔄 Smart</button>
+  </div>
+  <div style="display:flex;align-items:center;justify-content:space-between;margin:0 20px 12px;background:var(--surface);border:1.5px solid var(--border);border-radius:12px;padding:10px 14px">
+    <div>
+      <div style="font-size:13px;font-weight:500;color:var(--ink)">Group by room</div>
+      <div style="font-size:11px;color:var(--ink-mute);margin-top:1px">Do each room together</div>
+    </div>
+    <div id="bee-room-toggle" onclick="toggleBeeRoomGroup()" style="width:44px;height:26px;border-radius:40px;background:var(--border);cursor:pointer;position:relative;transition:background .25s;flex-shrink:0">
+      <div id="bee-room-knob" style="position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:var(--ink-mute);transition:transform .25s,background .25s"></div>
+    </div>
+  </div>
+  <div style="padding:0 20px 10px;font-size:11px;color:var(--ink-mute);text-align:center">☕ 5 min break every 30 min of work included</div>
+
+  <!-- Summary bar -->
+  <div id="bee-summary" style="margin:0 20px 14px;padding:12px 16px;background:var(--surface);border:1.5px solid var(--border);border-radius:12px;font-size:13px;color:var(--ink-soft);display:none">
+  </div>
+
+  <!-- Task list -->
+  <div id="bee-list" style="padding:0 20px calc(var(--safe-bot)+40px);display:flex;flex-direction:column;gap:10px">
+    <div class="empty-state"><span class="emoji">🐝</span>Set your time above to see what you can get done.</div>
+  </div>
+</div>
+
+<!-- ADD CHORE SHEET -->
+<div class="sheet-overlay" id="add-overlay" onclick="closeAddChore()"></div>
+<div class="bottom-sheet" id="add-sheet">
+  <div class="sheet-handle"></div>
+  <div class="sheet-header">
+    <div class="sheet-title">Add chore</div>
+    <button class="sheet-close" onclick="closeAddChore()">×</button>
+  </div>
+  <div class="sheet-body">
+    <div class="form-group">
+      <label class="form-label">Chore name</label>
+      <input class="form-input" id="new-name" type="text" placeholder="e.g. Clean windows" autocomplete="off">
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Min days</label>
+        <input class="form-input" id="new-min" type="number" placeholder="3" min="1">
+        <div class="form-hint">Earliest to repeat</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Max days</label>
+        <input class="form-input" id="new-max" type="number" placeholder="7" min="1">
+        <div class="form-hint">Due by this many days</div>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Who did it last</label>
+      <div class="form-select-wrap">
+        <select class="form-select" id="new-who">
+          <option value="">— optional —</option>
+          <option value="Me">Me</option>
+          <option value="Partner">Partner</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Duration (minutes)</label>
+      <input class="form-input" id="new-duration" type="number" placeholder="15" min="1">
+      <div class="form-hint">Approx. time to complete</div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Room</label>
+      <div class="room-checks" id="new-room-checks"></div>
+    </div>
+    <button class="submit-btn" id="add-submit-btn" onclick="submitNewChore()">Add to list</button>
+  </div>
+</div>
+
+<!-- VIEW ALL SHEET -->
+<div class="sheet-overlay" id="all-overlay" onclick="closeViewAll()"></div>
+<div class="bottom-sheet" id="all-sheet">
+  <div class="sheet-handle"></div>
+  <div class="sheet-header">
+    <div class="sheet-title">All chores</div>
+    <button class="sheet-close" onclick="closeViewAll()">×</button>
+  </div>
+  <div class="sheet-body" id="all-list"></div>
+</div>
+
+<script>
+
+
+
+
+
+
+var sortMode = "urgency";
+
+
+
+
+
+
+/* ═══════════════════════════════════════
+   CONFIGURATION
+   ═══════════════════════════════════════
+   Sheet layout:
+     A = Chore name
+     B = Min days
+     C = Max days
+     D = Last done (written by app, format: "22 Mar 2025 14:30 · Me")
+     E = Room code(s), space-separated e.g. "k bt"
+     F = Who did it last (written separately for clarity)
+     I = Legend  e.g. "k = Kitchen"
+   DATA_START_ROW: first data row (skip header)
+═══════════════════════════════════════ */
+const CONFIG = {
+  SHEET_ID:      '16nGtOxBWpYW8_go2DzqBh_IXAiciwlEzDzO8N2VirvQ',
+  SHEET_NAME:    'Sheet1',
+  API_KEY:       'AIzaSyDb065U8j5l8LhKNzcz3onSoDxknA4d7rU',
+  COL_NAME:      1,
+  COL_MIN_DAYS:  2,
+  COL_MAX_DAYS:  3,
+  COL_LAST_DONE: 4,
+  COL_ROOM:      5,
+  COL_WHO:       6,
+  COL_DURATION:  7,   // G — minutes e.g. 15
+  COL_PREREQ:    8,   // H — prerequisite row numbers, comma-separated
+  COL_LEGEND:    9,
+  DATA_START_ROW: 2,
+  YOUR_NAME:     'Anthony',
+  PARTNER_NAME:  'Kathrina',
+};
+
+const OAUTH_CLIENT_ID = '321304865512-53n0nqgmg7il2i7mjinni0efd025lpgi.apps.googleusercontent.com';
+const SCOPES = 'https://www.googleapis.com/auth/spreadsheets';
+
+// ─── Legend cache ─────────────────────────────────
+const LEGEND_KEY    = 'chores_legend_v1';
+const LEGEND_TTL_MS = 24 * 60 * 60 * 1000;
+
+function saveLegendCache(legend) {
+  try { localStorage.setItem(LEGEND_KEY, JSON.stringify({ ts: Date.now(), legend })); } catch(e) {}
+}
+function loadLegendCache() {
+  try {
+    const raw = localStorage.getItem(LEGEND_KEY);
+    if (!raw) return null;
+    const { ts, legend } = JSON.parse(raw);
+    if (Date.now() - ts > LEGEND_TTL_MS) return null;
+    return legend;
+  } catch(e) { return null; }
+}
+function bustLegendCache() {
+  try { localStorage.removeItem(LEGEND_KEY); } catch(e) {}
+}
+
+
+
+// ─── State ────────────────────────────────────────
+let tokenClient  = null;
+let accessToken  = null;
+let pendingWrite = null;
+let allChores    = [];
+let roomLegend   = {};
+let filterDays   = 4;
+let filterRoom   = '';
+
+// ─── Helpers ─────────────────────────────────────
+const colLetter = (n) => String.fromCharCode(64 + n);
+
+function formatDate(d) {
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const pad = n => String(n).padStart(2, '0');
+  return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
+function parseDate(str) {
+  if (!str) return null;
+  // Strip who suffix if present e.g. "22 Mar 2025 14:30 · Me"
+  const cleaned = str.split(' · ')[0].trim();
+  const d = new Date(cleaned);
+  return isNaN(d) ? null : d;
+}
+
+function daysSince(date) {
+  if (!date) return Infinity;
+  return (Date.now() - date.getTime()) / 86400000;
+}
+
+function urgencyRatio(minDays, maxDays, days) {
+  if (!isFinite(days)) return 1.5;
+  if (maxDays <= 0) return 0;
+  return days / maxDays;
+}
+
+function urgencyColor(ratio) {
+  if (ratio <= 0.35) return 'var(--c-fresh)';
+  if (ratio <= 0.65) return 'var(--c-ok)';
+  if (ratio <= 0.85) return 'var(--c-soon)';
+  if (ratio <= 1.0)  return 'var(--c-due)';
+  return 'var(--c-over)';
+}
+
+function urgencyBarWidth(ratio) { return Math.min(ratio * 100, 100) + '%'; }
+
+function relativeTime(date) {
+  if (!date) return 'Never done';
+  const d   = daysSince(date);
+  const now = new Date();
+  const hr  = now.getHours();
+
+  if (d < 0.04) return 'Done just now';
+
+  if (d < 1) {
+    const doneHr = new Date(date).getHours();
+    if (doneHr < 12 && hr >= 12) return 'Done this morning';
+    return 'Done today';
+  }
+
+  if (d < 2) {
+    const doneHr = new Date(date).getHours();
+    if (doneHr >= 18) return 'Done last night';
+    if (doneHr >= 12) return 'Done yesterday afternoon';
+    return 'Done yesterday';
+  }
+
+  const days = Math.floor(d);
+  return `Done ${days} day${days !== 1 ? 's' : ''} ago`;
+}
+
+function showToast(msg, duration = 2200) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), duration);
+}
+
+function roomName(codes) {
+  if (!codes) return '';
+  return codes.split(' ').filter(Boolean).map(c => roomLegend[c.toLowerCase()] || c).join(', ');
+}
+
+// ─── Legend parsing ───────────────────────────────
+function parseLegend(rows) {
+  const legend = {};
+  rows.forEach(row => {
+    const cell = (row[CONFIG.COL_LEGEND - 1] || '').trim();
+    if (!cell) return;
+    const match = cell.match(/^([^\s=]+)\s*=\s*(.+)$/);
+    if (match) legend[match[1].toLowerCase()] = match[2].trim();
+  });
+  return legend;
+}
+
+// ─── Room dropdowns ───────────────────────────────
+function populateRoomDropdowns() {
+  const mainSel = document.getElementById('room-select');
+  while (mainSel.options.length > 1) mainSel.remove(1);
+  Object.entries(roomLegend).sort((a,b) => a[1].localeCompare(b[1])).forEach(([code, name]) => {
+    mainSel.appendChild(new Option(name, code));
+  });
+  if (filterRoom) mainSel.value = filterRoom;
+}
+
+// ─── Load chores ──────────────────────────────────
+async function loadChores(forceRefresh = false) {
+  if (forceRefresh && !accessToken) {
+    await new Promise(resolve => {
+      const _saved = pendingWrite;
+      pendingWrite = { customCallback: async () => { pendingWrite = _saved; resolve(); } };
+      initOAuth();
+    });
+  }
+  if (CONFIG.SHEET_ID === 'YOUR_SHEET_ID_HERE') {
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('config-banner').classList.remove('hidden');
+    document.getElementById('chore-list').style.display = 'flex';
+    renderDemo(); return;
+  }
+
+  document.getElementById('loading').style.display = 'block';
+  document.getElementById('error').style.display   = 'none';
+  document.getElementById('chore-list').style.display = 'none';
+
+  if (forceRefresh) bustLegendCache();
+  const cachedLegend = loadLegendCache();
+
+  try {
+    if (cachedLegend) {
+      // Fast path: only fetch task data (A–F)
+      roomLegend = cachedLegend;
+      populateRoomDropdowns();
+      const range = encodeURIComponent(`${CONFIG.SHEET_NAME}!A${CONFIG.DATA_START_ROW}:G`);
+      const url   = `https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.SHEET_ID}/values/${range}?key=${CONFIG.API_KEY}`;
+      const res   = await fetch(url);
+      const data  = await res.json();
+      if (data.error) throw new Error(data.error.message);
+      parseAndCacheChores(data.values || []);
+    } else {
+      // Full fetch (A–I) to get legend
+      const range = encodeURIComponent(`${CONFIG.SHEET_NAME}!A${CONFIG.DATA_START_ROW}:I`);
+      const url   = `https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.SHEET_ID}/values/${range}?key=${CONFIG.API_KEY}`;
+      const res   = await fetch(url);
+      const data  = await res.json();
+      if (data.error) throw new Error(data.error.message);
+      const rows = data.values || [];
+      roomLegend = parseLegend(rows);
+      saveLegendCache(roomLegend);
+      populateRoomDropdowns();
+      parseAndCacheChores(rows);
+    }
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('chore-list').style.display = 'flex';
+    applyFilterAndRender();
+    // Update page title with overdue count
+    updatePageTitle();
+  } catch(e) {
+    document.getElementById('loading').style.display = 'none';
+    const err = document.getElementById('error');
+    err.style.display = 'block';
+    err.innerHTML = `<strong>Couldn't load chores</strong><br>${e.message}<br><br>Check your Sheet ID, API key, and that the sheet is public.`;
+  }
+}
+
+function parseAndCacheChores(rows) {
+  allChores = rows.filter(r => r[CONFIG.COL_NAME - 1]).map((row, i) => {
+    const name     = row[CONFIG.COL_NAME - 1]     || '';
+    const minDays  = parseFloat(row[CONFIG.COL_MIN_DAYS  - 1]) || 1;
+    const maxDays  = parseFloat(row[CONFIG.COL_MAX_DAYS  - 1]) || 7;
+    const lastDone = parseDate(row[CONFIG.COL_LAST_DONE - 1]);
+    const room     = (row[CONFIG.COL_ROOM - 1] || '').trim().toLowerCase();
+    const who      = (row[CONFIG.COL_WHO - 1] || '').trim();
+    const duration = parseInt(row[CONFIG.COL_DURATION - 1]) || 0;
+    const prereqs  = (row[CONFIG.COL_PREREQ - 1] || '').split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n));
+    const days     = daysSince(lastDone);
+    const ratio    = urgencyRatio(minDays, maxDays, days);
+    return { name, minDays, maxDays, lastDone, room, who, duration, prereqs, days, ratio, sheetRow: CONFIG.DATA_START_ROW + i };
+  }).sort((a, b) => b.ratio - a.ratio);
+}
+
+function updatePageTitle() {
+  const overdue = allChores.filter(c => c.ratio >= 1).length;
+  document.title = overdue > 0 ? `(${overdue}) Chores` : 'Chores';
+}
+
+// ─── Filters ──────────────────────────────────────
+function setRoom(code) {
+  filterRoom = code;
+  document.getElementById('room-select').classList.toggle('active', !!code);
+  document.getElementById('filter-bar').classList.toggle('dimmed', !!code);
+  applyFilterAndRender();
+}
+
+function setSort(mode) {
+  sortMode = mode;
+  document.getElementById('sort-urgency-btn').classList.toggle('active', mode === 'urgency');
+  document.getElementById('sort-duration-btn').classList.toggle('active', mode === 'duration');
+  applyFilterAndRender();
+}
+
+function setFilter(days) {
+  filterDays = days;
+  document.querySelectorAll('.filter-btn').forEach(b => {
+    b.classList.toggle('active', parseInt(b.dataset.days) === days);
+  });
+  applyFilterAndRender();
+}
+
+function applyFilterAndRender() {
+  const list = document.getElementById('chore-list');
+  // Keep swipe hint, clear the rest
+  const hint = document.getElementById('swipe-hint');
+  list.innerHTML = '';
+  if (hint) list.appendChild(hint);
+
+  let filtered;
+  if (filterRoom) {
+    filtered = allChores.filter(c => {
+      const codes = (c.room || '').toLowerCase().split(' ').filter(Boolean);
+      return codes.includes(filterRoom.toLowerCase());
+    });
+  } else {
+    filtered = allChores.filter(c => {
+      const daysUntilDue = c.maxDays - c.days;
+      if (filterDays === 999) return c.ratio >= 1;
+      return daysUntilDue <= filterDays || c.ratio >= 1;
+    });
+  }
+
+  // Apply sort
+  if (sortMode === 'duration') {
+    // Chores with duration first (ascending), then no-duration by urgency
+    filtered.sort((a, b) => {
+      if (a.duration && b.duration) return a.duration - b.duration;
+      if (a.duration) return -1;
+      if (b.duration) return 1;
+      return b.ratio - a.ratio;
+    });
+  } else {
+    filtered.sort((a, b) => b.ratio - a.ratio);
+  }
+
+  if (filtered.length === 0) {
+    const label = filterRoom
+      ? `in ${roomName(filterRoom)}`
+      : `due within ${filterDays === 999 ? 'deadline' : filterDays + ' day' + (filterDays !== 1 ? 's' : '')}`;
+    list.innerHTML += `<div class="empty-state"><span class="emoji">✨</span>All caught up!<br><span style="font-size:12px">Nothing ${label}.</span></div>`;
+  } else {
+    const _prevCount = filtered.filter(c=>!isSnoozed(c.sheetRow)).length;
+    const _visible = filtered.filter(c => !isSnoozed(c.sheetRow));
+    _visible.forEach(chore => {
+      const wrap = buildCardWrap(chore);
+      list.appendChild(wrap);
+    });
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      list.querySelectorAll('.urgency-fill').forEach(el => { el.style.width = el.dataset.target; });
+    }));
+    checkAllCaughtUp(_visible.length);
+  }
+}
+
+// ─── Build card with swipe wrapper ────────────────
+function buildCardWrap(chore, readOnly = false) {
+  const { name, lastDone, ratio, sheetRow, room, who } = chore;
+  const color  = urgencyColor(ratio);
+  const width  = urgencyBarWidth(ratio);
+  const rLabel = roomName(room);
+  const whoLine      = who      ? `<div class="chore-room-tag">👤 Last done by ${who}</div>` : '';
+  const durationLine = chore.duration ? `<div class="chore-room-tag">⏱ ~${chore.duration} min</div>` : '';
+
+  if (readOnly) {
+    const card = document.createElement('div');
+    card.className = 'chore-card';
+    card.innerHTML = `
+      <div class="chore-inner">
+        <div>
+          <div class="chore-name">${name}</div>
+          ${rLabel ? `<div class="chore-room-tag">📍 ${rLabel}</div>` : ''}
+          ${whoLine}
+          ${durationLine}
+        </div>
+      </div>
+      <div class="last-done">${relativeTime(lastDone)}</div>
+      <div class="urgency-bar" style="background:${color}20">
+        <div class="urgency-fill" style="background:${color}" data-target="${width}"></div>
+      </div>`;
+    return card;
+  }
+
+  const wrap = document.createElement('div');
+  wrap.className = 'chore-card-wrap';
+
+  const bgDone = document.createElement('div');
+  bgDone.className = 'swipe-bg-done';
+  bgDone.innerHTML = '✓';
+
+  const bgSnooze = document.createElement('div');
+  bgSnooze.className = 'swipe-bg-snooze';
+  bgSnooze.innerHTML = '💤';
+
+  const card = document.createElement('div');
+  card.className = 'chore-card';
+  card.dataset.row = sheetRow;
+  card.innerHTML = `
+    <div class="chore-inner">
+      <div>
+        <div class="chore-name">${name}</div>
+        ${rLabel ? `<div class="chore-room-tag">📍 ${rLabel}</div>` : ''}
+        ${whoLine}
+      </div>
+    </div>
+    <div class="last-done">${relativeTime(lastDone)}</div>
+    <div class="urgency-bar" style="background:${color}20">
+      <div class="urgency-fill" style="background:${color}" data-target="${width}"></div>
+    </div>`;
+
+  wrap.appendChild(bgDone);
+  wrap.appendChild(bgSnooze);
+  wrap.appendChild(card);
+  attachSwipe(card, bgDone, bgSnooze, sheetRow);
+  return wrap;
+}
+
+// ─── Swipe to done ────────────────────────────────
+function attachSwipe(card, bgDone, bgSnooze, sheetRow) {
+  let startX = 0, startY = 0, dx = 0, tracking = false;
+  const THRESHOLD = 90;
+
+  card.addEventListener('touchstart', e => {
+    startX = e.touches[0].clientX; startY = e.touches[0].clientY;
+    tracking = true; dx = 0;
+  }, { passive: true });
+
+  card.addEventListener('touchmove', e => {
+    if (!tracking) return;
+    const mx = e.touches[0].clientX - startX;
+    const my = e.touches[0].clientY - startY;
+    if (Math.abs(my) > Math.abs(mx) + 10) {
+      tracking = false;
+      card.style.transform = '';
+      bgDone.classList.remove('visible');
+      bgSnooze.classList.remove('visible');
+      return;
+    }
+    dx = Math.max(-140, Math.min(mx, 140));
+    card.style.transform = `translateX(${dx}px)`;
+    card.style.transition = 'none';
+    bgDone.classList.toggle('visible', dx < -30);
+    bgSnooze.classList.toggle('visible', dx > 30);
+  }, { passive: true });
+
+  card.addEventListener('touchend', () => {
+    if (!tracking) return;
+    tracking = false;
+    card.style.transition = '';
+    bgDone.classList.remove('visible');
+    bgSnooze.classList.remove('visible');
+
+    if (dx <= -THRESHOLD) {
+      // Swipe left — mark done
+      card.style.animation = 'cardSnap .3s ease forwards';
+      // Fire particles immediately at touch point
+      const pMode = isAnthony() ? 'fire' : 'rainbow';
+      burstParticles(pMode, startX, startY, isAnthony() ? 35 : 40);
+      markDone(null, sheetRow, card);
+      setTimeout(() => card.closest('.chore-card-wrap')?.remove(), 400);
+    } else if (dx >= THRESHOLD) {
+      // Swipe right — snooze 1 day
+      card.style.animation = 'cardSnapRight .3s ease forwards';
+      snoozeChore(sheetRow);
+      setTimeout(() => card.closest('.chore-card-wrap')?.remove(), 400);
+    } else {
+      card.style.transform = '';
+    }
+    dx = 0;
+  });
+}
+
+// ─── Mark Done ────────────────────────────────────
+async function markDone(btn, sheetRow, cardOverride) {
+  if (CONFIG.SHEET_ID === 'YOUR_SHEET_ID_HERE') { showToast('Demo mode — configure your sheet to save ✓'); return; }
+  if (btn) btn.disabled = true;
+
+  const chore = allChores.find(c => c.sheetRow === sheetRow);
+  const prevLastDone = chore ? chore.lastDone : null;
+  const prevWho      = chore ? chore.who : '';
+
+  const now      = new Date();
+  const whoName  = localStorage.getItem('chores_active_user') || CONFIG.YOUR_NAME;
+  const value    = formatDate(now);
+  const whoValue = whoName;
+
+  // Update in-memory immediately
+  if (chore) { chore.lastDone = now; chore.who = whoName; chore.days = 0; chore.ratio = 0; }
+
+  // Update card UI immediately
+  const card = cardOverride || (btn ? btn.closest('.chore-card') : null);
+  if (card && btn) {
+    btn.classList.add('saving'); btn.textContent = '✓';
+    setTimeout(() => { btn.classList.remove('saving'); btn.textContent = 'Done'; btn.disabled = false; }, 1800);
+  }
+  if (card) {
+    card.querySelector('.last-done').textContent = 'Done just now';
+    card.querySelector('.urgency-fill').style.width = '5%';
+    card.querySelector('.urgency-fill').style.background = 'var(--c-fresh)';
+    card.querySelector('.urgency-bar').style.background  = 'var(--c-fresh)20';
+  }
+
+  // Update page title
+  updatePageTitle();
+  haptic(40);
+  checkTagTeam(chore, whoName);
+  recordLastActive(whoName);
+  updateProfilePill();
+
+
+
+  // Write immediately
+  const doWrite = async () => {
+    try {
+      await writeCellToSheet(sheetRow, CONFIG.COL_LAST_DONE, value);
+      await writeCellToSheet(sheetRow, CONFIG.COL_WHO, whoValue);
+    } catch(e) { showToast('Save failed — ' + e.message); }
+  };
+  if (accessToken) { doWrite(); }
+  else { pendingWrite = { customCallback: doWrite }; initOAuth(); }
+}
+
+async function writeCellToSheet(sheetRow, col, value) {
+  const range = `${CONFIG.SHEET_NAME}!${colLetter(col)}${sheetRow}`;
+  const url   = `https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.SHEET_ID}/values/${encodeURIComponent(range)}?valueInputOption=RAW`;
+  const res   = await fetch(url, {
+    method: 'PUT',
+    headers: { 'Authorization': `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ values: [[value]] }),
+  });
+  const data = await res.json();
+  if (data.error) throw new Error(data.error.message);
+}
+
+
+
+
+// ─── Add chore ────────────────────────────────────
+function openAddChore() {
+  const container = document.getElementById('new-room-checks');
+  container.innerHTML = '';
+  Object.entries(roomLegend).sort((a,b) => a[1].localeCompare(b[1])).forEach(([code, name]) => {
+    const label = document.createElement('label');
+    label.className = 'room-check-label';
+    // Pre-check if a room filter is active
+    const checked = filterRoom && (filterRoom === code || filterRoom.split(' ').includes(code)) ? 'checked' : '';
+    label.innerHTML = `<input type="checkbox" value="${code}" ${checked}> ${name}`;
+    container.appendChild(label);
+  });
+  document.getElementById('add-overlay').classList.add('open');
+  document.getElementById('add-sheet').classList.add('open');
+  setTimeout(() => document.getElementById('new-name').focus(), 400);
+}
+
+function closeAddChore() {
+  document.getElementById('add-overlay').classList.remove('open');
+  document.getElementById('add-sheet').classList.remove('open');
+}
+
+async function submitNewChore() {
+  const name = document.getElementById('new-name').value.trim();
+  const min  = parseInt(document.getElementById('new-min').value);
+  const max  = parseInt(document.getElementById('new-max').value);
+  const room = Array.from(document.querySelectorAll('#new-room-checks input:checked')).map(cb => cb.value).join(' ');
+
+  if (!name)        { showToast('Please enter a chore name'); return; }
+  if (!min || !max) { showToast('Please enter min and max days'); return; }
+  if (min > max)    { showToast('Min days must be ≤ max days'); return; }
+  if (CONFIG.SHEET_ID === 'YOUR_SHEET_ID_HERE') { showToast('Demo mode — configure your sheet to save'); return; }
+
+  const btn = document.getElementById('add-submit-btn');
+  btn.disabled = true; btn.textContent = 'Saving…';
+
+  const range = encodeURIComponent(`${CONFIG.SHEET_NAME}!A:F`);
+  const url   = `https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.SHEET_ID}/values/${range}:append?valueInputOption=RAW&insertDataOption=INSERT_ROWS`;
+
+  const doAppend = async () => {
+    try {
+      const dur = parseInt(document.getElementById('new-duration').value) || '';
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ values: [[name, min, max, '', room, '', dur]] }),
+      });
+      const data = await res.json();
+      if (data.error) throw new Error(data.error.message);
+      showToast(`"${name}" added ✓`);
+      closeAddChore();
+      document.getElementById('new-name').value = '';
+      document.getElementById('new-min').value  = '';
+      document.getElementById('new-max').value  = '';
+      document.getElementById('new-duration').value = '';
+      document.querySelectorAll('#new-room-checks input').forEach(cb => cb.checked = false);
+      await loadChores();
+    } catch(e) {
+      showToast('Failed to add — ' + e.message);
+    } finally {
+      btn.disabled = false; btn.textContent = 'Add to list';
+    }
+  };
+
+  if (accessToken) { await doAppend(); }
+  else { pendingWrite = { customCallback: doAppend }; initOAuth(); }
+}
+
+// ─── View All ─────────────────────────────────────
+function openViewAll() {
+  const container = document.getElementById('all-list');
+  container.innerHTML = '';
+  if (allChores.length === 0) {
+    container.innerHTML = '<div class="empty-state"><span class="emoji">🧹</span>No chores loaded yet.</div>';
+  } else {
+    [...allChores].sort((a,b) => a.name.localeCompare(b.name)).forEach(chore => {
+      const color  = urgencyColor(chore.ratio);
+      const rLabel = roomName(chore.room);
+      const row = document.createElement('div');
+      row.className = 'all-chore-row';
+      row.innerHTML = `
+        <div class="all-dot" style="background:${color}"></div>
+        <div class="all-chore-name">
+          ${chore.name}
+          ${rLabel ? `<div class="all-chore-room">📍 ${rLabel}</div>` : ''}
+          ${chore.who ? `<div class="all-chore-room">👤 ${chore.who}</div>` : ''}
+        </div>
+        <div class="all-chore-meta">Every ${chore.minDays}–${chore.maxDays}d<br>${relativeTime(chore.lastDone)}</div>
+        <button class="all-done-btn" onclick="markDoneFromViewAll(${chore.sheetRow}, this)">Done</button>
+      `;
+      container.appendChild(row);
+    });
+  }
+  document.getElementById('all-overlay').classList.add('open');
+  document.getElementById('all-sheet').classList.add('open');
+}
+
+async function markDoneFromViewAll(sheetRow, btn) {
+  btn.textContent = '✓';
+  btn.disabled = true;
+  await markDone(null, sheetRow, null);
+  // Update the row text
+  const meta = btn.closest('.all-chore-row').querySelector('.all-chore-meta');
+  if (meta) meta.innerHTML = `Every ${(allChores.find(c=>c.sheetRow===sheetRow)||{}).minDays||'?'}–${(allChores.find(c=>c.sheetRow===sheetRow)||{}).maxDays||'?'}d<br>Done just now`;
+}
+
+function closeViewAll() {
+  document.getElementById('all-overlay').classList.remove('open');
+  document.getElementById('all-sheet').classList.remove('open');
+}
+
+// ─── Night mode ───────────────────────────────────
+
+
+// ─── Pull to refresh ──────────────────────────────
+(function() {
+  let startY = 0, pulling = false, triggered = false;
+  const indicator = document.getElementById('ptr-indicator');
+
+  document.addEventListener('touchstart', e => {
+    if (window.scrollY === 0) { startY = e.touches[0].clientY; pulling = true; triggered = false; }
+  }, { passive: true });
+
+  document.addEventListener('touchmove', e => {
+    if (!pulling) return;
+    const dy = e.touches[0].clientY - startY;
+    if (dy > 60 && !triggered) {
+      indicator.classList.add('visible');
+      indicator.textContent = '↑ Release to refresh';
+    } else if (dy > 10) {
+      indicator.classList.add('visible');
+      indicator.textContent = '↓ Pull to refresh';
+    }
+  }, { passive: true });
+
+  document.addEventListener('touchend', e => {
+    if (!pulling) return;
+    pulling = false;
+    const dy = e.changedTouches[0].clientY - startY;
+    indicator.classList.remove('visible');
+    if (dy > 60) {
+      indicator.textContent = 'Refreshing…';
+      indicator.classList.add('visible');
+      loadChores(true).then(() => { indicator.classList.remove('visible'); });
+    }
+  });
+})();
+
+// ─── Auto-refresh on foreground ───────────────────
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden && CONFIG.SHEET_ID !== 'YOUR_SHEET_ID_HERE') {
+    loadChores();
+  }
+});
+
+// ─── Snooze chore for 1 day ──────────────────────────
+const SNOOZE_KEY = 'chores_snoozed_v1';
+
+function getSnoozed() {
+  try { return JSON.parse(localStorage.getItem(SNOOZE_KEY)) || {}; } catch { return {}; }
+}
+
+function snoozeChore(sheetRow) {
+  const snoozed = getSnoozed();
+  const midnight = new Date(); midnight.setHours(24, 0, 0, 0);
+  snoozed[sheetRow] = midnight.getTime();
+  localStorage.setItem(SNOOZE_KEY, JSON.stringify(snoozed));
+  showToast('Hidden until tomorrow 💤');
+}
+
+function isSnoozed(sheetRow) {
+  const snoozed = getSnoozed();
+  const expiry  = snoozed[sheetRow];
+  if (!expiry) return false;
+  if (Date.now() > expiry) {
+    delete snoozed[sheetRow];
+    localStorage.setItem(SNOOZE_KEY, JSON.stringify(snoozed));
+    return false;
+  }
+  return true;
+}
+
+
+
+const BREAK_EVERY = 30;
+const BREAK_MINS  = 5;
+function getDifficulty(dur) {
+  if (!dur) return 'medium';
+  if (dur <= 10) return 'easy';
+  if (dur <= 25) return 'medium';
+  return 'hard';
+}
+
+const DIFF_LABEL  = { easy:'Easy', medium:'Medium', hard:'Hard' };
+
+function smartRotationSort(chores) {
+  const pools = { hard:[], medium:[], easy:[] };
+  chores.forEach(c => pools[getDifficulty(c.duration)].push(c));
+  Object.values(pools).forEach(p => p.sort((a,b) => b.ratio - a.ratio));
+  const order = ['hard','easy','medium'];
+  const result = [];
+  let i = 0;
+  while (pools.hard.length || pools.medium.length || pools.easy.length) {
+    const key = order[i++ % 3];
+    if (pools[key].length) result.push(pools[key].shift());
+  }
+  return result;
+}
+const DIFF_ICON   = { easy:'🌿', medium:'⚡', hard:'💪' };
+
+// ─── Room grouping sort ───────────────────────────────
+// Groups tasks by primary room, orders rooms by max urgency,
+// preserves input order within each room group
+function roomGroupSort(chores) {
+  // Extract primary room code for each chore
+  function primaryRoom(c) {
+    return (c.room || '').toLowerCase().split(' ')[0] || '_none';
+  }
+
+  // Group chores by room
+  const groups = {};
+  chores.forEach(c => {
+    const r = primaryRoom(c);
+    if (!groups[r]) groups[r] = [];
+    groups[r].push(c);
+  });
+
+  // Order rooms by highest urgency in that room
+  const roomOrder = Object.keys(groups).sort((a, b) => {
+    const maxA = Math.max(...groups[a].map(c => c.ratio));
+    const maxB = Math.max(...groups[b].map(c => c.ratio));
+    return maxB - maxA;
+  });
+
+  // Flatten — within each room keep input order (already smart-sorted)
+  return roomOrder.flatMap(r => groups[r]);
+}
+// ─── Topological sort respecting prereqs ──────────────
+// Reorders a list of chores so prereqs always come before dependents
+// while preserving the input order as much as possible
+function topoSort(chores) {
+  // Only enforce prereqs that are in THIS schedule
+  const inSchedule = new Set(chores.map(c => c.sheetRow));
+  const done       = new Set();
+  const result     = [];
+  let   remaining  = [...chores];
+  const maxPasses  = chores.length * 2;
+  let   passes     = 0;
+
+  while (remaining.length && passes++ < maxPasses) {
+    const eligible = remaining.filter(c => {
+      const unmet = (c.prereqs || []).filter(row => inSchedule.has(row) && !done.has(row));
+      return unmet.length === 0;
+    });
+
+    if (!eligible.length) eligible.push(remaining[0]); // break cycle
+
+    const pick = eligible[0];
+    result.push(pick);
+    done.add(pick.sheetRow);
+    remaining = remaining.filter(c => c !== pick);
+  }
+
+  remaining.forEach(c => result.push(c));
+  return result;
+}
+// ─── Prereq checking ──────────────────────────────────
+
+
+// Look up a task name by its sheet row number
+
+// ─── Working Bee ──────────────────────────────────────────
+let beeMode = 'priority';
+
+function openWorkingBee() {
+  document.getElementById('bee-screen').style.display = 'block';
+  document.getElementById('bee-hours').value = '';
+  document.getElementById('bee-mins').value  = '30';
+  updateBee();
+}
+
+function closeWorkingBee() {
+  document.getElementById('bee-screen').style.display = 'none';
+}
+
+function toggleBeeRoomGroup() {
+  groupByRoom = !groupByRoom;
+  const tog  = document.getElementById('bee-room-toggle');
+  const knob = document.getElementById('bee-room-knob');
+  if (tog && knob) {
+    tog.style.background  = groupByRoom ? 'var(--c-due)' : 'var(--border)';
+    knob.style.transform  = groupByRoom ? 'translateX(18px)' : 'translateX(0)';
+    knob.style.background = groupByRoom ? 'white' : 'var(--ink-mute)';
+  }
+  updateBee();
+}
+
+function setBeeMode(mode) {
+  beeMode = mode;
+  document.getElementById('bee-mode-priority').classList.toggle('active', mode === 'priority');
+  document.getElementById('bee-mode-most').classList.toggle('active', mode === 'most');
+  const sm = document.getElementById('bee-mode-smart');
+  if (sm) sm.classList.toggle('active', mode === 'smart');
+  updateBee();
+}
+
+function fmtTime(m) { return m>=60?`${Math.floor(m/60)}h ${m%60>0?m%60+'m':''}`.trim():`${m}m`; }
+
+function buildBeeSchedule(budget) {
+  const pool = allChores.filter(c => c.duration > 0 && !isSnoozed(c.sheetRow));
+
+  let sorted;
+  if (beeMode === 'priority') sorted = [...pool].sort((a,b) => b.ratio - a.ratio);
+  else if (beeMode === 'most') sorted = [...pool].sort((a,b) => a.duration - b.duration);
+  else sorted = smartRotationSort(pool);
+
+  if (groupByRoom) sorted = roomGroupSort(sorted);
+  sorted = topoSort(sorted);
+
+  const items   = [];
+  let workTime  = 0, breakTime = 0, breaks = 0, elapsed = 0;
+
+  for (const c of sorted) {
+    if (elapsed > 0 && elapsed >= BREAK_EVERY) {
+      breakTime += BREAK_MINS; breaks++;
+      items.push({ _isBreak: true, breakNo: breaks });
+      elapsed = 0;
+    }
+    if (workTime + breakTime + c.duration <= budget) {
+      items.push(c); workTime += c.duration; elapsed += c.duration;
+    }
+    if (workTime + breakTime >= budget) break;
+  }
+  return { items, workTime, breakTime, breaks };
+}
+
+function updateBee() {
+  const hours  = parseInt(document.getElementById('bee-hours').value) || 0;
+  const mins   = parseInt(document.getElementById('bee-mins').value)  || 0;
+  const budget = hours * 60 + mins;
+  const listEl = document.getElementById('bee-list');
+  const summEl = document.getElementById('bee-summary');
+
+  if (budget <= 0) {
+    listEl.innerHTML = '<div class="empty-state"><span class="emoji">🐝</span>Set your time above to get started.</div>';
+    summEl.style.display = 'none'; return;
+  }
+
+  const { items, workTime, breakTime, breaks } = buildBeeSchedule(budget);
+  const tasks   = items.filter(i => !i._isBreak);
+  const noDur   = allChores.filter(c => !c.duration && !isSnoozed(c.sheetRow));
+  const timeLeft = budget - workTime - breakTime;
+
+  summEl.style.display = 'block';
+  if (!tasks.length) {
+    summEl.innerHTML = `<span style="color:var(--c-over)">No tasks with durations fit in ${fmtTime(budget)}.</span>`;
+    listEl.innerHTML = '<div class="empty-state"><span class="emoji">🤔</span>Add durations in column G to use Working Bee.</div>';
+    return;
+  }
+
+  summEl.innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <span><strong style="color:var(--ink)">${tasks.length} chore${tasks.length!==1?'s':''}</strong> · ${fmtTime(workTime)} work · ${fmtTime(breakTime)} breaks</span>
+      <span style="color:${timeLeft>0?'var(--c-fresh)':'var(--c-due)'}"><strong>${fmtTime(timeLeft)}</strong> spare</span>
+    </div>`;
+
+  listEl.innerHTML = '';
+  let taskNum = 0;
+  let lastRoom = null;
+
+  items.forEach(item => {
+    if (item._isBreak) {
+      const bc = document.createElement('div');
+      bc.className = 'bee-break-card';
+      bc.innerHTML = `<span style="font-size:18px">☕</span><div><div style="font-size:13px;font-weight:600;color:var(--ink-soft)">Break ${item.breakNo} · ${BREAK_MINS} min</div><div style="font-size:11px;color:var(--ink-mute);margin-top:1px">Step away. Hydrate.</div></div><span style="margin-left:auto;font-size:11px;color:var(--ink-mute)">${BREAK_MINS}m</span>`;
+      listEl.appendChild(bc);
+    } else {
+      taskNum++;
+      const diff   = getDifficulty(item.duration);
+      const color  = urgencyColor(item.ratio);
+      const rLabel = roomName(item.room);
+
+      // Room header (when grouped)
+      if (groupByRoom) {
+        const room = (item.room||'').toLowerCase().split(' ')[0]||'_none';
+        if (room !== lastRoom) {
+          lastRoom = room;
+          const rh = document.createElement('div');
+          rh.style.cssText = 'font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:1.5px;color:var(--ink-mute);padding:6px 2px 2px;';
+          rh.textContent   = '📍 ' + (roomName(item.room) || 'General');
+          listEl.appendChild(rh);
+        }
+      }
+
+      const card = document.createElement('div');
+      card.style.cssText = 'background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);overflow:hidden;';
+      card.innerHTML = `
+        <div style="display:flex;align-items:center;gap:12px;padding:12px 14px 8px">
+          <div style="width:24px;height:24px;border-radius:50%;background:var(--surface2,#eee);border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--ink-mute);flex-shrink:0">${taskNum}</div>
+          <div style="flex:1">
+            <div style="font-size:15px;font-weight:500;color:var(--ink)">${item.name}</div>
+            <div style="display:flex;gap:6px;margin-top:3px;flex-wrap:wrap;align-items:center">
+              <span class="diff-badge diff-${diff}">${DIFF_ICON[diff]} ${DIFF_LABEL[diff]}</span>
+              <span style="font-size:10px;color:var(--ink-mute)">⏱ ${item.duration} min</span>
+              ${rLabel&&!groupByRoom?`<span style="font-size:10px;color:var(--ink-mute)">📍 ${rLabel}</span>`:''}
+              ${item.prereqs&&item.prereqs.length?`<span style="font-size:10px;color:var(--ink-mute)">🔒 after row ${item.prereqs.join(', ')}</span>`:''}
+            </div>
+          </div>
+          <div style="font-size:11px;font-weight:600;color:${color};text-align:right;flex-shrink:0">${item.ratio>=1?'⚠️ Due':item.ratio>=0.85?'Soon':''}</div>
+        </div>
+        <div style="height:3px;background:${color}"></div>`;
+      listEl.appendChild(card);
+    }
+  });
+
+  if (timeLeft > 0 && noDur.length) {
+    const bonus = document.createElement('div');
+    bonus.style.cssText = 'margin-top:4px;padding:10px 14px;background:var(--surface);border:1.5px dashed var(--border);border-radius:12px;font-size:12px;color:var(--ink-mute)';
+    bonus.innerHTML = `<strong style="color:var(--ink-soft)">+${fmtTime(timeLeft)} spare</strong> — no duration set: ${noDur.slice(0,3).map(c=>`<span style="color:var(--ink)">${c.name}</span>`).join(', ')}${noDur.length>3?` +${noDur.length-3} more`:''}`;
+    listEl.appendChild(bonus);
+  }
+}
+
+
+
+
+// ─── Particle engine — CELEBRATION EDITION ──────────────
+const _canvas  = () => document.getElementById('particle-canvas');
+let   _rafId   = null;
+let   _particles = [];
+let   _bgFlash   = 0; // background flash intensity
+
+function burstParticles(mode, originX, originY, count = 35) {
+  const canvas = _canvas();
+  if (!canvas) return;
+  canvas.width  = window.innerWidth;
+  canvas.height = window.innerHeight;
+  canvas.style.opacity = '1';
+
+  if (_rafId) { cancelAnimationFrame(_rafId); _rafId = null; }
+  _particles = [];
+  _bgFlash = mode === 'fire' ? 0.7 : 0.5;
+
+  for (let i = 0; i < count; i++) {
+    _spawnParticle(mode, originX, originY, i / count);
+  }
+
+  _animateParticles();
+}
+
+function _spawnParticle(mode, ox, oy, t, speedMult = 1) {
+  const anthony = mode === 'fire';
+  const angle   = Math.random() * Math.PI * 2;
+  const speed   = speedMult * (3 + Math.random() * 7);
+  const size    = 3 + Math.random() * 9;
+  const life    = 0.8 + Math.random() * 0.8;
+
+  let color;
+  if (anthony) {
+    const fc = ['#ff3300','#ff6600','#ff9900','#ffcc00','#ffffff'];
+    color = fc[Math.floor(Math.random() * fc.length)];
+  } else {
+    const hue = Math.floor(Math.random() * 360);
+    color = `hsl(${hue},100%,65%)`;
+  }
+
+  // Simplified: only circles and stars (fast to draw)
+  const shape = anthony
+    ? (Math.random() > 0.4 ? 'circle' : 'ember')
+    : (Math.random() > 0.5 ? 'circle' : 'star');
+
+  _particles.push({
+    x: ox, y: oy,
+    vx: Math.cos(angle) * speed,
+    vy: Math.sin(angle) * speed - 2,
+    size, color, life, maxLife: life,
+    mode, shape,
+    rotation: Math.random() * Math.PI * 2,
+    rotSpeed: (Math.random() - 0.5) * 0.2,
+    gravity: anthony ? 0.1 : 0.15,
+    drag: 0.97,
+  });
+}
+
+function _drawHeart(ctx, x, y, size, rotation) {
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.rotate(rotation);
+  ctx.scale(size * 0.06, size * 0.06);
+  ctx.beginPath();
+  ctx.moveTo(0, 0);
+  ctx.bezierCurveTo(-10, -10, -20, 5, 0, 15);
+  ctx.bezierCurveTo(20, 5, 10, -10, 0, 0);
+  ctx.closePath();
+  ctx.fill();
+  ctx.restore();
+}
+
+function _drawStar(ctx, x, y, size, rotation, points = 5) {
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.rotate(rotation);
+  ctx.beginPath();
+  for (let i = 0; i < points * 2; i++) {
+    const a = (i * Math.PI) / points - Math.PI / 2;
+    const r = i % 2 === 0 ? size : size * 0.4;
+    i === 0 ? ctx.moveTo(Math.cos(a)*r, Math.sin(a)*r)
+            : ctx.lineTo(Math.cos(a)*r, Math.sin(a)*r);
+  }
+  ctx.closePath();
+  ctx.fill();
+  ctx.restore();
+}
+
+function _drawSparkle(ctx, x, y, size, rotation) {
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.rotate(rotation);
+  ctx.beginPath();
+  for (let i = 0; i < 4; i++) {
+    const a = (i * Math.PI) / 2;
+    ctx.moveTo(0, 0);
+    ctx.lineTo(Math.cos(a) * size, Math.sin(a) * size);
+    ctx.moveTo(0, 0);
+    ctx.lineTo(Math.cos(a + Math.PI/4) * size * 0.4, Math.sin(a + Math.PI/4) * size * 0.4);
+  }
+  ctx.closePath();
+  ctx.strokeStyle = ctx.fillStyle;
+  ctx.lineWidth   = size * 0.18;
+  ctx.stroke();
+  ctx.restore();
+}
+
+function _animateParticles() {
+  const canvas = _canvas();
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // ── Background flash ──
+  if (_bgFlash > 0.01) {
+    const anthony = _particles.length > 0 && _particles[0].mode === 'fire';
+    ctx.globalAlpha = _bgFlash * 0.18;
+    ctx.fillStyle   = anthony ? '#ff4400' : `hsl(${Date.now() * 0.3 % 360},100%,70%)`;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    _bgFlash *= 0.82;
+    ctx.globalAlpha = 1;
+  }
+
+  _particles = _particles.filter(p => p.life > 0);
+
+  for (const p of _particles) {
+    const t     = p.life / p.maxLife;
+    const alpha = t < 0.3 ? (t / 0.3) * 0.9 : t * 0.9;
+    const s     = p.size * Math.sqrt(t);
+
+    ctx.globalAlpha = alpha;
+    ctx.fillStyle   = p.color;
+
+    // Light glow only for fire
+    if (p.mode === 'fire') {
+      ctx.shadowColor = p.color;
+      ctx.shadowBlur  = 10 * t;
+    } else {
+      ctx.shadowBlur = 0;
+    }
+
+    if (p.shape === 'star') {
+      _drawStar(ctx, p.x, p.y, s, p.rotation);
+    } else if (p.shape === 'ember') {
+      ctx.beginPath();
+      ctx.ellipse(p.x, p.y, s * 0.45, s, p.rotation, 0, Math.PI * 2);
+      ctx.fill();
+    } else {
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, s, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    p.x  += p.vx;
+    p.y  += p.vy;
+    p.vy += p.gravity;
+    p.vx *= p.drag;
+    p.vy *= p.drag;
+    p.rotation += p.rotSpeed;
+    p.life -= 0.022;
+  }
+
+  ctx.globalAlpha = 1;
+  ctx.shadowBlur  = 0;
+
+  if (_particles.length > 0 || _bgFlash > 0.01) {
+    _rafId = requestAnimationFrame(_animateParticles);
+  } else {
+    canvas.style.opacity = '0';
+    _rafId = null;
+  }
+}
+
+
+
+// ─── Haptic feedback ──────────────────────────────────
+function haptic(ms=40) { try { if (navigator.vibrate) navigator.vibrate(ms); } catch {} }
+
+// ─── Tag team toast ───────────────────────────────────
+function checkTagTeam(chore, newWho) {
+  if (!chore || !chore.who || !newWho) return;
+  if (chore.who !== newWho && chore.who !== '') {
+    setTimeout(() => showToast('Tag team 🤝'), 700);
+  }
+}
+
+// ─── Landing functions ────────────────────────────────
+function selectUser(name) {
+  localStorage.setItem('chores_active_user', name);
+  applyProfile(name);
+  burstParticles(innerWidth/2, innerHeight*0.5, 45, name === CONFIG.YOUR_NAME ? 'fire' : 'rainbow');
+  haptic(60);
+  const isDark = name === CONFIG.YOUR_NAME;
+  if (isDark) document.documentElement.classList.add('dark');
+  else document.documentElement.classList.remove('dark');
+  localStorage.setItem('nightMode', isDark);
+  const btn = document.getElementById('night-btn');
+  if (btn) btn.textContent = isDark ? '☀️' : '🌙';
+  if (!accessToken) initOAuth();
+  const ls = document.getElementById('landing-screen');
+  ls.classList.add('hide');
+  setTimeout(() => {
+    ls.style.display = 'none';
+    loadChores().then(() => {
+      const days = getChoresWelcomeBack();
+      if (days) setTimeout(() => showToast('Welcome back ' + name + ' 👋'), 500);
+      else setTimeout(() => showToast(getGreeting() + ' ' + name + '! 👋'), 400);
+    });
+  }, 400);
+}
+
+function showHowTo() {
+  document.getElementById('howto-screen').classList.add('show');
+}
+
+function closeHowTo() {
+  document.getElementById('howto-screen').classList.remove('show');
+}
+
+function getChoresWelcomeBack() {
+  const lastOpen = localStorage.getItem('chores_last_open');
+  const today    = new Date().toDateString();
+  localStorage.setItem('chores_last_open', new Date().toISOString());
+  if (!lastOpen) return null;
+  const days = Math.floor((Date.now() - new Date(lastOpen).getTime()) / 86400000);
+  return days >= 2 ? days : null;
+}
+
+// ─── Profile system ──────────────────────────────────
+function getActiveUser() {
+  return localStorage.getItem('chores_active_user') || CONFIG.YOUR_NAME;
+}
+
+function isAnthony() { return getActiveUser() === CONFIG.YOUR_NAME; }
+
+function applyProfile(user, animate = false) {
+  const anthony = user === CONFIG.YOUR_NAME;
+  const btn = document.getElementById('profile-toggle');
+  if (btn) {
+    btn.innerHTML = anthony ? '🐉 Anthony' : '🦄 Kathrina';
+    btn.style.color = anthony ? '#f97316' : '#e879a0';
+    btn.style.borderColor = anthony ? 'rgba(249,115,22,.4)' : 'rgba(232,121,160,.4)';
+  }
+}
+
+function switchProfile() {
+  const current = getActiveUser();
+  const next    = current === CONFIG.YOUR_NAME ? CONFIG.PARTNER_NAME : CONFIG.YOUR_NAME;
+  localStorage.setItem('chores_active_user', next);
+  applyProfile(next, true);
+  burstParticles(next === CONFIG.YOUR_NAME ? 'fire' : 'rainbow', window.innerWidth/2, window.innerHeight/2, 40);
+  showToast(next === CONFIG.YOUR_NAME ? '🐉 Anthony mode' : '🦄 Kathrina mode');
+}
+
+function updateUserSwitcher() {
+  applyProfile(getActiveUser());
+}
+
+// ─── Last active / profile pill ──────────────────────
+function getLastActive(name) {
+  const key  = 'chores_last_active_' + name;
+  const last = localStorage.getItem(key);
+  if (!last) return '';
+  const days = Math.floor((Date.now() - new Date(last).getTime()) / 86400000);
+  if (days === 0) return 'active today';
+  if (days === 1) return 'yesterday';
+  return days + 'd ago';
+}
+
+function recordLastActive(name) {
+  localStorage.setItem('chores_last_active_' + name, new Date().toISOString());
+}
+
+function updateProfilePill() {
+  const btn  = document.getElementById('profile-toggle');
+  if (!btn) return;
+  const user  = getActiveUser();
+  const emoji = user === CONFIG.YOUR_NAME ? '🐉' : '🦄';
+  const other = user === CONFIG.YOUR_NAME ? CONFIG.PARTNER_NAME : CONFIG.YOUR_NAME;
+  const last  = getLastActive(other);
+  btn.innerHTML = emoji + ' ' + user + (last ? '<span style="font-size:9px;opacity:.55;margin-left:5px">' + last + '</span>' : '');
+}
+
+// ─── Room dropdown with overdue badges ───────────────
+function getRoomOverdueCounts() {
+  const counts = {};
+  allChores.forEach(c => {
+    if (c.ratio < 1) return;
+    (c.room || '').toLowerCase().split(' ').filter(Boolean).forEach(code => {
+      counts[code] = (counts[code] || 0) + 1;
+    });
+  });
+  return counts;
+}
+
+function populateRoomDropdownsWithBadges() {
+  populateRoomDropdowns();
+  const sel    = document.getElementById('room-select');
+  const counts = getRoomOverdueCounts();
+  if (!sel) return;
+  Array.from(sel.options).forEach(opt => {
+    if (!opt.value) return;
+    const n = counts[opt.value];
+    if (n) opt.text = (roomLegend[opt.value] || opt.value) + ' (' + n + ')';
+  });
+}
+
+// ─── Landing particles ────────────────────────────────
+(function spawnSparkles() {
+  const kathrina = document.querySelector('.landing-kathrina');
+  if (!kathrina) return;
+  const colors = ['#ff6eb4','#ffa0d0','#c084fc','#818cf8','#60c0f0','#60e880','#ffe060','#ffb060'];
+  function mkSparkle() {
+    const e    = document.createElement('div');
+    const size = 3 + Math.random() * 6;
+    const dur  = 2 + Math.random() * 3;
+    const left = 10 + Math.random() * 80;
+    const bot  = 10 + Math.random() * 70;
+    const col  = colors[Math.floor(Math.random() * colors.length)];
+    const drift = (Math.random() - .5) * 40;
+    e.style.cssText = 'position:absolute;border-radius:50%;pointer-events:none;z-index:1;' +
+      'width:'+size+'px;height:'+size+'px;left:'+left+'%;bottom:'+bot+'%;' +
+      'background:'+col+';box-shadow:0 0 '+(size*1.5)+'px '+col+';' +
+      'animation:emberRise '+dur+'s linear forwards;--drift:'+drift+'px;';
+    kathrina.appendChild(e);
+    setTimeout(() => e.remove(), dur * 1000 + 200);
+  }
+  setInterval(mkSparkle, 400);
+  for (let i = 0; i < 10; i++) setTimeout(mkSparkle, i * 150);
+})();
+
+(function spawnEmbers() {
+  const anthony = document.querySelector('.landing-anthony');
+  if (!anthony) return;
+  function mkEmber() {
+    const e     = document.createElement('div');
+    e.className = 'ember';
+    const size  = 2 + Math.random() * 4;
+    const drift = (Math.random() - .5) * 60;
+    const dur   = 3 + Math.random() * 4;
+    const left  = 20 + Math.random() * 60;
+    e.style.cssText = 'width:'+size+'px;height:'+size+'px;left:'+left+'%;bottom:'+(20+Math.random()*30)+'%;' +
+      'background:hsl('+(20+Math.random()*30)+',100%,'+(55+Math.random()*30)+'%);' +
+      '--drift:'+drift+'px;animation-duration:'+dur+'s;animation-delay:'+(Math.random()*3)+'s';
+    anthony.appendChild(e);
+    setTimeout(() => e.remove(), (dur + 3) * 1000);
+  }
+  setInterval(mkEmber, 600);
+  for (let i = 0; i < 8; i++) mkEmber();
+})();
+
+
+
+
+// ─── Landing swipe to choose ──────────────────────────
+(function() {
+  var sx = 0, sy = 0, dx = 0, tracking = false;
+  var committed = false;
+  var THR = 70; // px to commit
+
+  function getEls() {
+    return {
+      left:    document.getElementById('half-kathrina'),
+      right:   document.getElementById('half-anthony'),
+      divider: document.getElementById('landing-divider'),
+      hint:    document.getElementById('swipe-hint-land'),
+    };
+  }
+
+  function resetLayout(els, animate) {
+    ['left','right'].forEach(function(k) {
+      if (!els[k]) return;
+      if (animate) els[k].style.transition = 'flex .3s cubic-bezier(.34,1.56,.64,1)';
+      else els[k].style.transition = 'none';
+      els[k].style.flex = '1';
+      els[k].style.overflow = '';
+    });
+    if (els.divider) { els.divider.style.transition = animate ? 'opacity .3s' : 'none'; els.divider.style.opacity = '1'; }
+    if (els.hint)    { els.hint.style.opacity = '0.4'; }
+    if (animate) {
+      setTimeout(function() {
+        if (els.left)  els.left.style.transition  = '';
+        if (els.right) els.right.style.transition = '';
+      }, 350);
+    }
+  }
+
+  document.addEventListener('touchstart', function(e) {
+    var landing = document.getElementById('landing-screen');
+    if (!landing || landing.style.display === 'none') return;
+    sx = e.touches[0].clientX;
+    sy = e.touches[0].clientY;
+    dx = 0; tracking = true; committed = false;
+  }, { passive: true });
+
+  document.addEventListener('touchmove', function(e) {
+    if (!tracking || committed) return;
+    var landing = document.getElementById('landing-screen');
+    if (!landing || landing.style.display === 'none') { tracking = false; return; }
+
+    var mx = e.touches[0].clientX - sx;
+    var my = e.touches[0].clientY - sy;
+
+    // Cancel if more vertical than horizontal
+    if (Math.abs(my) > Math.abs(mx) + 10) { tracking = false; return; }
+
+    dx = mx;
+    var els = getEls();
+    var pct = Math.min(Math.abs(dx) / (window.innerWidth * 0.45), 1);
+
+    if (dx > 0) {
+      if (els.left)  { els.left.style.transition  = 'none'; els.left.style.flex  = String(1 + pct * 0.7); }
+      if (els.right) { els.right.style.transition = 'none'; els.right.style.flex = String(1 - pct * 0.5); }
+    } else {
+      if (els.right) { els.right.style.transition = 'none'; els.right.style.flex = String(1 + pct * 0.7); }
+      if (els.left)  { els.left.style.transition  = 'none'; els.left.style.flex  = String(1 - pct * 0.5); }
+    }
+    if (els.divider) { els.divider.style.opacity = String(1 - pct * 0.8); }
+    if (els.hint)    { els.hint.style.opacity    = String(Math.max(0, 0.4 - pct * 0.8)); }
+  }, { passive: true });
+
+  document.addEventListener('touchend', function(e) {
+    if (!tracking || committed) return;
+    var landing = document.getElementById('landing-screen');
+    if (!landing || landing.style.display === 'none') { tracking = false; return; }
+    tracking = false;
+
+    var els = getEls();
+
+    if (Math.abs(dx) >= THR) {
+      committed = true;
+      var isKathrina = dx > 0;
+      var chosen = isKathrina ? els.left  : els.right;
+      var other  = isKathrina ? els.right : els.left;
+
+      if (chosen) { chosen.style.transition = 'flex .35s ease'; chosen.style.flex = '1'; }
+      if (other)  { other.style.transition  = 'flex .35s ease'; other.style.flex  = '0'; other.style.overflow = 'hidden'; }
+      if (els.divider) { els.divider.style.transition = 'opacity .35s'; els.divider.style.opacity = '0'; }
+      if (els.hint)    els.hint.style.opacity = '0';
+
+      haptic(60);
+      setTimeout(function() {
+        selectUser(isKathrina ? CONFIG.PARTNER_NAME : CONFIG.YOUR_NAME);
+      }, 350);
+    } else {
+      resetLayout(els, true);
+    }
+    dx = 0;
+  });
+})();
+
+</script>
+</body>
+</html>  .wordmark { font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 600; letter-spacing: -.5px; line-height: 1; }
+  .wordmark span { color: var(--c-due); }
+  .subtitle { font-size: 12px; color: var(--ink-soft); font-weight: 300; letter-spacing: .5px; text-transform: uppercase; padding-bottom: 2px; }
+  .offline-badge {
+    display: inline-block; background: rgba(197,115,58,.15); color: var(--c-due);
+    border: 1px solid rgba(197,115,58,.3); border-radius: 8px;
+    font-size: 9px; padding: 1px 6px; margin-left: 6px;
+    vertical-align: middle; letter-spacing: .5px;
+  }
+  .header-btns { display: flex; gap: 8px; align-items: center; }
+  .icon-btn {
+    background: none; border: 1.5px solid var(--border); border-radius: 50%;
+    width: 38px; height: 38px; display: grid; place-items: center;
+    cursor: pointer; color: var(--ink-soft); font-size: 16px; transition: all .2s; flex-shrink: 0;
+    touch-action: manipulation;
+  }
+  .icon-btn:active { transform: scale(.88); }
+  .icon-btn svg { width: 16px; height: 16px; }
+  .refresh-btn:active { transform: rotate(180deg) !important; }
+
+  /* ── Config Banner ── */
+
+  /* ── Legend ── */
+  .legend { display: flex; gap: 12px; padding: 0 20px 10px; flex-wrap: wrap; }
+  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--ink-soft); font-weight: 400; letter-spacing: .3px; }
+  .legend-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+  /* ── Room Dropdown ── */
+  .room-bar { padding: 0 16px 10px; }
+  .room-select-wrap { position: relative; }
+  .room-select-wrap::after { content: '▾'; position: absolute; right: 14px; top: 50%; transform: translateY(-50%); pointer-events: none; color: var(--ink-soft); font-size: 13px; }
+  .room-select {
+    width: 100%; appearance: none; -webkit-appearance: none;
+    background: var(--surface); border: 1.5px solid var(--border); border-radius: 12px;
+    padding: 9px 36px 9px 14px; font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500;
+    color: var(--ink); cursor: pointer; outline: none; transition: border-color .15s, background .15s;
+  }
+  .room-select:focus { border-color: var(--c-due); }
+  .room-select.active { border-color: var(--c-due); color: var(--c-due); }
+
+  /* ── Filter Bar ── */
+  .filter-bar { display: flex; gap: 8px; padding: 0 16px 14px; overflow-x: auto; scrollbar-width: none; transition: opacity .2s; }
+  .filter-bar::-webkit-scrollbar { display: none; }
+  .filter-bar.dimmed { opacity: .35; pointer-events: none; }
+  .filter-btn { flex-shrink: 0; background: var(--surface); border: 1.5px solid var(--border); border-radius: 20px; padding: 5px 14px; font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 500; color: var(--ink-soft); cursor: pointer; transition: all .15s; letter-spacing: .2px; touch-action: manipulation; }
+  .filter-btn.active { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+
+  /* ── Chore list ── */
+  #chore-list { padding: 0 16px calc(var(--safe-bot) + 100px); display: flex; flex-direction: column; gap: 10px; }
+
+  /* ── Swipe wrapper ── */
+  .chore-card-wrap { position: relative; border-radius: var(--radius); overflow: hidden; }
+  .swipe-bg-done {
+    position: absolute; inset: 0;
+    background: linear-gradient(270deg, rgba(90,138,94,.35), rgba(90,138,94,.1));
+    display: flex; align-items: center; justify-content: flex-end; padding-right: 20px;
+    font-size: 20px; opacity: 0; transition: opacity .15s;
+    border-radius: var(--radius); pointer-events: none;
+  }
+  .swipe-bg-snooze {
+    position: absolute; inset: 0;
+    background: linear-gradient(90deg, rgba(201,168,76,.35), rgba(201,168,76,.1));
+    display: flex; align-items: center; padding-left: 20px;
+    font-size: 20px; opacity: 0; transition: opacity .15s;
+    border-radius: var(--radius); pointer-events: none;
+  }
+  .swipe-bg-done.visible { opacity: 1; }
+  .swipe-bg-snooze.visible { opacity: 1; }
+
+  /* ── Chore card ── */
+  .chore-card {
+    background: var(--surface); border-radius: var(--radius); border: 1.5px solid var(--border);
+    overflow: hidden; transition: transform .05s; box-shadow: 0 2px 8px rgba(0,0,0,.04);
+    position: relative; z-index: 1; touch-action: pan-y; -webkit-user-select: none; user-select: none;
+  }
+  .chore-card:active { transform: scale(.985); }
+  .chore-inner { display: flex; align-items: center; gap: 14px; padding: 14px 16px 10px; }
+  .chore-name { flex: 1; font-size: 16px; font-weight: 500; line-height: 1.2; }
+  .chore-room-tag { font-size: 10px; font-weight: 400; color: var(--ink-soft); letter-spacing: .3px; margin-top: 2px; }
+
+  .urgency-bar { height: 5px; border-radius: 0 0 var(--radius) var(--radius); transition: background .6s ease; position: relative; overflow: hidden; }
+  .urgency-bar::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(255,255,255,.18) 0%, transparent 60%); }
+  .urgency-fill { height: 100%; width: 0%; transition: width 1s cubic-bezier(.25,.8,.25,1); }
+  .last-done { font-size: 11px; color: var(--ink-soft); padding: 0 16px 10px; font-weight: 300; }
+
+  /* Swipe hint */
+  .swipe-hint { text-align: center; font-size: 10px; color: var(--ink-soft); padding: 0 0 8px; letter-spacing: .5px; opacity: .5; }
+
+  /* ── Empty / loading / error ── */
+  .empty-state { text-align: center; padding: 48px 24px; color: var(--ink-soft); font-size: 14px; line-height: 1.7; }
+  .empty-state .emoji { font-size: 36px; display: block; margin-bottom: 12px; }
+  #loading, #error { text-align: center; padding: 60px 24px; color: var(--ink-soft); font-size: 15px; line-height: 1.6; }
+  #error { color: var(--c-over); }
+  .spinner { width: 32px; height: 32px; border: 3px solid var(--border); border-top-color: var(--c-due); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 16px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── Pull to refresh ── */
+  .ptr-indicator {
+    text-align: center; font-size: 12px; color: var(--ink-soft);
+    padding: 0; height: 0; overflow: hidden; transition: height .2s, padding .2s;
+    letter-spacing: .3px; line-height: 36px;
+  }
+  .ptr-indicator.visible { height: 36px; padding: 0 8px; }
+
+  /* ── Toast ── */
+  #toast {
+    position: fixed; bottom: calc(var(--safe-bot) + 20px); left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: var(--ink); color: var(--bg); padding: 10px 20px; border-radius: 40px;
+    font-size: 13px; font-weight: 500;
+    transition: transform .3s cubic-bezier(.34,1.56,.64,1), opacity .3s;
+    opacity: 0; z-index: 200; white-space: nowrap;
+  }
+  #toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+  /* ── Bottom sheets ── */
+  .sheet-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.4); z-index: 50; opacity: 0; pointer-events: none; transition: opacity .3s; }
+  .sheet-overlay.open { opacity: 1; pointer-events: all; }
+  .bottom-sheet {
+    position: fixed; bottom: 0; left: 0; right: 0; background: var(--surface);
+    border-radius: 24px 24px 0 0; z-index: 60;
+    transform: translateY(100%); transition: transform .35s cubic-bezier(.32,0,.67,0);
+    max-height: 92dvh; display: flex; flex-direction: column;
+  }
+  .bottom-sheet.open { transform: translateY(0); transition: transform .35s cubic-bezier(.22,1,.36,1); }
+  .sheet-handle { width: 36px; height: 4px; background: var(--border); border-radius: 4px; margin: 12px auto 0; flex-shrink: 0; }
+  .sheet-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px 12px; flex-shrink: 0; border-bottom: 1px solid var(--border); }
+  .sheet-title { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 600; }
+  .sheet-close { background: none; border: 1.5px solid var(--border); border-radius: 50%; width: 32px; height: 32px; display: grid; place-items: center; cursor: pointer; color: var(--ink-soft); font-size: 18px; line-height: 1; transition: all .15s; }
+  .sheet-close:active { transform: scale(.88); }
+  .sheet-body { overflow-y: auto; flex: 1; padding: 20px 20px calc(var(--safe-bot) + 20px); }
+
+  /* ── Forms ── */
+  .form-group { margin-bottom: 18px; }
+  .form-label { display: block; font-size: 12px; font-weight: 500; text-transform: uppercase; letter-spacing: .8px; color: var(--ink-soft); margin-bottom: 8px; }
+  .form-input { width: 100%; background: var(--bg); border: 1.5px solid var(--border); border-radius: 12px; padding: 12px 14px; font-family: 'DM Sans', sans-serif; font-size: 16px; color: var(--ink); outline: none; transition: border-color .15s; -webkit-appearance: none; appearance: none; }
+  .form-input:focus { border-color: var(--c-due); }
+  .form-select-wrap { position: relative; }
+  .form-select-wrap::after { content: '▾'; position: absolute; right: 14px; top: 50%; transform: translateY(-50%); pointer-events: none; color: var(--ink-soft); font-size: 13px; }
+  .form-select { width: 100%; background: var(--bg); border: 1.5px solid var(--border); border-radius: 12px; padding: 12px 36px 12px 14px; font-family: 'DM Sans', sans-serif; font-size: 16px; color: var(--ink); outline: none; -webkit-appearance: none; appearance: none; cursor: pointer; }
+  .form-select:focus { border-color: var(--c-due); }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .form-hint { font-size: 11px; color: var(--ink-soft); margin-top: 5px; font-weight: 300; }
+  .room-checks { display: flex; flex-direction: column; gap: 10px; }
+  .room-check-label { display: flex; align-items: center; gap: 10px; cursor: pointer; font-size: 15px; font-weight: 500; padding: 10px 14px; background: var(--bg); border: 1.5px solid var(--border); border-radius: 12px; transition: border-color .15s, background .15s; }
+  .room-check-label:has(input:checked) { border-color: var(--c-due); background: var(--surface); }
+  .room-check-label input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--c-due); cursor: pointer; flex-shrink: 0; }
+  .submit-btn { width: 100%; background: var(--ink); color: var(--bg); border: none; border-radius: 14px; padding: 15px; font-family: 'DM Sans', sans-serif; font-size: 16px; font-weight: 500; cursor: pointer; margin-top: 8px; transition: opacity .15s, transform .1s; }
+  .submit-btn:active { transform: scale(.97); }
+  .submit-btn:disabled { opacity: .5; cursor: not-allowed; }
+
+  /* ── View All ── */
+  .all-chore-row { display: flex; align-items: center; gap: 10px; padding: 13px 0; border-bottom: 1px solid var(--border); cursor: pointer; transition: opacity .15s; }
+  .all-chore-row:last-child { border-bottom: none; }
+  .all-chore-row:active { opacity: .7; }
+  .all-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .all-chore-name { flex: 1; font-size: 15px; font-weight: 500; line-height: 1.3; }
+  .all-chore-room { font-size: 11px; font-weight: 300; color: var(--ink-soft); }
+  .all-chore-meta { font-size: 11px; color: var(--ink-soft); font-weight: 300; text-align: right; line-height: 1.4; }
+  .all-done-btn { flex-shrink: 0; background: none; border: 1.5px solid var(--border); border-radius: 8px; padding: 5px 10px; font-family: 'DM Sans', sans-serif; font-size: 12px; color: var(--ink-soft); cursor: pointer; transition: all .15s; margin-left: 4px; }
+  .all-done-btn:active { transform: scale(.9); background: var(--c-fresh); color: white; border-color: var(--c-fresh); }
+
+  /* ── Landing screen ── */
+  #landing-screen {
+    position: fixed; inset: 0; z-index: 9000;
+    display: flex; align-items: stretch;
+    transition: opacity .4s, transform .4s;
+    overflow: hidden;
+  }
+  #landing-screen.hide { opacity: 0; transform: scale(.97); pointer-events: none; }
+
+  /* Left half — Kathrina: iridescent rainbow */
+  .landing-half {
+    flex: 1; display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: calc(var(--safe-top) + 32px) 20px calc(var(--safe-bot) + 40px);
+    text-align: center; cursor: pointer;
+    transition: flex .4s cubic-bezier(.4,0,.2,1);
+    position: relative; overflow: hidden;
+  }
+  .landing-half:active { flex: 1.08; }
+
+  .landing-kathrina {
+    background:
+      linear-gradient(160deg, #fce4f0 0%, #f0d5ff 20%, #d5e8ff 40%, #d5ffe8 60%, #fff5d5 80%, #fce4f0 100%);
+    background-size: 300% 300%;
+    animation: iriLand 8s ease infinite;
+  }
+  @keyframes iriLand {
+    0%,100% { background-position: 0% 50%; }
+    50%      { background-position: 100% 50%; }
+  }
+
+  /* Rainbow shimmer overlay */
+  .landing-kathrina::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(
+      135deg,
+      rgba(255,100,180,.18) 0%,
+      rgba(180,100,255,.14) 20%,
+      rgba(100,180,255,.12) 40%,
+      rgba(100,255,200,.10) 60%,
+      rgba(255,220,100,.12) 80%,
+      rgba(255,100,180,.18) 100%
+    );
+    animation: shimmer 4s ease-in-out infinite alternate;
+    pointer-events: none;
+  }
+  @keyframes shimmer {
+    0%   { opacity: .6; }
+    100% { opacity: 1; }
+  }
+
+  /* Divider line */
+  .landing-divider {
+    width: 1.5px;
+    background: linear-gradient(to bottom,
+      transparent 0%,
+      rgba(180,120,60,.3) 20%,
+      rgba(180,120,60,.5) 50%,
+      rgba(180,120,60,.3) 80%,
+      transparent 100%
+    );
+    flex-shrink: 0;
+    z-index: 1;
+  }
+
+  /* Right half — Anthony: dark gothic */
+  .landing-anthony {
+    background:
+      radial-gradient(ellipse at 50% 0%, #2a1a0a 0%, #0d0808 50%, #050305 100%);
+    position: relative;
+  }
+
+  /* Gothic texture overlay */
+  .landing-anthony::before {
+    content: '';
+    position: absolute; inset: 0;
+    background-image:
+      repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 3px,
+        rgba(180,60,0,.03) 3px,
+        rgba(180,60,0,.03) 4px
+      ),
+      repeating-linear-gradient(
+        90deg,
+        transparent,
+        transparent 20px,
+        rgba(80,20,0,.04) 20px,
+        rgba(80,20,0,.04) 21px
+      );
+    pointer-events: none;
+  }
+
+  /* Subtle castle silhouette at bottom */
+  .landing-anthony::after {
+    content: '';
+    position: absolute; bottom: 0; left: 0; right: 0; height: 160px;
+    background:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 160'%3E%3Cpath d='M0,160 L0,100 L20,100 L20,80 L30,80 L30,60 L40,60 L40,80 L50,80 L50,70 L60,70 L60,100 L80,100 L80,80 L90,80 L90,60 L95,60 L95,40 L100,40 L100,20 L105,20 L105,40 L110,40 L110,60 L115,60 L115,80 L120,80 L120,100 L140,100 L140,80 L150,80 L150,100 L170,100 L170,80 L180,80 L180,60 L185,60 L185,40 L190,40 L190,50 L195,50 L195,40 L200,40 L200,60 L205,60 L205,80 L210,80 L210,100 L230,100 L230,80 L240,80 L240,60 L245,60 L245,40 L250,40 L250,20 L255,20 L255,40 L260,40 L260,60 L265,60 L265,80 L270,80 L270,100 L290,100 L290,80 L300,80 L300,70 L310,70 L310,80 L320,80 L320,100 L340,100 L340,80 L350,80 L350,60 L360,60 L360,80 L370,80 L370,100 L400,100 L400,160 Z' fill='%23000000' opacity='0.9'/%3E%3C/svg%3E")
+      no-repeat bottom center;
+    background-size: 100% auto;
+    pointer-events: none;
+    opacity: .7;
+  }
+
+  /* User card content */
+  .landing-user-content { position: relative; z-index: 2; width: 100%; }
+
+  .landing-user-emoji {
+    font-size: 52px; display: block; margin-bottom: 16px;
+    filter: drop-shadow(0 4px 12px rgba(0,0,0,.2));
+    animation: emojiFloat 3.5s ease-in-out infinite;
+  }
+  .landing-kathrina .landing-user-emoji { animation-delay: 0s; }
+  .landing-anthony  .landing-user-emoji { animation-delay: .8s; }
+  @keyframes emojiFloat { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-7px)} }
+
+  .landing-user-name {
+    font-size: 22px; font-weight: 700; display: block; margin-bottom: 6px;
+    font-family: 'Playfair Display', serif;
+  }
+  .landing-kathrina .landing-user-name { color: #a0206a; }
+  .landing-anthony  .landing-user-name { color: #f97316; }
+
+  .landing-user-vibe {
+    font-size: 11px; display: block; letter-spacing: .8px;
+    text-transform: uppercase; font-weight: 400; margin-bottom: 24px;
+  }
+  .landing-kathrina .landing-user-vibe { color: #c060a0; }
+  .landing-anthony  .landing-user-vibe { color: #8a5030; }
+
+  .landing-user-btn {
+    display: inline-block; padding: 11px 22px;
+    border-radius: 40px; border: none; cursor: pointer;
+    font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600;
+    transition: transform .15s, box-shadow .15s; letter-spacing: .3px;
+  }
+  .landing-user-btn:active { transform: scale(.94); }
+  .landing-kathrina .landing-user-btn {
+    background: linear-gradient(135deg, #ff6eb4, #c084fc, #60c0f0);
+    color: white; box-shadow: 0 6px 24px rgba(192,84,252,.3);
+  }
+  .landing-anthony .landing-user-btn {
+    background: linear-gradient(135deg, #7a1a00, #cc4400);
+    color: #ffddaa; box-shadow: 0 6px 24px rgba(180,60,0,.4);
+    border: 1px solid rgba(255,120,40,.2);
+  }
+
+  /* Rainbow accent bar along bottom of Kathrina side */
+  .kathrina-rainbow-bar {
+    position: absolute; bottom: 0; left: 0; right: 0; height: 4px;
+    background: linear-gradient(90deg,
+      #ff6eb4, #ffa060, #ffe060, #60e880, #60c0f0, #c084fc, #ff6eb4
+    );
+    background-size: 200% 100%;
+    animation: rainbowSlide 3s linear infinite;
+  }
+  @keyframes rainbowSlide { 0%{background-position:0%} 100%{background-position:200%} }
+
+  /* Fire embers on Anthony side */
+  .ember {
+    position: absolute; border-radius: 50%;
+    animation: emberRise linear infinite;
+    pointer-events: none; z-index: 1;
+  }
+  @keyframes emberRise {
+    0%   { transform: translateY(0) translateX(0) scale(1); opacity: .8; }
+    100% { transform: translateY(-300px) translateX(var(--drift)) scale(0); opacity: 0; }
+  }
+
+  /* How To button at very bottom centre */
+  .landing-howto-strip {
+    position: absolute; bottom: calc(var(--safe-bot) + 16px); left: 0; right: 0;
+    display: flex; justify-content: center; z-index: 10;
+  }
+  .landing-howto-btn-chores {
+    background: rgba(255,255,255,.12); backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,.2); border-radius: 40px;
+    padding: 8px 22px; color: rgba(255,255,255,.7);
+    font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 500;
+    cursor: pointer; transition: all .2s; letter-spacing: .3px;
+  }
+  .landing-howto-btn-chores:active { background: rgba(255,255,255,.2); color: white; }
+
+  /* ── How To screen (chores) ── */
+  #howto-screen {
+    position: fixed; inset: 0; z-index: 9001;
+    background: #fdfaf6; overflow-y: auto; display: none;
+    animation: fadeUp .3s ease;
+  }
+  #howto-screen.show { display: block; }
+  .howto-header {
+    padding: calc(var(--safe-top) + 16px) 20px 14px;
+    display: flex; align-items: center; justify-content: space-between;
+    position: sticky; top: 0; background: #fdfaf6;
+    z-index: 10; border-bottom: 1px solid #ece6dc;
+  }
+  .howto-title { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 600; color: #2c2416; }
+  .howto-body { padding: 24px 24px calc(var(--safe-bot) + 40px); }
+  .howto-section { margin-bottom: 28px; }
+  .howto-section-title {
+    font-size: 10px; font-weight: 600; letter-spacing: 2px;
+    color: #b5703a; text-transform: uppercase; margin-bottom: 10px;
+  }
+  .howto-section p { font-size: 14px; color: #7a6e5f; line-height: 1.75; font-weight: 300; }
+  .howto-section p strong { color: #2c2416; font-weight: 500; }
+  .howto-tip {
+    display: flex; align-items: flex-start; gap: 12px; margin-top: 10px;
+    background: #f5f0e8; border: 1.5px solid #e2d9c8;
+    border-radius: 12px; padding: 12px 14px;
+  }
+  .howto-tip-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+  .howto-tip-text { font-size: 13px; color: #7a6e5f; line-height: 1.6; }
+  .howto-tip-text strong { color: #2c2416; }
+
+  @keyframes cardSnap {
+    0%   { transform: translateX(-110%) scale(1); }
+    15%  { transform: translateX(-85%) scale(1.04); }
+    100% { transform: translateX(-110%) scale(1); opacity:0; }
+  }
+  @keyframes cardSnapRight {
+    0%   { transform: translateX(110%) scale(1); }
+    15%  { transform: translateX(85%) scale(1.04); }
+    100% { transform: translateX(110%) scale(1); opacity:0; }
+  }
+
+  /* Working Bee break card */
+  .bee-break-card {
+    display: flex; align-items: center; gap: 12px;
+    background: var(--surface2, #f0e8d8); border: 1.5px dashed var(--border);
+    border-radius: var(--radius); padding: 10px 14px;
+  }
+  /* Difficulty badges */
+  .diff-badge { font-size: 10px; font-weight: 600; padding: 3px 8px; border-radius: 20px; letter-spacing: .3px; }
+  .diff-easy   { background: rgba(90,138,94,.15);  color: var(--c-fresh); }
+  .diff-medium { background: rgba(201,168,76,.15); color: var(--c-soon); }
+  .diff-hard   { background: rgba(160,48,48,.15);  color: var(--c-over); }
+
+  @keyframes hintPulse {
+    0%,100% { opacity:.4; transform:scale(1); }
+    50%      { opacity:.8; transform:scale(1.05); }
+  }
+</style>
+</head>
+<body>
+
+<!-- ══ LANDING SCREEN ══ -->
+<div id="landing-screen">
+
+  <!-- Kathrina — left half -->
   <div class="landing-half landing-kathrina" onclick="selectUser('Kathrina')">
     <div class="landing-user-content">
       <span class="landing-user-emoji">🦄</span>
