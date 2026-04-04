@@ -459,6 +459,18 @@
     15%  { transform: translateX(85%) scale(1.04); }
     100% { transform: translateX(110%) scale(1); opacity:0; }
   }
+
+  /* Working Bee break card */
+  .bee-break-card {
+    display: flex; align-items: center; gap: 12px;
+    background: var(--surface2, #f0e8d8); border: 1.5px dashed var(--border);
+    border-radius: var(--radius); padding: 10px 14px;
+  }
+  /* Difficulty badges */
+  .diff-badge { font-size: 10px; font-weight: 600; padding: 3px 8px; border-radius: 20px; letter-spacing: .3px; }
+  .diff-easy   { background: rgba(90,138,94,.15);  color: var(--c-fresh); }
+  .diff-medium { background: rgba(201,168,76,.15); color: var(--c-soon); }
+  .diff-hard   { background: rgba(160,48,48,.15);  color: var(--c-over); }
 </style>
 </head>
 <body>
@@ -647,10 +659,21 @@
   </div>
 
   <!-- Mode toggle -->
-  <div style="padding:0 20px 16px;display:flex;gap:8px">
-    <button id="bee-mode-priority" class="filter-pill active" onclick="setBeeMode('priority')" style="flex:1;text-align:center">🔥 Priority first</button>
-    <button id="bee-mode-most" class="filter-pill" onclick="setBeeMode('most')" style="flex:1;text-align:center">📋 Most tasks</button>
+  <div style="padding:0 20px 10px;margin-top:4px;display:flex;gap:8px">
+    <button id="bee-mode-priority" class="filter-pill active" onclick="setBeeMode('priority')" style="flex:1;text-align:center">🔥 Priority</button>
+    <button id="bee-mode-most" class="filter-pill" onclick="setBeeMode('most')" style="flex:1;text-align:center">📋 Most</button>
+    <button id="bee-mode-smart" class="filter-pill" onclick="setBeeMode('smart')" style="flex:1;text-align:center">🔄 Smart</button>
   </div>
+  <div style="display:flex;align-items:center;justify-content:space-between;margin:0 20px 12px;background:var(--surface);border:1.5px solid var(--border);border-radius:12px;padding:10px 14px">
+    <div>
+      <div style="font-size:13px;font-weight:500;color:var(--ink)">Group by room</div>
+      <div style="font-size:11px;color:var(--ink-mute);margin-top:1px">Do each room together</div>
+    </div>
+    <div id="bee-room-toggle" onclick="toggleBeeRoomGroup()" style="width:44px;height:26px;border-radius:40px;background:var(--border);cursor:pointer;position:relative;transition:background .25s;flex-shrink:0">
+      <div id="bee-room-knob" style="position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:var(--ink-mute);transition:transform .25s,background .25s"></div>
+    </div>
+  </div>
+  <div style="padding:0 20px 10px;font-size:11px;color:var(--ink-mute);text-align:center">☕ 5 min break every 30 min of work included</div>
 
   <!-- Summary bar -->
   <div id="bee-summary" style="margin:0 20px 14px;padding:12px 16px;background:var(--surface);border:1.5px solid var(--border);border-radius:12px;font-size:13px;color:var(--ink-soft);display:none">
@@ -722,6 +745,7 @@
 </div>
 
 <script>
+
 var sortMode = "urgency";
 
 
@@ -753,6 +777,7 @@ const CONFIG = {
   COL_ROOM:      5,
   COL_WHO:       6,
   COL_DURATION:  7,   // G — minutes e.g. 15
+  COL_PREREQ:    8,   // H — prerequisite row numbers, comma-separated
   COL_LEGEND:    9,
   DATA_START_ROW: 2,
   YOUR_NAME:     'Anthony',
@@ -959,9 +984,10 @@ function parseAndCacheChores(rows) {
     const room     = (row[CONFIG.COL_ROOM - 1] || '').trim().toLowerCase();
     const who      = (row[CONFIG.COL_WHO - 1] || '').trim();
     const duration = parseInt(row[CONFIG.COL_DURATION - 1]) || 0;
+    const prereqs  = (row[CONFIG.COL_PREREQ - 1] || '').split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n));
     const days     = daysSince(lastDone);
     const ratio    = urgencyRatio(minDays, maxDays, days);
-    return { name, minDays, maxDays, lastDone, room, who, duration, days, ratio, sheetRow: CONFIG.DATA_START_ROW + i };
+    return { name, minDays, maxDays, lastDone, room, who, duration, prereqs, days, ratio, sheetRow: CONFIG.DATA_START_ROW + i };
   }).sort((a, b) => b.ratio - a.ratio);
 }
 
@@ -1411,6 +1437,103 @@ function isSnoozed(sheetRow) {
 }
 
 
+
+const BREAK_EVERY = 30;
+const BREAK_MINS  = 5;
+const DIFF_LABEL  = { easy:'Easy', medium:'Medium', hard:'Hard' };
+
+function smartRotationSort(chores) {
+  const pools = { hard:[], medium:[], easy:[] };
+  chores.forEach(c => pools[getDifficulty(c.duration)].push(c));
+  Object.values(pools).forEach(p => p.sort((a,b) => b.ratio - a.ratio));
+  const order = ['hard','easy','medium'];
+  const result = [];
+  let i = 0;
+  while (pools.hard.length || pools.medium.length || pools.easy.length) {
+    const key = order[i++ % 3];
+    if (pools[key].length) result.push(pools[key].shift());
+  }
+  return result;
+}
+const DIFF_ICON   = { easy:'🌿', medium:'⚡', hard:'💪' };
+
+// ─── Room grouping sort ───────────────────────────────
+// Groups tasks by primary room, orders rooms by max urgency,
+// preserves input order within each room group
+function roomGroupSort(chores) {
+  // Extract primary room code for each chore
+  function primaryRoom(c) {
+    return (c.room || '').toLowerCase().split(' ')[0] || '_none';
+  }
+
+  // Group chores by room
+  const groups = {};
+  chores.forEach(c => {
+    const r = primaryRoom(c);
+    if (!groups[r]) groups[r] = [];
+    groups[r].push(c);
+  });
+
+  // Order rooms by highest urgency in that room
+  const roomOrder = Object.keys(groups).sort((a, b) => {
+    const maxA = Math.max(...groups[a].map(c => c.ratio));
+    const maxB = Math.max(...groups[b].map(c => c.ratio));
+    return maxB - maxA;
+  });
+
+  // Flatten — within each room keep input order (already smart-sorted)
+  return roomOrder.flatMap(r => groups[r]);
+}
+// ─── Topological sort respecting prereqs ──────────────
+// Reorders a list of chores so prereqs always come before dependents
+// while preserving the input order as much as possible
+function topoSort(chores) {
+  // Only enforce prereqs that are in THIS schedule
+  const inSchedule = new Set(chores.map(c => c.sheetRow));
+  const done       = new Set();
+  const result     = [];
+  let   remaining  = [...chores];
+  const maxPasses  = chores.length * 2;
+  let   passes     = 0;
+
+  while (remaining.length && passes++ < maxPasses) {
+    const eligible = remaining.filter(c => {
+      const unmet = (c.prereqs || []).filter(row => inSchedule.has(row) && !done.has(row));
+      return unmet.length === 0;
+    });
+
+    if (!eligible.length) eligible.push(remaining[0]); // break cycle
+
+    const pick = eligible[0];
+    result.push(pick);
+    done.add(pick.sheetRow);
+    remaining = remaining.filter(c => c !== pick);
+  }
+
+  remaining.forEach(c => result.push(c));
+  return result;
+}
+// ─── Prereq checking ──────────────────────────────────
+function getScheduleNames() {
+  return new Set(schedule.filter(i => !i._isBreak).map(c => c.name.toLowerCase()));
+}
+function getScheduleRows() {
+  return new Set(schedule.filter(i => !i._isBreak).map(c => c.sheetRow));
+}
+
+function isBlockedInSession(chore) {
+  if (!chore.prereqs || !chore.prereqs.length) return [];
+  const schedRows = new Set(schedule.filter(i => !i._isBreak).map(c => c.sheetRow));
+  // Blocked if prereq is in this session and not yet completed
+  return chore.prereqs.filter(row => schedRows.has(row) && !session.doneNames.has(row));
+}
+
+// Look up a task name by its sheet row number
+function nameByRow(rowNum) {
+  const c = allChores.find(ch => ch.sheetRow === rowNum);
+  return c ? c.name : `Row ${rowNum}`;
+}
+
 // ─── Working Bee ──────────────────────────────────────────
 let beeMode = 'priority';
 
@@ -1425,538 +1548,143 @@ function closeWorkingBee() {
   document.getElementById('bee-screen').style.display = 'none';
 }
 
+function toggleBeeRoomGroup() {
+  groupByRoom = !groupByRoom;
+  const tog  = document.getElementById('bee-room-toggle');
+  const knob = document.getElementById('bee-room-knob');
+  if (tog && knob) {
+    tog.style.background  = groupByRoom ? 'var(--c-due)' : 'var(--border)';
+    knob.style.transform  = groupByRoom ? 'translateX(18px)' : 'translateX(0)';
+    knob.style.background = groupByRoom ? 'white' : 'var(--ink-mute)';
+  }
+  updateBee();
+}
+
 function setBeeMode(mode) {
   beeMode = mode;
   document.getElementById('bee-mode-priority').classList.toggle('active', mode === 'priority');
   document.getElementById('bee-mode-most').classList.toggle('active', mode === 'most');
+  const sm = document.getElementById('bee-mode-smart');
+  if (sm) sm.classList.toggle('active', mode === 'smart');
   updateBee();
 }
 
-function updateBee() {
-  const hours   = parseInt(document.getElementById('bee-hours').value) || 0;
-  const mins    = parseInt(document.getElementById('bee-mins').value)  || 0;
-  const budget  = hours * 60 + mins;
+function fmtTime(m) { return m>=60?`${Math.floor(m/60)}h ${m%60>0?m%60+'m':''}`.trim():`${m}m`; }
 
-  const listEl    = document.getElementById('bee-list');
-  const summaryEl = document.getElementById('bee-summary');
+function buildBeeSchedule(budget) {
+  const pool = allChores.filter(c => c.duration > 0 && !isSnoozed(c.sheetRow));
+
+  let sorted;
+  if (beeMode === 'priority') sorted = [...pool].sort((a,b) => b.ratio - a.ratio);
+  else if (beeMode === 'most') sorted = [...pool].sort((a,b) => a.duration - b.duration);
+  else sorted = smartRotationSort(pool);
+
+  if (groupByRoom) sorted = roomGroupSort(sorted);
+  sorted = topoSort(sorted);
+
+  const items   = [];
+  let workTime  = 0, breakTime = 0, breaks = 0, elapsed = 0;
+
+  for (const c of sorted) {
+    if (elapsed > 0 && elapsed >= BREAK_EVERY) {
+      breakTime += BREAK_MINS; breaks++;
+      items.push({ _isBreak: true, breakNo: breaks });
+      elapsed = 0;
+    }
+    if (workTime + breakTime + c.duration <= budget) {
+      items.push(c); workTime += c.duration; elapsed += c.duration;
+    }
+    if (workTime + breakTime >= budget) break;
+  }
+  return { items, workTime, breakTime, breaks };
+}
+
+function updateBee() {
+  const hours  = parseInt(document.getElementById('bee-hours').value) || 0;
+  const mins   = parseInt(document.getElementById('bee-mins').value)  || 0;
+  const budget = hours * 60 + mins;
+  const listEl = document.getElementById('bee-list');
+  const summEl = document.getElementById('bee-summary');
 
   if (budget <= 0) {
-    listEl.innerHTML = '<div class="empty-state"><span class="emoji">🐝</span>Set your time above to see what you can get done.</div>';
-    summaryEl.style.display = 'none';
+    listEl.innerHTML = '<div class="empty-state"><span class="emoji">🐝</span>Set your time above to get started.</div>';
+    summEl.style.display = 'none'; return;
+  }
+
+  const { items, workTime, breakTime, breaks } = buildBeeSchedule(budget);
+  const tasks   = items.filter(i => !i._isBreak);
+  const noDur   = allChores.filter(c => !c.duration && !isSnoozed(c.sheetRow));
+  const timeLeft = budget - workTime - breakTime;
+
+  summEl.style.display = 'block';
+  if (!tasks.length) {
+    summEl.innerHTML = `<span style="color:var(--c-over)">No tasks with durations fit in ${fmtTime(budget)}.</span>`;
+    listEl.innerHTML = '<div class="empty-state"><span class="emoji">🤔</span>Add durations in column G to use Working Bee.</div>';
     return;
   }
 
-  // Only chores with a duration set, not snoozed
-  const withDuration = allChores.filter(c => c.duration > 0 && !isSnoozed(c.sheetRow));
-  // Also include chores with no duration (treat as 0 — show at end)
-  const noDuration   = allChores.filter(c => !c.duration && !isSnoozed(c.sheetRow));
+  summEl.innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <span><strong style="color:var(--ink)">${tasks.length} chore${tasks.length!==1?'s':''}</strong> · ${fmtTime(workTime)} work · ${fmtTime(breakTime)} breaks</span>
+      <span style="color:${timeLeft>0?'var(--c-fresh)':'var(--c-due)'}"><strong>${fmtTime(timeLeft)}</strong> spare</span>
+    </div>`;
 
-  let selected = [];
-  let timeUsed = 0;
-
-  if (beeMode === 'priority') {
-    // Most overdue first — fit as many high-priority as possible
-    const sorted = [...withDuration].sort((a, b) => b.ratio - a.ratio);
-    for (const c of sorted) {
-      if (timeUsed + c.duration <= budget) {
-        selected.push(c);
-        timeUsed += c.duration;
-      }
-    }
-  } else {
-    // Most tasks — smallest first
-    const sorted = [...withDuration].sort((a, b) => a.duration - b.duration);
-    for (const c of sorted) {
-      if (timeUsed + c.duration <= budget) {
-        selected.push(c);
-        timeUsed += c.duration;
-      }
-    }
-    // Re-sort selected by priority for display
-    selected.sort((a, b) => b.ratio - a.ratio);
-  }
-
-  const timeLeft = budget - timeUsed;
-
-  // Update summary
-  summaryEl.style.display = 'block';
-  const fmtTime = m => m >= 60 ? `${Math.floor(m/60)}h ${m%60}m`.replace(' 0m','') : `${m}m`;
-  if (selected.length === 0) {
-    summaryEl.innerHTML = `<span style="color:var(--c-over)">No tasks with durations fit in ${fmtTime(budget)}. Try adding durations to your chores.</span>`;
-  } else {
-    summaryEl.innerHTML = `
-      <div style="display:flex;justify-content:space-between;align-items:center">
-        <span><strong style="color:var(--ink)">${selected.length} chore${selected.length!==1?'s':''}</strong> · ${fmtTime(timeUsed)} used</span>
-        <span style="color:${timeLeft>0?'var(--c-fresh)':'var(--c-due)'}"><strong>${fmtTime(timeLeft)}</strong> spare</span>
-      </div>`;
-  }
-
-  // Render cards
   listEl.innerHTML = '';
-  if (selected.length === 0) {
-    listEl.innerHTML = '<div class="empty-state"><span class="emoji">🤔</span>No tasks with durations fit in this time.<br><span style="font-size:12px">Add durations in column G or via the Add form.</span></div>';
-    return;
-  }
+  let taskNum = 0;
+  let lastRoom = null;
 
-  selected.forEach((chore, idx) => {
-    const color  = urgencyColor(chore.ratio);
-    const rLabel = roomName(chore.room);
-    const card = document.createElement('div');
-    card.style.cssText = `background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);overflow:hidden;`;
-    card.innerHTML = `
-      <div style="display:flex;align-items:center;gap:12px;padding:12px 14px 8px">
-        <div style="width:24px;height:24px;border-radius:50%;background:var(--surface2);border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--ink-mute);flex-shrink:0">${idx+1}</div>
-        <div style="flex:1">
-          <div style="font-size:15px;font-weight:500;color:var(--ink)">${chore.name}</div>
-          <div style="font-size:11px;color:var(--ink-soft);margin-top:2px">
-            ${rLabel ? `📍 ${rLabel} · ` : ''}⏱ ${chore.duration} min · ${relativeTime(chore.lastDone)}
+  items.forEach(item => {
+    if (item._isBreak) {
+      const bc = document.createElement('div');
+      bc.className = 'bee-break-card';
+      bc.innerHTML = `<span style="font-size:18px">☕</span><div><div style="font-size:13px;font-weight:600;color:var(--ink-soft)">Break ${item.breakNo} · ${BREAK_MINS} min</div><div style="font-size:11px;color:var(--ink-mute);margin-top:1px">Step away. Hydrate.</div></div><span style="margin-left:auto;font-size:11px;color:var(--ink-mute)">${BREAK_MINS}m</span>`;
+      listEl.appendChild(bc);
+    } else {
+      taskNum++;
+      const diff   = getDifficulty(item.duration);
+      const color  = urgencyColor(item.ratio);
+      const rLabel = roomName(item.room);
+
+      // Room header (when grouped)
+      if (groupByRoom) {
+        const room = (item.room||'').toLowerCase().split(' ')[0]||'_none';
+        if (room !== lastRoom) {
+          lastRoom = room;
+          const rh = document.createElement('div');
+          rh.style.cssText = 'font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:1.5px;color:var(--ink-mute);padding:6px 2px 2px;';
+          rh.textContent   = '📍 ' + (roomName(item.room) || 'General');
+          listEl.appendChild(rh);
+        }
+      }
+
+      const card = document.createElement('div');
+      card.style.cssText = 'background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);overflow:hidden;';
+      card.innerHTML = `
+        <div style="display:flex;align-items:center;gap:12px;padding:12px 14px 8px">
+          <div style="width:24px;height:24px;border-radius:50%;background:var(--surface2,#eee);border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--ink-mute);flex-shrink:0">${taskNum}</div>
+          <div style="flex:1">
+            <div style="font-size:15px;font-weight:500;color:var(--ink)">${item.name}</div>
+            <div style="display:flex;gap:6px;margin-top:3px;flex-wrap:wrap;align-items:center">
+              <span class="diff-badge diff-${diff}">${DIFF_ICON[diff]} ${DIFF_LABEL[diff]}</span>
+              <span style="font-size:10px;color:var(--ink-mute)">⏱ ${item.duration} min</span>
+              ${rLabel&&!groupByRoom?`<span style="font-size:10px;color:var(--ink-mute)">📍 ${rLabel}</span>`:''}
+              ${item.prereqs&&item.prereqs.length?`<span style="font-size:10px;color:var(--ink-mute)">🔒 after row ${item.prereqs.join(', ')}</span>`:''}
+            </div>
           </div>
+          <div style="font-size:11px;font-weight:600;color:${color};text-align:right;flex-shrink:0">${item.ratio>=1?'⚠️ Due':item.ratio>=0.85?'Soon':''}</div>
         </div>
-        <div style="font-size:11px;font-weight:600;color:${color};text-align:right;flex-shrink:0">
-          ${chore.ratio >= 1 ? '⚠️ Overdue' : chore.ratio >= 0.85 ? 'Due soon' : ''}
-        </div>
-      </div>
-      <div style="height:4px;background:${color}"></div>
-    `;
-    listEl.appendChild(card);
+        <div style="height:3px;background:${color}"></div>`;
+      listEl.appendChild(card);
+    }
   });
 
-  // If time left and there are unduration chores, show them as bonus
-  if (timeLeft > 0 && noDuration.length > 0) {
+  if (timeLeft > 0 && noDur.length) {
     const bonus = document.createElement('div');
     bonus.style.cssText = 'margin-top:4px;padding:10px 14px;background:var(--surface);border:1.5px dashed var(--border);border-radius:12px;font-size:12px;color:var(--ink-mute)';
-    bonus.innerHTML = `<strong style="color:var(--ink-soft)">You have ${fmtTime(timeLeft)} spare</strong> — these have no duration set:<br>${noDuration.slice(0,3).map(c=>`<span style="color:var(--ink)">${c.name}</span>`).join(', ')}${noDuration.length>3?` + ${noDuration.length-3} more`:''}`;
+    bonus.innerHTML = `<strong style="color:var(--ink-soft)">+${fmtTime(timeLeft)} spare</strong> — no duration set: ${noDur.slice(0,3).map(c=>`<span style="color:var(--ink)">${c.name}</span>`).join(', ')}${noDur.length>3?` +${noDur.length-3} more`:''}`;
     listEl.appendChild(bonus);
   }
 }
-
-// ─── OAuth ────────────────────────────────────────
-function initOAuth() {
-  if (OAUTH_CLIENT_ID.includes('YOUR_OAUTH_CLIENT_ID_HERE')) {
-    showToast('Set OAUTH_CLIENT_ID to enable saving');
-    if (pendingWrite?.btn) pendingWrite.btn.disabled = false;
-    return;
-  }
-  if (!window.google) {
-    const s = document.createElement('script');
-    s.src = 'https://accounts.google.com/gsi/client';
-    s.onload = () => startTokenFlow();
-    document.head.appendChild(s);
-  } else { startTokenFlow(); }
-}
-
-function startTokenFlow() {
-  tokenClient = google.accounts.oauth2.initTokenClient({
-    client_id: OAUTH_CLIENT_ID,
-    scope: SCOPES,
-    callback: async (resp) => {
-      if (resp.error) {
-        showToast('Sign-in cancelled');
-        if (pendingWrite?.btn) pendingWrite.btn.disabled = false;
-        return;
-      }
-      accessToken = resp.access_token;
-      // offline queue removed
-      if (pendingWrite) {
-        const pw = pendingWrite; pendingWrite = null;
-        if (pw.customCallback) { await pw.customCallback(); }
-        else { await writeCellToSheet(pw.sheetRow, CONFIG.COL_LAST_DONE, pw.value); }
-      }
-    },
-  });
-  tokenClient.requestAccessToken({ prompt: 'consent' });
-}
-
-// ─── Profile system (combined user + theme) ──────────────
-// Anthony = dark mode + fire/ember particles
-// Kathrina = light mode + rainbow particles
-
-function getActiveUser() {
-  return localStorage.getItem('chores_active_user') || CONFIG.YOUR_NAME;
-}
-
-function isAnthony() {
-  return getActiveUser() === CONFIG.YOUR_NAME;
-}
-
-function applyProfile(user, animate = false) {
-  const anthony = user === CONFIG.YOUR_NAME;
-  if (anthony) {
-    document.documentElement.classList.add('dark');
-  } else {
-    document.documentElement.classList.remove('dark');
-  }
-  const btn = document.getElementById('profile-toggle');
-  if (btn) {
-    btn.textContent = anthony ? '🐉 Anthony' : '🦄 Kathrina';
-    btn.style.color = anthony ? '#f97316' : '#e879a0';
-    btn.style.borderColor = anthony ? 'rgba(249,115,22,.4)' : 'rgba(232,121,160,.4)';
-  }
-}
-
-function switchProfile() {
-  const current = getActiveUser();
-  const next    = current === CONFIG.YOUR_NAME ? CONFIG.PARTNER_NAME : CONFIG.YOUR_NAME;
-  localStorage.setItem('chores_active_user', next);
-  applyProfile(next, true);
-  // Burst particles on switch
-  burstParticles(next === CONFIG.YOUR_NAME ? 'fire' : 'rainbow', window.innerWidth / 2, window.innerHeight / 2, 40);
-  showToast(next === CONFIG.YOUR_NAME ? '🔥 Anthony mode' : '🌈 Kathrina mode');
-}
-
-// ─── Particle engine — CELEBRATION EDITION ──────────────
-const _canvas  = () => document.getElementById('particle-canvas');
-let   _rafId   = null;
-let   _particles = [];
-let   _bgFlash   = 0; // background flash intensity
-
-function burstParticles(mode, originX, originY, count = 35) {
-  const canvas = _canvas();
-  if (!canvas) return;
-  canvas.width  = window.innerWidth;
-  canvas.height = window.innerHeight;
-  canvas.style.opacity = '1';
-
-  if (_rafId) { cancelAnimationFrame(_rafId); _rafId = null; }
-  _particles = [];
-  _bgFlash = mode === 'fire' ? 0.7 : 0.5;
-
-  for (let i = 0; i < count; i++) {
-    _spawnParticle(mode, originX, originY, i / count);
-  }
-
-  _animateParticles();
-}
-
-function _spawnParticle(mode, ox, oy, t, speedMult = 1) {
-  const anthony = mode === 'fire';
-  const angle   = Math.random() * Math.PI * 2;
-  const speed   = speedMult * (3 + Math.random() * 7);
-  const size    = 3 + Math.random() * 9;
-  const life    = 0.8 + Math.random() * 0.8;
-
-  let color;
-  if (anthony) {
-    const fc = ['#ff3300','#ff6600','#ff9900','#ffcc00','#ffffff'];
-    color = fc[Math.floor(Math.random() * fc.length)];
-  } else {
-    const hue = Math.floor(Math.random() * 360);
-    color = `hsl(${hue},100%,65%)`;
-  }
-
-  // Simplified: only circles and stars (fast to draw)
-  const shape = anthony
-    ? (Math.random() > 0.4 ? 'circle' : 'ember')
-    : (Math.random() > 0.5 ? 'circle' : 'star');
-
-  _particles.push({
-    x: ox, y: oy,
-    vx: Math.cos(angle) * speed,
-    vy: Math.sin(angle) * speed - 2,
-    size, color, life, maxLife: life,
-    mode, shape,
-    rotation: Math.random() * Math.PI * 2,
-    rotSpeed: (Math.random() - 0.5) * 0.2,
-    gravity: anthony ? 0.1 : 0.15,
-    drag: 0.97,
-  });
-}
-
-
-function _drawStar(ctx, x, y, size, rotation, points = 5) {
-  ctx.save();
-  ctx.translate(x, y);
-  ctx.rotate(rotation);
-  ctx.beginPath();
-  for (let i = 0; i < points * 2; i++) {
-    const a = (i * Math.PI) / points - Math.PI / 2;
-    const r = i % 2 === 0 ? size : size * 0.4;
-    i === 0 ? ctx.moveTo(Math.cos(a)*r, Math.sin(a)*r)
-            : ctx.lineTo(Math.cos(a)*r, Math.sin(a)*r);
-  }
-  ctx.closePath();
-  ctx.fill();
-  ctx.restore();
-}
-
-
-function _animateParticles() {
-  const canvas = _canvas();
-  if (!canvas) return;
-  const ctx = canvas.getContext('2d');
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-  // ── Background flash ──
-  if (_bgFlash > 0.01) {
-    const anthony = _particles.length > 0 && _particles[0].mode === 'fire';
-    ctx.globalAlpha = _bgFlash * 0.18;
-    ctx.fillStyle   = anthony ? '#ff4400' : `hsl(${Date.now() * 0.3 % 360},100%,70%)`;
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    _bgFlash *= 0.82;
-    ctx.globalAlpha = 1;
-  }
-
-  _particles = _particles.filter(p => p.life > 0);
-
-  for (const p of _particles) {
-    const t     = p.life / p.maxLife;
-    const alpha = t < 0.3 ? (t / 0.3) * 0.9 : t * 0.9;
-    const s     = p.size * Math.sqrt(t);
-
-    ctx.globalAlpha = alpha;
-    ctx.fillStyle   = p.color;
-
-    // Light glow only for fire
-    if (p.mode === 'fire') {
-      ctx.shadowColor = p.color;
-      ctx.shadowBlur  = 10 * t;
-    } else {
-      ctx.shadowBlur = 0;
-    }
-
-    if (p.shape === 'star') {
-      _drawStar(ctx, p.x, p.y, s, p.rotation);
-    } else if (p.shape === 'ember') {
-      ctx.beginPath();
-      ctx.ellipse(p.x, p.y, s * 0.45, s, p.rotation, 0, Math.PI * 2);
-      ctx.fill();
-    } else {
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, s, 0, Math.PI * 2);
-      ctx.fill();
-    }
-
-    p.x  += p.vx;
-    p.y  += p.vy;
-    p.vy += p.gravity;
-    p.vx *= p.drag;
-    p.vy *= p.drag;
-    p.rotation += p.rotSpeed;
-    p.life -= 0.022;
-  }
-
-  ctx.globalAlpha = 1;
-  ctx.shadowBlur  = 0;
-
-  if (_particles.length > 0 || _bgFlash > 0.01) {
-    _rafId = requestAnimationFrame(_animateParticles);
-  } else {
-    canvas.style.opacity = '0';
-    _rafId = null;
-  }
-}
-
-// ─── Swipe hint: hide after first use ─────────────
-if (localStorage.getItem('swipeUsed')) {
-  const hint = document.getElementById('swipe-hint');
-  if (hint) hint.style.display = 'none';
-}
-
-// ─── Init ─────────────────────────────────────────
-applyProfile(getActiveUser());
-loadChores();
-
-// ─── Scroll-safe tap guard ────────────────────────────────
-// Prevents accidental taps on buttons/cards when the user is scrolling.
-(function() {
-  let _touchStartY = 0, _touchStartX = 0, _didScroll = false;
-  const MOVE_THRESHOLD = 8; // px — any more than this = scrolling, not tapping
-
-  document.addEventListener('touchstart', e => {
-    _touchStartY  = e.touches[0].clientY;
-    _touchStartX  = e.touches[0].clientX;
-    _didScroll    = false;
-  }, { passive: true });
-
-  document.addEventListener('touchmove', e => {
-    const dy = Math.abs(e.touches[0].clientY - _touchStartY);
-    const dx = Math.abs(e.touches[0].clientX - _touchStartX);
-    if (dy > MOVE_THRESHOLD || dx > MOVE_THRESHOLD) _didScroll = true;
-  }, { passive: true });
-
-  // Intercept clicks that fire right after a scroll
-  document.addEventListener('click', e => {
-    if (_didScroll) {
-      e.stopImmediatePropagation();
-      e.preventDefault();
-      _didScroll = false;
-    }
-  }, true); // capture phase — runs before any onclick handlers
-})();
-
-
-
-
-// ─── Landing ──────────────────────────────────────────────
-// Spawn rainbow sparkles on Kathrina side
-(function spawnSparkles() {
-  const kathrina = document.querySelector('.landing-kathrina');
-  if (!kathrina) return;
-  const colors = ['#ff6eb4','#ffa0d0','#c084fc','#818cf8','#60c0f0','#60e880','#ffe060','#ffb060'];
-  function mkSparkle() {
-    const e = document.createElement('div');
-    const size  = 3 + Math.random() * 6;
-    const dur   = 2 + Math.random() * 3;
-    const left  = 10 + Math.random() * 80;
-    const bottom = 10 + Math.random() * 70;
-    const color = colors[Math.floor(Math.random() * colors.length)];
-    const drift = (Math.random() - .5) * 40;
-    e.style.cssText = `position:absolute;border-radius:50%;pointer-events:none;z-index:1;` +
-      `width:${size}px;height:${size}px;left:${left}%;bottom:${bottom}%;` +
-      `background:${color};box-shadow:0 0 ${size*1.5}px ${color};` +
-      `animation:emberRise ${dur}s linear forwards;--drift:${drift}px;`;
-    kathrina.appendChild(e);
-    setTimeout(() => e.remove(), dur * 1000 + 200);
-  }
-  setInterval(mkSparkle, 400);
-  for (let i = 0; i < 10; i++) setTimeout(mkSparkle, i * 150);
-})();
-
-// Spawn floating embers on Anthony side
-(function spawnEmbers() {
-  const anthony = document.querySelector('.landing-anthony');
-  if (!anthony) return;
-  function mkEmber() {
-    const e = document.createElement('div');
-    e.className = 'ember';
-    const size  = 2 + Math.random() * 4;
-    const drift = (Math.random() - .5) * 60;
-    const dur   = 3 + Math.random() * 4;
-    const left  = 20 + Math.random() * 60;
-    e.style.cssText = `width:${size}px;height:${size}px;left:${left}%;bottom:${20+Math.random()*30}%;` +
-      `background:hsl(${20+Math.random()*30},100%,${55+Math.random()*30}%);` +
-      `--drift:${drift}px;animation-duration:${dur}s;animation-delay:${Math.random()*3}s`;
-    anthony.appendChild(e);
-    setTimeout(() => e.remove(), (dur + 3) * 1000);
-  }
-  setInterval(mkEmber, 600);
-  for (let i = 0; i < 8; i++) mkEmber();
-})();
-
-function selectUser(name) {
-  localStorage.setItem('chores_active_user', name);
-  applyProfile(name);
-  burstParticles(innerWidth/2, innerHeight*0.5, 45, name === CONFIG.YOUR_NAME ? 'fire' : 'rainbow');
-  haptic(60);
-  // Apply dark mode for Anthony, light for Kathrina
-  const isDark = name === 'Anthony';
-  if (isDark) document.documentElement.classList.add('dark');
-  else document.documentElement.classList.remove('dark');
-  localStorage.setItem('nightMode', isDark);
-  const btn = document.getElementById('night-btn');
-  if (btn) btn.textContent = isDark ? '☀️' : '🌙';
-
-  const ls = document.getElementById('landing-screen');
-  ls.classList.add('hide');
-  setTimeout(() => {
-    ls.style.display = 'none';
-    loadChores().then(() => {
-      const days = getChoresWelcomeBack();
-      if (days) setTimeout(() => showToast(`Welcome back ${name} 👋`), 500);
-      else setTimeout(() => showToast(`${getGreeting()} ${name}! 👋`), 400);
-    });
-  }, 400);
-}
-
-function showHowTo() {
-  document.getElementById('howto-screen').classList.add('show');
-}
-
-function closeHowTo() {
-  document.getElementById('howto-screen').classList.remove('show');
-}
-
-// ─── Haptic feedback ──────────────────────────────
-function haptic(ms=40) { try { if (navigator.vibrate) navigator.vibrate(ms); } catch {} }
-
-// ─── Snap animation ────────────────────────────────
-// CSS handles it — just ensure classes exist
-
-// ─── Tag team toast ───────────────────────────────
-function checkTagTeam(chore, newWho) {
-  if (!chore || !chore.who || !newWho) return;
-  if (chore.who !== newWho && chore.who !== '') {
-    setTimeout(() => showToast('Tag team 🤝'), 700);
-  }
-}
-
-// ─── "Last active" on profile pill ─────────────────
-function getLastActive(name) {
-  const key  = 'chores_last_active_' + name;
-  const last = localStorage.getItem(key);
-  if (!last) return '';
-  const days = Math.floor((Date.now() - new Date(last).getTime()) / 86400000);
-  if (days === 0) return 'active today';
-  if (days === 1) return 'yesterday';
-  return `${days}d ago`;
-}
-function recordLastActive(name) {
-  localStorage.setItem('chores_last_active_' + name, new Date().toISOString());
-}
-function updateProfilePill() {
-  const btn  = document.getElementById('profile-toggle');
-  if (!btn) return;
-  const user = getActiveUser();
-  const emoji = user === CONFIG.YOUR_NAME ? '🐉' : '🦄';
-  const last  = getLastActive(user === CONFIG.YOUR_NAME ? CONFIG.PARTNER_NAME : CONFIG.YOUR_NAME);
-  btn.innerHTML = `${emoji} ${user}${last ? `<span style="font-size:9px;opacity:.55;margin-left:5px">${last}</span>` : ''}`;
-}
-
-// ─── Room overdue badges ───────────────────────────
-function getRoomOverdueCounts() {
-  const counts = {};
-  allChores.forEach(c => {
-    if (c.ratio < 1) return;
-    (c.room || '').toLowerCase().split(' ').filter(Boolean).forEach(code => {
-      counts[code] = (counts[code] || 0) + 1;
-    });
-  });
-  return counts;
-}
-function populateRoomDropdownsWithBadges() {
-  populateRoomDropdowns(); // call existing fn
-  const sel    = document.getElementById('room-select');
-  const counts = getRoomOverdueCounts();
-  if (!sel) return;
-  Array.from(sel.options).forEach(opt => {
-    if (!opt.value) return;
-    const n = counts[opt.value];
-    if (n) opt.text = roomLegend[opt.value] + ` (${n})`;
-  });
-}
-
-// ─── Working Bee empty state nudge ─────────────────
-// Handled inline in updateBee
-
-// ─── Welcome back on chores landing ────────────────
-function getChoresWelcomeBack() {
-  const lastOpen = localStorage.getItem('chores_last_open');
-  const today    = new Date().toDateString();
-  localStorage.setItem('chores_last_open', new Date().toISOString());
-  if (!lastOpen) return null;
-  const days = Math.floor((Date.now() - new Date(lastOpen).getTime()) / 86400000);
-  return days >= 2 ? days : null;
-}
-
-// ─── All caught up celebration ─────────────────────
-function checkAllCaughtUp(visibleCount) {
-  if (visibleCount === 0 && allChores.length > 0) {
-    setTimeout(() => {
-      burstParticles(innerWidth/2, innerHeight/2, 45, isAnthony() ? 'fire' : 'rainbow');
-      showToast('All caught up! 🏠✨');
-    }, 300);
-  }
-}
-
-// ─── Greeting ──────────────────────────────────────
-function getGreeting() {
-  const h = new Date().getHours();
-  if (h < 12) return 'Good morning';
-  if (h < 17) return 'Good afternoon';
-  return 'Good evening';
-}
-
-
 
 
 </script>
