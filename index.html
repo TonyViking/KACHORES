@@ -925,6 +925,19 @@
       <label class="form-label">Chore name</label>
       <input class="form-input" id="new-name" type="text" placeholder="e.g. Clean windows" autocomplete="off">
     </div>
+
+    <!-- One-off toggle -->
+    <div class="form-group">
+      <label class="settings-radio-label" style="margin-bottom:4px" id="oneoff-toggle-label">
+        <input type="checkbox" id="new-oneoff" style="width:18px;height:18px;accent-color:var(--c-due);cursor:pointer;flex-shrink:0" onchange="toggleOneOffForm(this.checked)">
+        <div class="settings-radio-content">
+          <span>✦ One-off task</span>
+          <span class="settings-radio-desc">Done once then removed from the list</span>
+        </div>
+      </label>
+    </div>
+
+    <div id="recurring-fields">
     <div class="form-row">
       <div class="form-group">
         <label class="form-label">Min days</label>
@@ -956,6 +969,7 @@
       <label class="form-label">Room</label>
       <div class="room-checks" id="new-room-checks"></div>
     </div>
+    </div><!-- end recurring-fields -->
     <button class="submit-btn" id="add-submit-btn" onclick="submitNewChore()">Add to list</button>
   </div>
 </div>
@@ -972,6 +986,8 @@
 </div>
 
 <script>
+
+
 
 
 
@@ -1217,8 +1233,10 @@ async function loadChores(forceRefresh = false) {
 function parseAndCacheChores(rows) {
   allChores = rows.filter(r => r[CONFIG.COL_NAME - 1]).map((row, i) => {
     const name     = row[CONFIG.COL_NAME - 1]     || '';
-    const minDays  = parseFloat(row[CONFIG.COL_MIN_DAYS  - 1]) || 1;
-    const maxDays  = parseFloat(row[CONFIG.COL_MAX_DAYS  - 1]) || 7;
+    const _maxRaw  = row[CONFIG.COL_MAX_DAYS - 1];
+    const isOneOff = String(_maxRaw).trim() === '0';
+    const minDays  = isOneOff ? 0 : (parseFloat(row[CONFIG.COL_MIN_DAYS - 1]) || 1);
+    const maxDays  = isOneOff ? 0 : (parseFloat(_maxRaw) || 7);
     const lastDone = parseDate(row[CONFIG.COL_LAST_DONE - 1]);
     const room     = (row[CONFIG.COL_ROOM - 1] || '').trim().toLowerCase();
     const who      = (row[CONFIG.COL_WHO - 1] || '').trim();
@@ -1226,7 +1244,7 @@ function parseAndCacheChores(rows) {
     const prereqs  = (row[CONFIG.COL_PREREQ - 1] || '').split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n));
     const days     = daysSince(lastDone);
     const ratio    = urgencyRatio(minDays, maxDays, days);
-    return { name, minDays, maxDays, lastDone, room, who, duration, prereqs, days, ratio, sheetRow: CONFIG.DATA_START_ROW + i };
+    return { name, minDays, maxDays, lastDone, room, who, duration, prereqs, isOneOff, days, ratio, sheetRow: CONFIG.DATA_START_ROW + i };
   }).sort((a, b) => b.ratio - a.ratio);
 }
 
@@ -1300,9 +1318,10 @@ function applyFilterAndRender() {
       return codes.includes(filterRoom.toLowerCase());
     });
   } else if (filterDays === 'quick') {
-    filtered = allChores.filter(c => c.duration > 0 && c.duration <= 10 && c.ratio >= 0.35);
+    filtered = allChores.filter(c => c.isOneOff || (c.duration > 0 && c.duration <= 10 && c.ratio >= 0.35));
   } else {
     filtered = allChores.filter(c => {
+      if (c.isOneOff) return true; // always show one-offs
       const daysUntilDue = c.maxDays - c.days;
       if (filterDays === 999) return c.ratio >= 1;
       return daysUntilDue <= filterDays || c.ratio >= 1;
@@ -1383,6 +1402,10 @@ function buildCardWrap(chore, readOnly = false) {
   const bgSnooze = document.createElement('div');
   bgSnooze.className = 'swipe-bg-snooze'; bgSnooze.innerHTML = '💤';
 
+  const oneOffBadge = chore.isOneOff
+    ? `<span style="font-size:10px;font-weight:700;color:#7a4fcf;background:rgba(122,79,207,.12);border-radius:20px;padding:2px 8px;letter-spacing:.3px">✦ One-off</span>`
+    : '';
+
   const card = document.createElement('div');
   card.className = 'chore-card';
   card.dataset.row = sheetRow;
@@ -1390,15 +1413,18 @@ function buildCardWrap(chore, readOnly = false) {
     <div class="chore-inner">
       <div>
         <div class="chore-name">${name}</div>
+        ${oneOffBadge ? `<div style="margin-top:3px">${oneOffBadge}</div>` : ''}
         ${rLabel ? `<div class="chore-room-tag">📍 ${rLabel}</div>` : ''}
         ${whoLine}
       </div>
       <div style="font-size:11px;color:var(--ink-mute);flex-shrink:0;padding-left:8px">›</div>
     </div>
-    <div class="last-done">${relativeTime(lastDone)}</div>
-    <div class="urgency-bar" style="background:${color}20">
-      <div class="urgency-fill" style="background:${color}" data-target="${width}"></div>
-    </div>`;
+    ${chore.isOneOff
+      ? `<div class="last-done" style="color:var(--ink-mute)">Do once · mark done to remove</div>`
+      : `<div class="last-done">${relativeTime(lastDone)}</div>`}
+    ${chore.isOneOff
+      ? ``
+      : `<div class="urgency-bar" style="background:${color}20"><div class="urgency-fill" style="background:${color}" data-target="${width}"></div></div>`}`;
 
   // Expand panel
   const expand = document.createElement('div');
@@ -1526,8 +1552,17 @@ async function markDone(btn, sheetRow, cardOverride) {
   // Write immediately
   const doWrite = async () => {
     try {
-      await writeCellToSheet(sheetRow, CONFIG.COL_LAST_DONE, value);
-      await writeCellToSheet(sheetRow, CONFIG.COL_WHO, whoValue);
+      if (chore && chore.isOneOff) {
+        // Archive to Sheet2, then delete from Sheet1
+        await archiveOneOff(chore);
+        // Remove from allChores
+        const idx = allChores.findIndex(c => c.sheetRow === sheetRow);
+        if (idx > -1) allChores.splice(idx, 1);
+        showToast('Archived ✓ ' + chore.name);
+      } else {
+        await writeCellToSheet(sheetRow, CONFIG.COL_LAST_DONE, value);
+        await writeCellToSheet(sheetRow, CONFIG.COL_WHO, whoValue);
+      }
     } catch(e) { showToast('Save failed — ' + e.message); }
   };
   if (isTokenValid()) { doWrite(); }
@@ -1545,6 +1580,56 @@ async function ensureToken() {
     pendingWrite = { customCallback: async () => { pendingWrite = saved; resolve(true); } };
     initOAuth();
   });
+}
+
+async function archiveOneOff(chore) {
+  // 1. Append to Sheet2 with completion timestamp
+  const completedAt  = formatDate(new Date());
+  const whoName      = localStorage.getItem('chores_active_user') || CONFIG.YOUR_NAME;
+  const archiveRange = encodeURIComponent('Sheet2!A:H');
+  const archiveUrl   = `https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.SHEET_ID}/values/${archiveRange}:append?valueInputOption=RAW&insertDataOption=INSERT_ROWS`;
+  const appendRes    = await fetch(archiveUrl, {
+    method: 'POST',
+    headers: { 'Authorization': `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      values: [[
+        chore.name,
+        completedAt,
+        whoName,
+        chore.room || '',
+        chore.duration || '',
+        'one-off',
+      ]]
+    }),
+  });
+  const appendData = await appendRes.json();
+  if (appendData.error) throw new Error(appendData.error.message);
+
+  // 2. Delete from Sheet1 — get sheetId from metadata
+  const metaUrl  = `https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.SHEET_ID}?key=${CONFIG.API_KEY}`;
+  const meta     = await fetch(metaUrl);
+  const metaData = await meta.json();
+  const sheetId  = metaData.sheets?.find(s => s.properties.title === CONFIG.SHEET_NAME)?.properties?.sheetId ?? 0;
+
+  const deleteUrl = `https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.SHEET_ID}:batchUpdate`;
+  const deleteRes = await fetch(deleteUrl, {
+    method: 'POST',
+    headers: { 'Authorization': `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      requests: [{
+        deleteDimension: {
+          range: {
+            sheetId,
+            dimension: 'ROWS',
+            startIndex: chore.sheetRow - 1,  // 0-indexed
+            endIndex:   chore.sheetRow,
+          }
+        }
+      }]
+    }),
+  });
+  const deleteData = await deleteRes.json();
+  if (deleteData.error) throw new Error(deleteData.error.message);
 }
 
 async function writeCellToSheet(sheetRow, col, value) {
@@ -1710,6 +1795,15 @@ function updateSettingsSummary() {
   el.innerHTML = `${sortLabels[sortMode] || sortMode} &nbsp;·&nbsp; ${daysLabel}`;
 }
 
+function toggleOneOffForm(isOneOff) {
+  const fields = document.getElementById('recurring-fields');
+  const minEl  = document.getElementById('new-min');
+  const maxEl  = document.getElementById('new-max');
+  if (fields) fields.style.display = isOneOff ? 'none' : 'block';
+  if (minEl)  minEl.required = !isOneOff;
+  if (maxEl)  maxEl.required = !isOneOff;
+}
+
 function openAddChore() {
   const container = document.getElementById('new-room-checks');
   container.innerHTML = '';
@@ -1723,6 +1817,9 @@ function openAddChore() {
   });
   document.getElementById('add-overlay').classList.add('open');
   document.getElementById('add-sheet').classList.add('open');
+  // Reset one-off toggle
+  const cb = document.getElementById('new-oneoff');
+  if (cb) { cb.checked = false; toggleOneOffForm(false); }
   setTimeout(() => document.getElementById('new-name').focus(), 400);
 }
 
@@ -1737,9 +1834,12 @@ async function submitNewChore() {
   const max  = parseInt(document.getElementById('new-max').value);
   const room = Array.from(document.querySelectorAll('#new-room-checks input:checked')).map(cb => cb.value).join(' ');
 
-  if (!name)        { showToast('Please enter a chore name'); return; }
-  if (!min || !max) { showToast('Please enter min and max days'); return; }
-  if (min > max)    { showToast('Min days must be ≤ max days'); return; }
+  const isOneOff = document.getElementById('new-oneoff')?.checked || false;
+  if (!name) { showToast('Please enter a chore name'); return; }
+  if (!isOneOff) {
+    if (!min || !max) { showToast('Please enter min and max days'); return; }
+    if (min > max)    { showToast('Min days must be ≤ max days'); return; }
+  }
   const btn = document.getElementById('add-submit-btn');
   btn.disabled = true; btn.textContent = 'Saving…';
 
@@ -1752,7 +1852,7 @@ async function submitNewChore() {
       const res = await fetch(url, {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ values: [[name, min, max, '', room, '', dur]] }),
+        body: JSON.stringify({ values: [[name, isOneOff?0:min, isOneOff?0:max, '', room, '', dur]] }),
       });
       const data = await res.json();
       if (data.error) throw new Error(data.error.message);
@@ -2590,6 +2690,8 @@ function populateRoomDropdownsWithBadges() {
   setInterval(mkEmber, 600);
   for (let i = 0; i < 8; i++) mkEmber();
 })();
+
+
 
 
 
