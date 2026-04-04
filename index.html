@@ -779,6 +779,9 @@
 
 
 
+
+
+
 var sortMode = "urgency";
 
 
@@ -957,13 +960,6 @@ async function loadChores(forceRefresh = false) {
       initOAuth();
     });
   }
-  if (CONFIG.SHEET_ID === 'YOUR_SHEET_ID_HERE') {
-    document.getElementById('loading').style.display = 'none';
-    document.getElementById('config-banner').classList.remove('hidden');
-    document.getElementById('chore-list').style.display = 'flex';
-    renderDemo(); return;
-  }
-
   document.getElementById('loading').style.display = 'block';
   document.getElementById('error').style.display   = 'none';
   document.getElementById('chore-list').style.display = 'none';
@@ -1224,7 +1220,6 @@ function attachSwipe(card, bgDone, bgSnooze, sheetRow) {
 
 // ─── Mark Done ────────────────────────────────────
 async function markDone(btn, sheetRow, cardOverride) {
-  if (CONFIG.SHEET_ID === 'YOUR_SHEET_ID_HERE') { showToast('Demo mode — configure your sheet to save ✓'); return; }
   if (btn) btn.disabled = true;
 
   const chore = allChores.find(c => c.sheetRow === sheetRow);
@@ -1284,8 +1279,38 @@ async function writeCellToSheet(sheetRow, col, value) {
   if (data.error) throw new Error(data.error.message);
 }
 
+// ─── OAuth ────────────────────────────────────────────
+function initOAuth() {
+  if (!window.google) {
+    const s = document.createElement('script');
+    s.src   = 'https://accounts.google.com/gsi/client';
+    s.onload = () => startTokenFlow();
+    document.head.appendChild(s);
+  } else {
+    startTokenFlow();
+  }
+}
 
-
+function startTokenFlow() {
+  tokenClient = google.accounts.oauth2.initTokenClient({
+    client_id: OAUTH_CLIENT_ID,
+    scope: SCOPES,
+    callback: async (resp) => {
+      if (resp.error) {
+        showToast('Sign-in cancelled');
+        if (pendingWrite?.btn) pendingWrite.btn.disabled = false;
+        return;
+      }
+      accessToken = resp.access_token;
+      if (pendingWrite) {
+        const pw = pendingWrite; pendingWrite = null;
+        if (pw.customCallback) await pw.customCallback();
+        else await writeCellToSheet(pw.sheetRow, CONFIG.COL_LAST_DONE, pw.value);
+      }
+    },
+  });
+  tokenClient.requestAccessToken({ prompt: '' });
+}
 
 // ─── Add chore ────────────────────────────────────
 function openAddChore() {
@@ -1318,8 +1343,6 @@ async function submitNewChore() {
   if (!name)        { showToast('Please enter a chore name'); return; }
   if (!min || !max) { showToast('Please enter min and max days'); return; }
   if (min > max)    { showToast('Min days must be ≤ max days'); return; }
-  if (CONFIG.SHEET_ID === 'YOUR_SHEET_ID_HERE') { showToast('Demo mode — configure your sheet to save'); return; }
-
   const btn = document.getElementById('add-submit-btn');
   btn.disabled = true; btn.textContent = 'Saving…';
 
@@ -1437,9 +1460,7 @@ function closeViewAll() {
 
 // ─── Auto-refresh on foreground ───────────────────
 document.addEventListener('visibilitychange', () => {
-  if (!document.hidden && CONFIG.SHEET_ID !== 'YOUR_SHEET_ID_HERE') {
-    loadChores();
-  }
+  if (!document.hidden) { loadChores(); }
 });
 
 // ─── Snooze chore for 1 day ──────────────────────────
@@ -1899,6 +1920,14 @@ function checkTagTeam(chore, newWho) {
   }
 }
 
+// ─── Greeting ────────────────────────────────────────
+function getGreeting() {
+  const h = new Date().getHours();
+  if (h < 12) return 'Good morning';
+  if (h < 17) return 'Good afternoon';
+  return 'Good evening';
+}
+
 // ─── Landing functions ────────────────────────────────
 function selectUser(name) {
   localStorage.setItem('chores_active_user', name);
@@ -2063,6 +2092,9 @@ function populateRoomDropdownsWithBadges() {
   setInterval(mkEmber, 600);
   for (let i = 0; i < 8; i++) mkEmber();
 })();
+
+
+
 
 
 
