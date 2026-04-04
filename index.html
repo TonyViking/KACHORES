@@ -114,10 +114,7 @@
   .room-select:focus { border-color: var(--c-due); }
   .room-select.active { border-color: var(--c-due); color: var(--c-due); }
 
-  /* ── Filter Bar ── */
-  .filter-bar { display: flex; gap: 8px; padding: 0 16px 14px; overflow-x: auto; scrollbar-width: none; transition: opacity .2s; }
-  .filter-bar::-webkit-scrollbar { display: none; }
-  .filter-bar.dimmed { opacity: .35; pointer-events: none; }
+  /* filter-bar removed */
   .filter-btn { flex-shrink: 0; background: var(--surface); border: 1.5px solid var(--border); border-radius: 20px; padding: 5px 14px; font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 500; color: var(--ink-soft); cursor: pointer; transition: all .15s; letter-spacing: .2px; touch-action: manipulation; }
   .filter-btn.active { background: var(--ink); color: var(--bg); border-color: var(--ink); }
 
@@ -510,6 +507,76 @@
     box-shadow: 0 6px 24px rgba(180,60,0,.45);
     border: 1px solid rgba(255,120,40,.2);
   }
+
+  .settings-radio-label {
+    display: flex; align-items: center; gap: 12px;
+    padding: 11px 14px; background: var(--bg);
+    border: 1.5px solid var(--border); border-radius: 12px;
+    cursor: pointer; transition: border-color .15s, background .15s;
+  }
+  .settings-radio-label:has(input:checked) {
+    border-color: var(--c-due); background: var(--surface);
+  }
+  .settings-radio-label input[type="radio"] {
+    width: 16px; height: 16px; accent-color: var(--c-due); flex-shrink: 0;
+  }
+  .settings-radio-content {
+    display: flex; flex-direction: column; gap: 1px;
+    font-size: 14px; font-weight: 500;
+  }
+  .settings-radio-desc {
+    font-size: 11px; color: var(--ink-soft); font-weight: 300;
+  }
+
+  .chore-expand {
+    padding: 0 16px; overflow: hidden; max-height: 0;
+    transition: max-height .3s cubic-bezier(.4,0,.2,1), padding .3s;
+    background: var(--surface);
+    border-top: 1px solid transparent;
+  }
+  .chore-expand.open {
+    max-height: 200px;
+    padding: 10px 16px 14px;
+    border-top-color: var(--border);
+  }
+  .expand-row { display:flex; align-items:center; justify-content:space-between;
+    font-size:12px; color:var(--ink-soft); padding:3px 0; }
+  .expand-row strong { color:var(--ink); }
+  .expand-done-btn {
+    width:100%; margin-top:10px; padding:11px;
+    background:var(--ink); color:var(--bg); border:none; border-radius:12px;
+    font-family:'DM Sans',sans-serif; font-size:14px; font-weight:600;
+    cursor:pointer; transition:opacity .15s;
+  }
+  .expand-done-btn:active { opacity:.8; }
+
+  .activity-strip {
+    padding: 0 20px 8px;
+    font-size: 11px; color: var(--ink-mute);
+    letter-spacing: .3px; min-height: 20px;
+    transition: opacity .3s;
+  }
+  .activity-strip span { color: var(--ink-soft); }
+
+  /* Room health tiles */
+  #room-tiles-screen {
+    position:fixed;inset:0;z-index:100;overflow-y:auto;
+    background:var(--bg);display:none;animation:fadeUp .25s ease;
+  }
+  .room-tiles-grid {
+    display:grid;grid-template-columns:1fr 1fr;gap:12px;
+    padding:16px 20px calc(var(--safe-bot)+40px);
+  }
+  .room-tile {
+    border-radius:16px;padding:16px 14px;cursor:pointer;
+    transition:transform .15s,box-shadow .15s;
+    border:1.5px solid transparent;
+  }
+  .room-tile:active { transform:scale(.96); }
+  .room-tile-name { font-size:15px;font-weight:600;margin-bottom:4px; }
+  .room-tile-count { font-size:12px;opacity:.75; }
+  .room-tile-bar { height:4px;border-radius:4px;margin-top:10px;background:rgba(255,255,255,.2); }
+  .room-tile-fill { height:100%;border-radius:4px;background:rgba(255,255,255,.6); }
 </style>
 </head>
 <body>
@@ -557,58 +624,103 @@
     </button>
   </div>
   <div class="howto-body">
+
     <div class="howto-section">
       <div class="howto-section-title">Your chores</div>
-      <p>Each chore has a <strong>min days</strong> (earliest to repeat) and <strong>max days</strong> (when it becomes due). The app tracks when it was last done and by whom.</p>
+      <p>Each chore has a <strong>min days</strong> (earliest to repeat) and <strong>max days</strong> (when it becomes due). The coloured bar shows how urgent it is. The app syncs to your Google Sheet whenever you mark something done.</p>
     </div>
-    <div class="howto-section">
-      <div class="howto-section-title">Filters</div>
-      <p>Use the <strong>room dropdown</strong> to see all chores in a specific room. Use the <strong>day pills</strong> to see chores due within a time window.</p>
-    </div>
+
     <div class="howto-section">
       <div class="howto-section-title">Marking done</div>
       <div class="howto-tip">
         <div class="howto-tip-icon">←</div>
-        <div class="howto-tip-text"><strong>Swipe left</strong> to mark done — writes your name and time to the sheet instantly.</div>
+        <div class="howto-tip-text"><strong>Swipe left</strong> to mark done — saves to the sheet instantly.</div>
       </div>
       <div class="howto-tip" style="margin-top:8px">
         <div class="howto-tip-icon">→</div>
-        <div class="howto-tip-text"><strong>Swipe right</strong> to hide until midnight — reappears tomorrow as normal.</div>
+        <div class="howto-tip-text"><strong>Swipe right</strong> to snooze until midnight — reappears tomorrow.</div>
+      </div>
+      <div class="howto-tip" style="margin-top:8px">
+        <div class="howto-tip-icon">›</div>
+        <div class="howto-tip-text"><strong>Tap any card</strong> to expand it — shows duration, schedule, prerequisites, exact last done date, and a Done button.</div>
       </div>
     </div>
+
     <div class="howto-section">
       <div class="howto-section-title">Urgency colours</div>
-      <div class="howto-tip"><div class="howto-tip-icon">🟢</div><div class="howto-tip-text"><strong>Green</strong> — recently done.</div></div>
-      <div class="howto-tip" style="margin-top:8px"><div class="howto-tip-icon">🟡</div><div class="howto-tip-text"><strong>Yellow/orange</strong> — coming up soon.</div></div>
+      <div class="howto-tip"><div class="howto-tip-icon">🟢</div><div class="howto-tip-text"><strong>Green</strong> — recently done, all good.</div></div>
+      <div class="howto-tip" style="margin-top:8px"><div class="howto-tip-icon">🟡</div><div class="howto-tip-text"><strong>Yellow</strong> — coming up soon.</div></div>
+      <div class="howto-tip" style="margin-top:8px"><div class="howto-tip-icon">🟠</div><div class="howto-tip-text"><strong>Orange</strong> — due now.</div></div>
       <div class="howto-tip" style="margin-top:8px"><div class="howto-tip-icon">🔴</div><div class="howto-tip-text"><strong>Red</strong> — overdue.</div></div>
     </div>
+
+    <div class="howto-section">
+      <div class="howto-section-title">Home health</div>
+      <p>The indicator under the title shows the overall state of your home — 🟢 All good through to 🔴 Needs work — based on how many chores are overdue across all rooms. The activity strip below it shows the last chore completed.</p>
+    </div>
+
+    <div class="howto-section">
+      <div class="howto-section-title">Rooms 🏠</div>
+      <p>Tap the <strong>All rooms</strong> button below the header to open the room tiles view. Each room shows as a coloured tile based on its worst overdue chore. Tap any tile to filter the list to that room.</p>
+    </div>
+
+    <div class="howto-section">
+      <div class="howto-section-title">⚙️ Settings</div>
+      <p>Tap the <strong>cog icon</strong> in the header to open settings. Here you can choose:</p>
+      <div class="howto-tip" style="margin-top:8px">
+        <div class="howto-tip-icon">🔥</div>
+        <div class="howto-tip-text"><strong>Sort order</strong> — Urgency (most overdue first), Duration longest first, or Duration shortest first (quick wins).</div>
+      </div>
+      <div class="howto-tip" style="margin-top:8px">
+        <div class="howto-tip-icon">📅</div>
+        <div class="howto-tip-text"><strong>Due within</strong> — filter to chores due in 1, 2, 4, 7, or 14 days. Or choose <strong>Under 10 min</strong> when you only have a few minutes spare.</div>
+      </div>
+    </div>
+
     <div class="howto-section">
       <div class="howto-section-title">🐝 Working Bee</div>
-      <p>Tap the <strong>clock icon</strong> in the header. Set your time budget and choose <strong>Priority first</strong> or <strong>Most tasks</strong>. Only chores with a duration (column G) appear.</p>
+      <p>Tap the <strong>🐝 button</strong> in the header. Set your time budget and pick a mode — <strong>Priority</strong> (most overdue first), <strong>Most tasks</strong> (shortest first), or <strong>Smart</strong> (rotates hard and easy to avoid fatigue). Breaks are automatically inserted every 30 minutes. Only chores with a duration in column G appear.</p>
+      <div class="howto-tip" style="margin-top:8px">
+        <div class="howto-tip-icon">📍</div>
+        <div class="howto-tip-text">Toggle <strong>Group by room</strong> to cluster tasks so you're not walking back and forth.</div>
+      </div>
     </div>
+
     <div class="howto-section">
-      <div class="howto-section-title">View All</div>
-      <p>Tap the <strong>list icon</strong> in the header to see every chore alphabetically with Done buttons for quick access.</p>
+      <div class="howto-section-title">All chores ☰</div>
+      <p>Tap the <strong>list icon</strong> to see every chore alphabetically with room, last done date, and a Done button — useful for chores not currently showing in your filtered view.</p>
     </div>
+
+    <div class="howto-section">
+      <div class="howto-section-title">Adding chores ＋</div>
+      <p>Tap the <strong>+ button</strong> to add a new chore. Fill in the name, min and max days, room, and an optional duration. It's added to your sheet immediately.</p>
+    </div>
+
+    <div class="howto-section">
+      <div class="howto-section-title">Offline</div>
+      <p>If you mark a chore done without an internet connection, it's queued locally and synced automatically the next time you're back online. The <strong>OFFLINE</strong> badge appears in the header when disconnected.</p>
+    </div>
+
+    <div class="howto-section">
+      <div class="howto-section-title">Sheet layout</div>
+      <p>Your Google Sheet needs these columns: <strong>A</strong> Name · <strong>B</strong> Min days · <strong>C</strong> Max days · <strong>D</strong> Last done (written by app) · <strong>E</strong> Room code(s) · <strong>F</strong> Who · <strong>G</strong> Duration (minutes) · <strong>H</strong> Prerequisite row numbers · <strong>I</strong> Room legend (e.g. <em>k = Kitchen</em>).</p>
+    </div>
+
   </div>
 </div>
 
 <header>
-  <div>
+  <div style="display:flex;align-items:baseline;gap:8px;flex:1;min-width:0">
     <div class="wordmark">Home<span>.</span></div>
-    <div class="subtitle">Chore tracker<span class="offline-badge" id="offline-badge" style="display:none">OFFLINE</span></div>
+    <div class="subtitle" style="white-space:nowrap">Chore tracker<span class="offline-badge" id="offline-badge" style="display:none">OFFLINE</span></div>
+    <div style="font-size:10px;margin-top:2px;font-weight:400;letter-spacing:.3px;transition:color .4s" id="home-health"></div>
   </div>
   <div class="header-btns">
-        <button id="profile-toggle" onclick="switchProfile()" title="Switch profile" style="background:none;border:1.5px solid var(--border);border-radius:20px;padding:5px 14px;font-family:DM Sans,sans-serif;font-size:13px;font-weight:600;color:var(--ink-soft);cursor:pointer;transition:all .25s;white-space:nowrap;letter-spacing:.3px"></button>
-    <button class="icon-btn" onclick="openViewAll()" title="View all chores">
+    <button id="profile-toggle" onclick="switchProfile()" title="Switch profile" style="background:none;border:1.5px solid var(--border);border-radius:20px;padding:5px 12px;font-family:DM Sans,sans-serif;font-size:12px;font-weight:600;color:var(--ink-soft);cursor:pointer;transition:all .25s;white-space:nowrap;letter-spacing:.3px;flex-shrink:0"></button>
+    <button class="icon-btn" onclick="openSettings()" title="Settings" id="settings-btn">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/>
-        <line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/>
-      </svg>
-    </button>
-    <button class="icon-btn" onclick="openWorkingBee()" title="Working Bee" id="bee-btn">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+        <circle cx="12" cy="12" r="3"/>
+        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
       </svg>
     </button>
     <button class="icon-btn" onclick="openAddChore()" title="Add chore">
@@ -616,15 +728,18 @@
         <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
       </svg>
     </button>
-    <button class="icon-btn refresh-btn" onclick="loadChores(true)" title="Refresh">
+    <button class="icon-btn" onclick="openWorkingBee()" title="Working Bee" id="bee-btn" style="font-size:18px;line-height:1">🐝</button>
+    <button class="icon-btn" onclick="openViewAll()" title="All chores">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+        <line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/>
+        <line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/>
       </svg>
     </button>
   </div>
 </header>
 
 
+<div id="activity-strip" class="activity-strip"></div>
 <div class="legend">
   <div class="legend-item"><div class="legend-dot" style="background:var(--c-fresh)"></div> Fresh</div>
   <div class="legend-item"><div class="legend-dot" style="background:var(--c-ok)"></div> Good</div>
@@ -636,36 +751,40 @@
 <div class="ptr-indicator" id="ptr-indicator"></div>
 
 <!-- Room filter -->
-<div class="room-bar">
-  <div class="room-select-wrap">
-    <select class="room-select" id="room-select" onchange="setRoom(this.value)">
-      <option value="">All rooms</option>
-    </select>
-  </div>
+<div style="padding:0 16px 10px;display:flex;gap:8px;align-items:center">
+  <button id="room-filter-btn" onclick="openRoomTiles()" style="flex:1;background:var(--surface);border:1.5px solid var(--border);border-radius:12px;padding:9px 14px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;color:var(--ink-soft);cursor:pointer;text-align:left;transition:all .15s;display:flex;align-items:center;justify-content:space-between">
+    <span id="room-filter-label">All rooms</span>
+    <span style="font-size:11px;opacity:.6">🏠 ›</span>
+  </button>
 </div>
+<!-- Hidden select for programmatic use -->
+<select id="room-select" style="display:none" onchange="setRoom(this.value)"><option value="">All rooms</option></select>
 
-<!-- Day filter pills -->
-<div class="filter-bar" id="filter-bar">
-  <button class="filter-btn" data-days="1"   onclick="setFilter(1)">1 day</button>
-  <button class="filter-btn" data-days="2"   onclick="setFilter(2)">2 days</button>
-  <button class="filter-btn active" data-days="4" onclick="setFilter(4)">4 days</button>
-  <button class="filter-btn" data-days="7"   onclick="setFilter(7)">7 days</button>
-  <button class="filter-btn" data-days="14"  onclick="setFilter(14)">14 days</button>
-  <button class="filter-btn" data-days="999" onclick="setFilter(999)">All due</button>
-</div>
+<!-- filter pills moved to settings -->
 
 <canvas id="particle-canvas" style="position:fixed;inset:0;pointer-events:none;z-index:9999;opacity:0;transition:opacity .3s"></canvas>
 <div id="loading"><div class="spinner"></div>Loading chores…</div>
 <div id="error" style="display:none"></div>
-<div style="padding:0 16px 10px;display:flex;gap:8px;align-items:center">
-  <span style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink-soft);font-weight:500;flex-shrink:0">Sort</span>
-  <button id="sort-urgency-btn" class="filter-btn sort-btn active" onclick="setSort('urgency')" style="flex-shrink:0">&#x1F525; Urgency</button>
-  <button id="sort-duration-btn" class="filter-btn sort-btn" onclick="setSort('duration')" style="flex-shrink:0">&#x23F1; Duration</button>
-</div>
+<!-- sort row moved to settings -->
 <div id="chore-list" style="display:none">
   <div class="swipe-hint" id="swipe-hint">← swipe left to done · snooze right</div>
 </div>
 <div id="toast"></div>
+
+<!-- ROOM HEALTH TILES SCREEN -->
+<div id="room-tiles-screen">
+  <div style="padding:calc(var(--safe-top)+12px) 20px 14px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:linear-gradient(to bottom,var(--bg) 80%,transparent);z-index:10">
+    <div>
+      <div style="font-family:'Playfair Display',serif;font-size:22px;font-weight:600">Rooms</div>
+      <div style="font-size:11px;color:var(--ink-soft);letter-spacing:1px;text-transform:uppercase;margin-top:1px">Tap a room to filter</div>
+    </div>
+    <button class="icon-btn" onclick="closeRoomTiles()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+  <div id="room-health-summary" style="margin:0 20px 14px;padding:12px 16px;background:var(--surface);border:1.5px solid var(--border);border-radius:12px;font-size:13px;color:var(--ink-soft)"></div>
+  <div class="room-tiles-grid" id="room-tiles-grid"></div>
+</div>
 
 <!-- WORKING BEE SCREEN -->
 <div id="bee-screen" style="display:none;position:fixed;inset:0;z-index:100;overflow-y:auto;background:var(--bg);animation:fadeUp .25s ease">
@@ -721,6 +840,66 @@
   <!-- Task list -->
   <div id="bee-list" style="padding:0 20px calc(var(--safe-bot)+40px);display:flex;flex-direction:column;gap:10px">
     <div class="empty-state"><span class="emoji">🐝</span>Set your time above to see what you can get done.</div>
+  </div>
+</div>
+
+<!-- SETTINGS SHEET -->
+<div class="sheet-overlay" id="settings-overlay" onclick="closeSettings()"></div>
+<div class="bottom-sheet" id="settings-sheet">
+  <div class="sheet-handle"></div>
+  <div class="sheet-header">
+    <div class="sheet-title">⚙️ Settings</div>
+    <button class="sheet-close" onclick="closeSettings()">×</button>
+  </div>
+  <div class="sheet-body">
+
+    <!-- Sort order -->
+    <div class="form-group">
+      <label class="form-label">Sort order</label>
+      <div style="display:flex;flex-direction:column;gap:8px" id="sort-options">
+        <label class="settings-radio-label" id="sort-opt-urgency">
+          <input type="radio" name="sort-mode" value="urgency" checked onchange="setSort(this.value)">
+          <div class="settings-radio-content">
+            <span>🔥 Urgency</span>
+            <span class="settings-radio-desc">Most overdue first</span>
+          </div>
+        </label>
+        <label class="settings-radio-label" id="sort-opt-duration-long">
+          <input type="radio" name="sort-mode" value="duration-long" onchange="setSort(this.value)">
+          <div class="settings-radio-content">
+            <span>⏱ Duration — longest first</span>
+            <span class="settings-radio-desc">Tackle big tasks early</span>
+          </div>
+        </label>
+        <label class="settings-radio-label" id="sort-opt-duration-short">
+          <input type="radio" name="sort-mode" value="duration-short" onchange="setSort(this.value)">
+          <div class="settings-radio-content">
+            <span>⚡ Duration — shortest first</span>
+            <span class="settings-radio-desc">Quick wins first</span>
+          </div>
+        </label>
+      </div>
+    </div>
+
+    <!-- Due in X days -->
+    <div class="form-group" style="margin-top:20px">
+      <label class="form-label">Show chores due within</label>
+      <div class="form-select-wrap">
+        <select class="form-select" id="settings-filter-days" onchange="setFilter(parseInt(this.value))">
+          <option value="quick">Under 10 min ⚡</option>
+          <option value="1">1 day</option>
+          <option value="2">2 days</option>
+          <option value="4" selected>4 days</option>
+          <option value="7">7 days</option>
+          <option value="14">14 days</option>
+          <option value="999">All overdue only</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Active filters summary -->
+    <div id="settings-summary" style="margin-top:16px;padding:10px 14px;background:var(--bg);border:1.5px solid var(--border);border-radius:12px;font-size:12px;color:var(--ink-soft)"></div>
+
   </div>
 </div>
 
@@ -784,6 +963,8 @@
 </div>
 
 <script>
+
+
 
 
 
@@ -863,6 +1044,7 @@ function bustLegendCache() {
 // ─── State ────────────────────────────────────────
 let tokenClient  = null;
 let accessToken  = null;
+let tokenExpiry  = 0;  // timestamp ms when token expires
 let pendingWrite = null;
 let allChores    = [];
 let roomLegend   = {};
@@ -1011,6 +1193,9 @@ async function loadChores(forceRefresh = false) {
     applyFilterAndRender();
     // Update page title with overdue count
     updatePageTitle();
+  updateHomeHealth();
+  renderActivityStrip();
+  if (navigator.onLine) flushWriteQueue();
   } catch(e) {
     document.getElementById('loading').style.display = 'none';
     const err = document.getElementById('error');
@@ -1035,6 +1220,28 @@ function parseAndCacheChores(rows) {
   }).sort((a, b) => b.ratio - a.ratio);
 }
 
+
+// ─── Home health indicator ────────────────────────────
+function updateHomeHealth() {
+  if (!allChores.length) return;
+  const total   = allChores.length;
+  const overdue = allChores.filter(c => c.ratio >= 1).length;
+  const soon    = allChores.filter(c => c.ratio >= 0.85 && c.ratio < 1).length;
+  const pct     = (overdue + soon * 0.5) / total;
+
+  let emoji, label, color;
+  if (pct < 0.1)      { emoji='🟢'; label='All good';    color='var(--c-fresh)'; }
+  else if (pct < 0.3) { emoji='🟡'; label='Needs some attention'; color='var(--c-soon)'; }
+  else if (pct < 0.6) { emoji='🟠'; label='Getting behind';      color='var(--c-due)'; }
+  else                { emoji='🔴'; label='Needs work';          color='var(--c-over)'; }
+
+  const el = document.getElementById('home-health');
+  if (el) {
+    el.textContent = emoji + ' ' + label;
+    el.style.color  = color;
+  }
+}
+
 function updatePageTitle() {
   const overdue = allChores.filter(c => c.ratio >= 1).length;
   document.title = overdue > 0 ? `(${overdue}) Chores` : 'Chores';
@@ -1043,23 +1250,29 @@ function updatePageTitle() {
 // ─── Filters ──────────────────────────────────────
 function setRoom(code) {
   filterRoom = code;
-  document.getElementById('room-select').classList.toggle('active', !!code);
-  document.getElementById('filter-bar').classList.toggle('dimmed', !!code);
+  // Update tiles button label
+  const lbl = document.getElementById('room-filter-label');
+  if (lbl) lbl.textContent = code ? (roomLegend[code] || code) : 'All rooms';
+  const btn = document.getElementById('room-filter-btn');
+  if (btn) { btn.style.borderColor = code ? 'var(--c-due)' : 'var(--border)'; btn.style.color = code ? 'var(--c-due)' : 'var(--ink-soft)'; }
   applyFilterAndRender();
 }
 
 function setSort(mode) {
   sortMode = mode;
-  document.getElementById('sort-urgency-btn').classList.toggle('active', mode === 'urgency');
-  document.getElementById('sort-duration-btn').classList.toggle('active', mode === 'duration');
+  // Sync radio buttons in settings
+  const radio = document.querySelector(`input[name="sort-mode"][value="${mode}"]`);
+  if (radio) radio.checked = true;
+  updateSettingsSummary();
   applyFilterAndRender();
 }
 
 function setFilter(days) {
   filterDays = days;
-  document.querySelectorAll('.filter-btn:not(.sort-btn)').forEach(b => {
-    b.classList.toggle('active', parseInt(b.dataset.days) === days);
-  });
+  // Sync settings dropdown
+  const sel = document.getElementById('settings-filter-days');
+  if (sel) sel.value = String(days);
+  updateSettingsSummary();
   applyFilterAndRender();
 }
 
@@ -1076,6 +1289,8 @@ function applyFilterAndRender() {
       const codes = (c.room || '').toLowerCase().split(' ').filter(Boolean);
       return codes.includes(filterRoom.toLowerCase());
     });
+  } else if (filterDays === 'quick') {
+    filtered = allChores.filter(c => c.duration > 0 && c.duration <= 10 && c.ratio >= 0.35);
   } else {
     filtered = allChores.filter(c => {
       const daysUntilDue = c.maxDays - c.days;
@@ -1085,12 +1300,18 @@ function applyFilterAndRender() {
   }
 
   // Apply sort
-  if (sortMode === 'duration') {
-    // Chores with duration first (ascending), then no-duration by urgency
+  if (sortMode === 'duration-short') {
     filtered.sort((a, b) => {
       if (a.duration && b.duration) return a.duration - b.duration;
       if (a.duration) return -1;
       if (b.duration) return 1;
+      return b.ratio - a.ratio;
+    });
+  } else if (sortMode === 'duration-long') {
+    filtered.sort((a, b) => {
+      if (a.duration && b.duration) return b.duration - a.duration;
+      if (b.duration) return -1;
+      if (a.duration) return 1;
       return b.ratio - a.ratio;
     });
   } else {
@@ -1147,12 +1368,10 @@ function buildCardWrap(chore, readOnly = false) {
   wrap.className = 'chore-card-wrap';
 
   const bgDone = document.createElement('div');
-  bgDone.className = 'swipe-bg-done';
-  bgDone.innerHTML = '✓';
+  bgDone.className = 'swipe-bg-done'; bgDone.innerHTML = '✓';
 
   const bgSnooze = document.createElement('div');
-  bgSnooze.className = 'swipe-bg-snooze';
-  bgSnooze.innerHTML = '💤';
+  bgSnooze.className = 'swipe-bg-snooze'; bgSnooze.innerHTML = '💤';
 
   const card = document.createElement('div');
   card.className = 'chore-card';
@@ -1164,15 +1383,38 @@ function buildCardWrap(chore, readOnly = false) {
         ${rLabel ? `<div class="chore-room-tag">📍 ${rLabel}</div>` : ''}
         ${whoLine}
       </div>
+      <div style="font-size:11px;color:var(--ink-mute);flex-shrink:0;padding-left:8px">›</div>
     </div>
     <div class="last-done">${relativeTime(lastDone)}</div>
     <div class="urgency-bar" style="background:${color}20">
       <div class="urgency-fill" style="background:${color}" data-target="${width}"></div>
     </div>`;
 
+  // Expand panel
+  const expand = document.createElement('div');
+  expand.className = 'chore-expand';
+  const prereqNames = (chore.prereqs||[]).map(r => {
+    const p = allChores.find(c => c.sheetRow === r);
+    return p ? p.name : `Row ${r}`;
+  }).join(', ');
+  expand.innerHTML = `
+    ${chore.duration ? `<div class="expand-row"><span>Duration</span><strong>~${chore.duration} min</strong></div>` : ''}
+    ${chore.minDays ? `<div class="expand-row"><span>Schedule</span><strong>Every ${chore.minDays}–${chore.maxDays} days</strong></div>` : ''}
+    ${prereqNames ? `<div class="expand-row"><span>Do after</span><strong>${prereqNames}</strong></div>` : ''}
+    <div class="expand-row"><span>Last done</span><strong>${lastDone ? formatDate(lastDone) : 'Never'}</strong></div>
+    <button class="expand-done-btn" onclick="markDone(null,${sheetRow},null);this.closest('.chore-card-wrap').remove()">✓ Mark done</button>`;
+
+  // Tap to toggle expand (only if not swiping)
+  card.addEventListener('click', () => {
+    const chevron = card.querySelector('.chore-inner > div:last-child');
+    expand.classList.toggle('open');
+    if (chevron) chevron.textContent = expand.classList.contains('open') ? '↓' : '›';
+  });
+
   wrap.appendChild(bgDone);
   wrap.appendChild(bgSnooze);
   wrap.appendChild(card);
+  wrap.appendChild(expand);
   attachSwipe(card, bgDone, bgSnooze, sheetRow);
   return wrap;
 }
@@ -1265,6 +1507,7 @@ async function markDone(btn, sheetRow, cardOverride) {
   updatePageTitle();
   haptic(40);
   checkTagTeam(chore, whoName);
+  recordActivity(chore ? chore.name : 'Chore');
   recordLastActive(whoName);
   updateProfilePill();
 
@@ -1277,21 +1520,116 @@ async function markDone(btn, sheetRow, cardOverride) {
       await writeCellToSheet(sheetRow, CONFIG.COL_WHO, whoValue);
     } catch(e) { showToast('Save failed — ' + e.message); }
   };
-  if (accessToken) { doWrite(); }
+  if (isTokenValid()) { doWrite(); }
   else { pendingWrite = { customCallback: doWrite }; initOAuth(); }
+}
+
+function isTokenValid() {
+  return accessToken && Date.now() < tokenExpiry - 30000;
+}
+
+async function ensureToken() {
+  if (isTokenValid()) return true;
+  return new Promise(resolve => {
+    const saved = pendingWrite;
+    pendingWrite = { customCallback: async () => { pendingWrite = saved; resolve(true); } };
+    initOAuth();
+  });
 }
 
 async function writeCellToSheet(sheetRow, col, value) {
   const range = `${CONFIG.SHEET_NAME}!${colLetter(col)}${sheetRow}`;
   const url   = `https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.SHEET_ID}/values/${encodeURIComponent(range)}?valueInputOption=RAW`;
-  const res   = await fetch(url, {
-    method: 'PUT',
-    headers: { 'Authorization': `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ values: [[value]] }),
-  });
-  const data = await res.json();
-  if (data.error) throw new Error(data.error.message);
+  try {
+    const res  = await fetch(url, {
+      method: 'PUT',
+      headers: { 'Authorization': `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ values: [[value]] }),
+    });
+    const data = await res.json();
+    if (data.error) throw new Error(data.error.message);
+  } catch(e) {
+    if (!navigator.onLine) {
+      enqueueWrite(sheetRow, col, value);
+      showToast('Offline — queued for later 📶');
+      return; // don't rethrow
+    }
+    throw e;
+  }
 }
+
+
+
+// ─── Activity strip (anonymous) ──────────────────────
+const ACTIVITY_KEY = 'chores_activity_v1';
+
+function recordActivity(choreName) {
+  const log = getActivityLog();
+  log.unshift({ name: choreName, ts: Date.now() });
+  localStorage.setItem(ACTIVITY_KEY, JSON.stringify(log.slice(0, 10)));
+  renderActivityStrip();
+}
+
+function getActivityLog() {
+  try { return JSON.parse(localStorage.getItem(ACTIVITY_KEY)) || []; } catch { return []; }
+}
+
+function renderActivityStrip() {
+  const el = document.getElementById('activity-strip');
+  if (!el) return;
+  const log = getActivityLog();
+  if (!log.length) { el.innerHTML = ''; return; }
+  const last = log[0];
+  const d    = (Date.now() - last.ts) / 86400000;
+  let when;
+  if (d < 0.04)    when = 'just now';
+  else if (d < 1)  when = 'today';
+  else if (d < 2)  when = 'yesterday';
+  else             when = Math.floor(d) + ' days ago';
+  el.innerHTML = `<span>${last.name}</span> cleaned ${when}`;
+}
+
+// ─── Offline write queue ─────────────────────────────
+const WRITE_QUEUE_KEY = 'chores_write_queue_v1';
+
+function getWriteQueue() {
+  try { return JSON.parse(localStorage.getItem(WRITE_QUEUE_KEY)) || []; } catch { return []; }
+}
+
+function enqueueWrite(sheetRow, col, value) {
+  const q = getWriteQueue();
+  // Replace existing entry for same cell
+  const idx = q.findIndex(e => e.sheetRow === sheetRow && e.col === col);
+  if (idx > -1) q[idx] = { sheetRow, col, value, ts: Date.now() };
+  else q.push({ sheetRow, col, value, ts: Date.now() });
+  localStorage.setItem(WRITE_QUEUE_KEY, JSON.stringify(q));
+}
+
+async function flushWriteQueue() {
+  const q = getWriteQueue();
+  if (!q.length || !isTokenValid()) return;
+  const remaining = [];
+  for (const entry of q) {
+    try {
+      await writeCellToSheet(entry.sheetRow, entry.col, entry.value);
+    } catch {
+      remaining.push(entry);
+    }
+  }
+  localStorage.setItem(WRITE_QUEUE_KEY, JSON.stringify(remaining));
+  if (q.length > remaining.length) {
+    showToast(`${q.length - remaining.length} offline write${q.length-remaining.length>1?'s':''} synced ✓`);
+  }
+}
+
+// Flush on reconnect
+window.addEventListener('online', () => {
+  if (isTokenValid()) flushWriteQueue();
+  document.getElementById('offline-badge').style.display = 'none';
+});
+window.addEventListener('offline', () => {
+  document.getElementById('offline-badge').style.display = '';
+});
 
 // ─── OAuth ────────────────────────────────────────────
 function initOAuth() {
@@ -1315,7 +1653,9 @@ function startTokenFlow() {
         if (pendingWrite?.btn) pendingWrite.btn.disabled = false;
         return;
       }
-      accessToken = resp.access_token;
+      accessToken  = resp.access_token;
+      tokenExpiry  = Date.now() + 3540000; // 59 min (expire before 60)
+      setTimeout(flushWriteQueue, 500);
       if (pendingWrite) {
         const pw = pendingWrite; pendingWrite = null;
         if (pw.customCallback) await pw.customCallback();
@@ -1327,6 +1667,39 @@ function startTokenFlow() {
 }
 
 // ─── Add chore ────────────────────────────────────
+function openSettings() {
+  updateSettingsSummary();
+  // Sync radio to current sortMode
+  const radio = document.querySelector(`input[name="sort-mode"][value="${sortMode}"]`);
+  if (radio) radio.checked = true;
+  // Sync dropdown to current filterDays
+  const sel = document.getElementById('settings-filter-days');
+  if (sel) sel.value = String(filterDays);
+  document.getElementById('settings-overlay').classList.add('open');
+  document.getElementById('settings-sheet').classList.add('open');
+}
+
+function closeSettings() {
+  document.getElementById('settings-overlay').classList.remove('open');
+  document.getElementById('settings-sheet').classList.remove('open');
+}
+
+function updateSettingsSummary() {
+  const el = document.getElementById('settings-summary');
+  if (!el) return;
+  const sortLabels = {
+    'urgency':       '🔥 Sorted by urgency',
+    'duration-long': '⏱ Sorted by duration — longest first',
+    'duration-short':'⚡ Sorted by duration — shortest first',
+  };
+  const daysLabel = filterDays === 999
+    ? 'Showing all overdue only'
+    : filterDays === 'quick'
+    ? 'Showing under 10 min only'
+    : `Showing chores due within ${filterDays} day${filterDays !== 1 ? 's' : ''}`;
+  el.innerHTML = `${sortLabels[sortMode] || sortMode} &nbsp;·&nbsp; ${daysLabel}`;
+}
+
 function openAddChore() {
   const container = document.getElementById('new-room-checks');
   container.innerHTML = '';
@@ -1390,6 +1763,90 @@ async function submitNewChore() {
 
   if (accessToken) { await doAppend(); }
   else { pendingWrite = { customCallback: doAppend }; initOAuth(); }
+}
+
+
+// ─── Room health tiles ────────────────────────────────
+function openRoomTiles() {
+  renderRoomTiles();
+  document.getElementById('room-tiles-screen').style.display = 'block';
+}
+
+function closeRoomTiles() {
+  document.getElementById('room-tiles-screen').style.display = 'none';
+}
+
+function renderRoomTiles() {
+  const grid    = document.getElementById('room-tiles-grid');
+  const summary = document.getElementById('room-health-summary');
+  grid.innerHTML = '';
+
+  // Build per-room stats
+  const rooms = {};
+  allChores.forEach(c => {
+    if (!c.room) return;
+    c.room.toLowerCase().split(' ').filter(Boolean).forEach(code => {
+      if (!rooms[code]) rooms[code] = { total:0, overdue:0, soon:0, due:0 };
+      rooms[code].total++;
+      if (c.ratio >= 1)           rooms[code].overdue++;
+      else if (c.ratio >= 0.85)   rooms[code].soon++;
+      else if (c.ratio >= 0.65)   rooms[code].due++;
+    });
+  });
+
+  const roomCodes = Object.keys(rooms).sort((a,b) => {
+    const wa = rooms[a].overdue * 3 + rooms[a].soon * 2 + rooms[a].due;
+    const wb = rooms[b].overdue * 3 + rooms[b].soon * 2 + rooms[b].due;
+    return wb - wa;
+  });
+
+  if (!roomCodes.length) {
+    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--ink-mute)">No rooms configured.</div>';
+    return;
+  }
+
+  // Overall summary
+  const totalOverdue = allChores.filter(c => c.ratio >= 1).length;
+  const totalSoon    = allChores.filter(c => c.ratio >= 0.85 && c.ratio < 1).length;
+  summary.innerHTML = `<strong style="color:var(--ink)">${roomCodes.length} rooms</strong> · ${totalOverdue} overdue · ${totalSoon} coming up`;
+
+  roomCodes.forEach(code => {
+    const r     = rooms[code];
+    const name  = roomLegend[code] || code;
+    const worst = r.overdue > 0 ? 'over' : r.soon > 0 ? 'soon' : r.due > 0 ? 'due' : 'fresh';
+    const bgMap = {
+      over:  'linear-gradient(135deg,#a03030,#7a1a1a)',
+      soon:  'linear-gradient(135deg,#8a6020,#6a4510)',
+      due:   'linear-gradient(135deg,#6a4820,#4a2810)',
+      fresh: 'linear-gradient(135deg,#2a5a30,#1a3a20)',
+    };
+    const pct   = Math.round((r.overdue / r.total) * 100);
+    const desc  = r.overdue  ? `${r.overdue} overdue`
+                : r.soon     ? `${r.soon} coming up`
+                : r.due      ? `${r.due} due soon`
+                : 'All good';
+
+    const tile = document.createElement('div');
+    tile.className = 'room-tile';
+    tile.style.cssText = `background:${bgMap[worst]};color:#fff;`;
+    tile.innerHTML = `
+      <div class="room-tile-name">${name}</div>
+      <div class="room-tile-count">${desc}</div>
+      <div class="room-tile-bar"><div class="room-tile-fill" style="width:${Math.max(pct,8)}%"></div></div>`;
+    tile.addEventListener('click', () => {
+      closeRoomTiles();
+      setRoom(code);
+    });
+    grid.appendChild(tile);
+  });
+
+  // "All rooms" tile
+  const allTile = document.createElement('div');
+  allTile.className = 'room-tile';
+  allTile.style.cssText = 'background:var(--surface);border-color:var(--border);color:var(--ink);';
+  allTile.innerHTML = `<div class="room-tile-name">All rooms</div><div class="room-tile-count" style="color:var(--ink-soft)">Clear filter</div>`;
+  allTile.addEventListener('click', () => { closeRoomTiles(); setRoom(''); });
+  grid.appendChild(allTile);
 }
 
 // ─── View All ─────────────────────────────────────
@@ -2115,6 +2572,8 @@ function populateRoomDropdownsWithBadges() {
   setInterval(mkEmber, 600);
   for (let i = 0; i < 8; i++) mkEmber();
 })();
+
+
 
 
 
