@@ -747,6 +747,14 @@
     <div class="howto-section">
       <div class="howto-section-title">Offline</div>
       <p>Mark a chore done without internet and it queues locally, syncing automatically when you're back online. The <strong>OFFLINE</strong> badge shows in the header when disconnected.</p>
+
+    <div class="howto-section">
+      <div class="howto-section-title">Sheet layout</div>
+      <p><strong>Sheet1</strong> — chores. A Name · B Min days · C Max days · D Last done · E Room codes · F Who · G Duration (min) · H Prerequisite rows.</p>
+      <p style="margin-top:8px"><strong>Sheet2</strong> — completed one-off chores, archived automatically.</p>
+      <p style="margin-top:8px"><strong>Sheet3</strong> — room legend. Column A = code (e.g. <code>k</code>), column B = name (e.g. <code>Kitchen</code>). One row per room.</p>
+      <p style="margin-top:8px"><strong>Sheet4</strong> — shared today's plan, managed entirely by the app.</p>
+    </div>
     </div>
 
   </div>
@@ -853,6 +861,14 @@
           <input class="form-input" id="bee-hours" type="number" placeholder="0" min="0" max="12" style="text-align:center;font-size:20px;font-weight:600" oninput="updateBee()">
           <div style="text-align:center;font-size:11px;color:var(--ink-mute);margin-top:4px">hours</div>
         </div>
+
+    <div class="howto-section">
+      <div class="howto-section-title">Sheet layout</div>
+      <p><strong>Sheet1</strong> — chores. A Name · B Min days · C Max days · D Last done · E Room codes · F Who · G Duration (min) · H Prerequisite rows.</p>
+      <p style="margin-top:8px"><strong>Sheet2</strong> — completed one-off chores, archived automatically by the app.</p>
+      <p style="margin-top:8px"><strong>Sheet3</strong> — room legend. Column A = room code (e.g. <code>k</code>), column B = room name (e.g. <code>Kitchen</code>). One row per room. No header row needed.</p>
+      <p style="margin-top:8px"><strong>Sheet4</strong> — shared today's plan. Written and managed entirely by the app.</p>
+    </div>
         <div style="font-size:24px;color:var(--ink-mute);padding-bottom:18px">:</div>
         <div style="flex:1">
           <input class="form-input" id="bee-mins" type="number" placeholder="30" min="0" max="59" style="text-align:center;font-size:20px;font-weight:600" oninput="updateBee()">
@@ -1005,6 +1021,20 @@
     <div class="form-group">
       <label class="form-label">Room</label>
       <div class="room-checks" id="new-room-checks"></div>
+      <div id="new-room-inline" style="display:none;margin-top:8px;display:none">
+        <div style="display:flex;gap:8px;align-items:flex-end">
+          <div style="flex:1">
+            <input class="form-input" id="new-room-name" type="text" placeholder="e.g. Bathroom" autocomplete="off" style="margin-bottom:0">
+          </div>
+          <div style="flex-shrink:0">
+            <div style="font-size:11px;color:var(--ink-soft);margin-bottom:4px">Code (auto)</div>
+            <input class="form-input" id="new-room-code" type="text" placeholder="bt" maxlength="4" style="width:56px;margin-bottom:0;text-transform:lowercase">
+          </div>
+          <button onclick="saveNewRoom()" style="flex-shrink:0;padding:10px 14px;background:var(--ink);color:var(--bg);border:none;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer">Save</button>
+        </div>
+        <div style="font-size:11px;color:var(--ink-soft);margin-top:6px">Code is auto-generated but editable. It's added to Sheet3.</div>
+      </div>
+      <button onclick="toggleAddRoomInline()" id="add-room-btn" style="margin-top:8px;width:100%;padding:9px;background:none;border:1.5px dashed var(--border);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--ink-soft);cursor:pointer">＋ Add a room</button>
     </div>
     </div><!-- end recurring-fields -->
     <button class="submit-btn" id="add-submit-btn" onclick="submitNewChore()">Add to list</button>
@@ -1050,6 +1080,9 @@
     <div style="font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink-soft);font-weight:500;margin-bottom:10px">Select chores</div>
     <div style="font-size:11px;color:var(--ink-soft);margin-bottom:10px">Tap to add · tap a planned item to mark done · hold to remove</div>
     <div id="todo-chore-list"></div>
+    <button onclick="openAddChoreTodo()" style="width:100%;margin-top:4px;padding:13px;background:none;border:1.5px dashed var(--border);border-radius:12px;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--ink-soft);cursor:pointer;letter-spacing:.2px">
+      ＋ Add new chore to list
+    </button>
     <div style="position:fixed;bottom:calc(var(--safe-bot,0px)+16px);left:16px;right:16px;z-index:20">
       <button onclick="buildTodoPlan()" id="todo-schedule-btn" style="width:100%;padding:16px;background:var(--ink);color:var(--bg);border:none;border-radius:16px;font-family:'Playfair Display',serif;font-size:16px;font-weight:600;cursor:pointer;opacity:.4;pointer-events:none">
         Select at least one chore
@@ -1066,6 +1099,10 @@
 </div>
 
 <script>
+
+
+
+
 
 
 
@@ -1119,7 +1156,8 @@ const CONFIG = {
   COL_WHO:       6,
   COL_DURATION:  7,   // G — minutes e.g. 15
   COL_PREREQ:    8,   // H — prerequisite row numbers, comma-separated
-  COL_LEGEND:    9,
+  COL_LEGEND:    9,   // I — still readable for migration, but legend now lives in Sheet3
+  LEGEND_SHEET:  'Sheet3', // A = room code, B = room name (e.g. 'k' | 'Kitchen')
   DATA_START_ROW: 2,
   PLAN_SHEET:    'Sheet4',  // shared today's plan — Date|ChoreRow|ChoreName|AddedBy|StartTime|DoneAt|DoneBy
   YOUR_NAME:     'Anthony',
@@ -1238,12 +1276,22 @@ function roomName(codes) {
 
 // ─── Legend parsing ───────────────────────────────
 function parseLegend(rows) {
+  // Reads Sheet3: col A = room code, col B = room name
+  // e.g. row: ['k', 'Kitchen'] or ['bt', 'Bathroom']
+  // Also supports old Sheet1 col I format: 'k = Kitchen' (for migration)
   const legend = {};
   rows.forEach(row => {
-    const cell = (row[CONFIG.COL_LEGEND - 1] || '').trim();
-    if (!cell) return;
-    const match = cell.match(/^([^\s=]+)\s*=\s*(.+)$/);
-    if (match) legend[match[1].toLowerCase()] = match[2].trim();
+    const a = (row[0] || '').trim();
+    const b = (row[1] || '').trim();
+    if (!a) return;
+    if (b) {
+      // Sheet3 format: code in col A, name in col B
+      legend[a.toLowerCase()] = b;
+    } else {
+      // Old col I format: 'k = Kitchen'
+      const match = a.match(/^([^\s=]+)\s*=\s*(.+)$/);
+      if (match) legend[match[1].toLowerCase()] = match[2].trim();
+    }
   });
   return legend;
 }
@@ -1276,27 +1324,29 @@ async function loadChores(forceRefresh = false) {
 
   try {
     if (cachedLegend) {
-      // Fast path: only fetch task data (A–F)
+      // Fast path: legend from cache, only fetch chore data (A–H)
       roomLegend = cachedLegend;
       populateRoomDropdowns();
-      const range = encodeURIComponent(`${CONFIG.SHEET_NAME}!A${CONFIG.DATA_START_ROW}:G`);
+      const range = encodeURIComponent(`${CONFIG.SHEET_NAME}!A${CONFIG.DATA_START_ROW}:H`);
       const url   = `https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.SHEET_ID}/values/${range}?key=${CONFIG.API_KEY}`;
       const res   = await fetch(url);
       const data  = await res.json();
       if (data.error) throw new Error(data.error.message);
       parseAndCacheChores(data.values || []);
     } else {
-      // Full fetch (A–I) to get legend
-      const range = encodeURIComponent(`${CONFIG.SHEET_NAME}!A${CONFIG.DATA_START_ROW}:I`);
-      const url   = `https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.SHEET_ID}/values/${range}?key=${CONFIG.API_KEY}`;
-      const res   = await fetch(url);
-      const data  = await res.json();
-      if (data.error) throw new Error(data.error.message);
-      const rows = data.values || [];
-      roomLegend = parseLegend(rows);
+      // Full fetch: legend from Sheet3, chores from Sheet1 A–H
+      const [choreRes, legendRes] = await Promise.all([
+        fetch(`https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.SHEET_ID}/values/${encodeURIComponent(CONFIG.SHEET_NAME+'!A'+CONFIG.DATA_START_ROW+':H')}?key=${CONFIG.API_KEY}`),
+        fetch(`https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.SHEET_ID}/values/${encodeURIComponent(CONFIG.LEGEND_SHEET+'!A1:B')}?key=${CONFIG.API_KEY}`),
+      ]);
+      const choreData  = await choreRes.json();
+      const legendData = await legendRes.json();
+      if (choreData.error)  throw new Error(choreData.error.message);
+      const legendRows = (legendData.values || []).filter(r => r[0] && r[1]); // skip header/empty
+      roomLegend = parseLegend(legendRows);
       saveLegendCache(roomLegend);
       populateRoomDropdowns();
-      parseAndCacheChores(rows);
+      parseAndCacheChores(choreData.values || []);
     }
     document.getElementById('loading').style.display = 'none';
     document.getElementById('chore-list').style.display = 'flex';
@@ -1888,6 +1938,24 @@ function toggleOneOffForm(isOneOff) {
   if (maxEl)  maxEl.required = !isOneOff;
 }
 
+function openAddChoreTodo() {
+  // Open add-chore sheet on top of the todo planner screen
+  const overlay = document.getElementById('add-overlay');
+  const sheet   = document.getElementById('add-sheet');
+  if (overlay) overlay.style.zIndex = '200';
+  if (sheet)   sheet.style.zIndex   = '201';
+  openAddChore();
+  // Reset z-index when the sheet closes
+  const origClose = window._origCloseAddChore || closeAddChore;
+  window._origCloseAddChore = closeAddChore;
+  window._todoCloseHook = function() {
+    if (overlay) overlay.style.zIndex = '';
+    if (sheet)   sheet.style.zIndex   = '';
+    origClose();
+    window._todoCloseHook = null;
+  };
+}
+
 function openAddChore() {
   const container = document.getElementById('new-room-checks');
   container.innerHTML = '';
@@ -1908,6 +1976,7 @@ function openAddChore() {
 }
 
 function closeAddChore() {
+  if (window._todoCloseHook) { window._todoCloseHook(); return; }
   document.getElementById('add-overlay').classList.remove('open');
   document.getElementById('add-sheet').classList.remove('open');
 }
@@ -1948,6 +2017,11 @@ async function submitNewChore() {
       document.getElementById('new-duration').value = '';
       document.querySelectorAll('#new-room-checks input').forEach(cb => cb.checked = false);
       await loadChores();
+      // If todo planner is open, refresh pick list with new chore
+      if (document.getElementById('todo-screen').style.display === 'block') {
+        await loadTodayPlan();
+        renderTodoPickList();
+      }
     } catch(e) {
       showToast('Failed to add — ' + e.message);
     } finally {
@@ -3186,6 +3260,102 @@ function saveTodoPicks() {} // no-op — now handled by Sheet4
 function restoreTodoPicks() {} // no-op
 
 
+
+
+
+
+// ─── Add room inline from chore form ─────────────────────────────────────────
+function toggleAddRoomInline() {
+  const panel = document.getElementById('new-room-inline');
+  const btn   = document.getElementById('add-room-btn');
+  if (!panel) return;
+  const open = panel.style.display === 'flex';
+  panel.style.display = open ? 'none' : 'flex';
+  panel.style.flexDirection = 'column';
+  btn.textContent = open ? '＋ Add a room' : '✕ Cancel';
+  if (!open) {
+    const nameEl = document.getElementById('new-room-name');
+    const codeEl = document.getElementById('new-room-code');
+    if (nameEl) nameEl.value = '';
+    if (codeEl) { codeEl.value = ''; delete codeEl.dataset.userEdited; }
+    setTimeout(() => nameEl && nameEl.focus(), 100);
+  }
+}
+
+function autoRoomCode(name) {
+  const words = name.trim().toLowerCase().split(/\s+/);
+  if (words.length === 1) {
+    const w = words[0];
+    const cons = w.replace(/[aeiou]/g,'');
+    return (cons.slice(0,2) || w.slice(0,2)).padEnd(2,'x');
+  }
+  return words.map(w => w[0]).join('').slice(0,3);
+}
+
+// Auto-generate code as name is typed
+document.getElementById('new-room-name') && document.getElementById('new-room-name').addEventListener('input', function() {
+  const codeEl = document.getElementById('new-room-code');
+  if (codeEl && !codeEl.dataset.userEdited) codeEl.value = autoRoomCode(this.value);
+});
+
+async function saveNewRoom() {
+  const nameEl = document.getElementById('new-room-name');
+  const codeEl = document.getElementById('new-room-code');
+  const name = (nameEl && nameEl.value.trim()) || '';
+  let   code = (codeEl && codeEl.value.trim().toLowerCase()) || '';
+  if (!name) { showToast('Enter a room name'); return; }
+  if (!code) code = autoRoomCode(name);
+
+  // Deduplicate code if already exists
+  let finalCode = code, suffix = 2;
+  while (roomLegend[finalCode]) finalCode = code + (suffix++);
+
+  if (!isTokenValid()) { showToast('Sign in first'); initOAuth(); return; }
+
+  try {
+    const range = encodeURIComponent(CONFIG.LEGEND_SHEET + '!A:B');
+    const url   = `https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.SHEET_ID}/values/${range}:append?valueInputOption=RAW&insertDataOption=INSERT_ROWS`;
+    const res   = await fetch(url, {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ values: [[finalCode, name]] }),
+    });
+    const data = await res.json();
+    if (data.error) throw new Error(data.error.message);
+
+    // Update local legend + cache
+    roomLegend[finalCode] = name;
+    saveLegendCache(roomLegend);
+
+    // Re-render room checkboxes and close inline panel
+    const container = document.getElementById('new-room-checks');
+    if (container) {
+      container.innerHTML = '';
+      Object.entries(roomLegend).sort((a,b) => a[1].localeCompare(b[1])).forEach(([c, n]) => {
+        const label = document.createElement('label');
+        label.className = 'room-check-label';
+        const checked = c === finalCode ? 'checked' : '';
+        label.innerHTML = `<input type="checkbox" value="${c}" ${checked}> ${n}`;
+        container.appendChild(label);
+      });
+    }
+    toggleAddRoomInline(); // close the panel
+    showToast('"' + name + '" added · code: ' + finalCode);
+  } catch(e) {
+    showToast('Failed: ' + e.message);
+  }
+}
+
 </script>
 </body>
-  </html>
+</html
+
+    <div class="howto-section">
+      <div class="howto-section-title">Sheet layout</div>
+      <p><strong>Sheet1</strong> — chores: A Name · B Min days · C Max days · D Last done · E Room codes · F Who · G Duration (min) · H Prerequisite rows</p>
+      <p style="margin-top:8px"><strong>Sheet2</strong> — completed one-off chores (app archives here automatically).</p>
+      <p style="margin-top:8px"><strong>Sheet3</strong> — room legend. Column A = room code (e.g. <code>k</code>), column B = room name (e.g. <code>Kitchen</code>). One row per room.</p>
+      <p style="margin-top:8px"><strong>Sheet4</strong> — shared today's plan. Written by the app — no manual editing needed.</p>
+    </div>
+
+  >
