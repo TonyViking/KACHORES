@@ -584,6 +584,48 @@
   .room-tile-count { font-size:12px;opacity:.75; }
   .room-tile-bar { height:4px;border-radius:4px;margin-top:10px;background:rgba(255,255,255,.2); }
   .room-tile-fill { height:100%;border-radius:4px;background:rgba(255,255,255,.6); }
+
+  .todo-chore-row {
+    display: flex; align-items: center; gap: 12px;
+    background: var(--surface); border: 1.5px solid var(--border);
+    border-radius: 12px; padding: 11px 14px; margin-bottom: 8px;
+    cursor: pointer; transition: border-color .15s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .todo-chore-row.selected {
+    border-color: var(--c-due); background: var(--c-due)10;
+  }
+  .todo-chore-check {
+    width: 20px; height: 20px; border-radius: 50%;
+    border: 2px solid var(--border); flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; transition: all .15s;
+  }
+  .todo-chore-row.selected .todo-chore-check {
+    background: var(--c-due); border-color: var(--c-due); color: #fff;
+  }
+  .todo-timeline-item {
+    display: flex; gap: 14px; padding-bottom: 20px; position: relative;
+  }
+  .todo-timeline-item::before {
+    content: ''; position: absolute; left: 19px; top: 38px;
+    width: 2px; background: var(--border); bottom: 0;
+  }
+  .todo-timeline-item:last-child::before { display: none; }
+  .todo-time-bubble {
+    width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0;
+    background: var(--surface); border: 1.5px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; font-weight: 600; color: var(--ink-soft); line-height: 1.2; text-align: center;
+  }
+  .todo-timeline-card {
+    flex: 1; background: var(--surface); border: 1.5px solid var(--border);
+    border-radius: 12px; padding: 10px 14px;
+  }
+  .todo-break-row {
+    display: flex; align-items: center; gap: 10px;
+    padding: 6px 0 14px; color: var(--ink-soft); font-size: 12px;
+  }
 </style>
 </head>
 <body>
@@ -634,7 +676,7 @@
 
     <div class="howto-section">
       <div class="howto-section-title">Your chores</div>
-      <p>Each chore has a <strong>min days</strong> (earliest to repeat) and <strong>max days</strong> (when it becomes due). The coloured bar shows how urgent it is. The app syncs to your Google Sheet whenever you mark something done.</p>
+      <p>Each chore has a <strong>min days</strong> (earliest to repeat) and <strong>max days</strong> (when it becomes due). The coloured bar shows urgency. The app syncs to your Google Sheet whenever you mark something done.</p>
     </div>
 
     <div class="howto-section">
@@ -645,11 +687,11 @@
       </div>
       <div class="howto-tip" style="margin-top:8px">
         <div class="howto-tip-icon">→</div>
-        <div class="howto-tip-text"><strong>Swipe right</strong> to snooze until midnight — reappears tomorrow.</div>
+        <div class="howto-tip-text"><strong>Swipe right</strong> to quiet until midnight — reappears tomorrow as normal.</div>
       </div>
       <div class="howto-tip" style="margin-top:8px">
         <div class="howto-tip-icon">›</div>
-        <div class="howto-tip-text"><strong>Tap any card</strong> to expand it — shows duration, schedule, prerequisites, exact last done date, and a Done button.</div>
+        <div class="howto-tip-text"><strong>Tap any card</strong> to expand — shows duration, schedule, last done date, and a Done button.</div>
       </div>
     </div>
 
@@ -663,30 +705,29 @@
 
     <div class="howto-section">
       <div class="howto-section-title">Home health</div>
-      <p>The indicator under the title shows the overall state of your home — 🟢 All good through to 🔴 Needs work — based on how many chores are overdue across all rooms. The activity strip below it shows the last chore completed.</p>
+      <p>The indicator under the title shows the overall state of your home — 🟢 All good through to 🔴 Needs work. The activity strip shows the last chore completed.</p>
     </div>
 
     <div class="howto-section">
       <div class="howto-section-title">Rooms 🏠</div>
-      <p>Tap the <strong>All rooms</strong> button below the header to open the room tiles view. Each room shows as a coloured tile based on its worst overdue chore. Tap any tile to filter the list to that room.</p>
+      <p>Tap the <strong>All rooms</strong> button below the header to open the room tiles view. Each room is a coloured tile showing its worst overdue chore. Tap any tile to filter the list to that room, or <strong>All rooms</strong> to clear.</p>
     </div>
 
     <div class="howto-section">
       <div class="howto-section-title">⚙️ Settings</div>
-      <p>Tap the <strong>cog icon</strong> in the header to open settings. Here you can choose:</p>
       <div class="howto-tip" style="margin-top:8px">
         <div class="howto-tip-icon">🔥</div>
-        <div class="howto-tip-text"><strong>Sort order</strong> — Urgency (most overdue first), Duration longest first, or Duration shortest first (quick wins).</div>
+        <div class="howto-tip-text"><strong>Sort order</strong> — Urgency (most overdue first), Duration longest first, or Duration shortest first.</div>
       </div>
       <div class="howto-tip" style="margin-top:8px">
         <div class="howto-tip-icon">📅</div>
-        <div class="howto-tip-text"><strong>Due within</strong> — filter to chores due in 1, 2, 4, 7, or 14 days. Or choose <strong>Under 10 min</strong> when you only have a few minutes spare.</div>
+        <div class="howto-tip-text"><strong>Due within</strong> — filter to 1, 2, 4, 7, or 14 days. Choose <strong>Under 10 min ⚡</strong> for quick wins.</div>
       </div>
     </div>
 
     <div class="howto-section">
       <div class="howto-section-title">🐝 Working Bee</div>
-      <p>Tap the <strong>🐝 button</strong> in the header. Set your time budget and pick a mode — <strong>Priority</strong> (most overdue first), <strong>Most tasks</strong> (shortest first), or <strong>Smart</strong> (rotates hard and easy to avoid fatigue). Breaks are automatically inserted every 30 minutes. Only chores with a duration in column G appear.</p>
+      <p>Tap the <strong>🐝</strong> in the header. Set your time budget and pick a mode — <strong>Priority</strong> (most overdue first), <strong>Most tasks</strong> (shortest first), or <strong>Smart</strong> (alternates hard and easy). Breaks are inserted every 30 minutes.</p>
       <div class="howto-tip" style="margin-top:8px">
         <div class="howto-tip-icon">📍</div>
         <div class="howto-tip-text">Toggle <strong>Group by room</strong> to cluster tasks so you're not walking back and forth.</div>
@@ -695,22 +736,17 @@
 
     <div class="howto-section">
       <div class="howto-section-title">All chores ☰</div>
-      <p>Tap the <strong>list icon</strong> to see every chore alphabetically with room, last done date, and a Done button — useful for chores not currently showing in your filtered view.</p>
+      <p>Tap the <strong>list icon</strong> to see every chore with its last done date and a Done button — useful when a chore isn't showing in your current filter.</p>
     </div>
 
     <div class="howto-section">
       <div class="howto-section-title">Adding chores ＋</div>
-      <p>Tap the <strong>+ button</strong> to add a new chore. Fill in the name, min and max days, room, and an optional duration. It's added to your sheet immediately.</p>
+      <p>Tap <strong>+</strong> to add a chore. Toggle <strong>✦ One-off</strong> for tasks that should be removed once done. Add a duration so it appears in Working Bee.</p>
     </div>
 
     <div class="howto-section">
       <div class="howto-section-title">Offline</div>
-      <p>If you mark a chore done without an internet connection, it's queued locally and synced automatically the next time you're back online. The <strong>OFFLINE</strong> badge appears in the header when disconnected.</p>
-    </div>
-
-    <div class="howto-section">
-      <div class="howto-section-title">Sheet layout</div>
-      <p>Your Google Sheet needs these columns: <strong>A</strong> Name · <strong>B</strong> Min days · <strong>C</strong> Max days · <strong>D</strong> Last done (written by app) · <strong>E</strong> Room code(s) · <strong>F</strong> Who · <strong>G</strong> Duration (minutes) · <strong>H</strong> Prerequisite row numbers · <strong>I</strong> Room legend (e.g. <em>k = Kitchen</em>).</p>
+      <p>Mark a chore done without internet and it queues locally, syncing automatically when you're back online. The <strong>OFFLINE</strong> badge shows in the header when disconnected.</p>
     </div>
 
   </div>
@@ -738,6 +774,7 @@
       </svg>
     </button>
     <button class="icon-btn" onclick="openWorkingBee()" title="Working Bee" id="bee-btn" style="font-size:18px;line-height:1">🐝</button>
+    <button class="icon-btn" onclick="openTodoPlan()" title="Today's plan" id="todo-btn" style="font-size:18px;line-height:1">📋</button>
     <button class="icon-btn" onclick="openViewAll()" title="All chores">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/>
@@ -985,7 +1022,53 @@
   <div class="sheet-body" id="all-list"></div>
 </div>
 
+<!-- ══ TODAY'S PLAN SCREEN ══ -->
+<div id="todo-screen" style="display:none;position:fixed;inset:0;z-index:100;background:var(--bg);overflow-y:auto;animation:fadeUp .25s ease">
+  <div style="padding:calc(var(--safe-top,0px) + 12px) 20px 14px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:linear-gradient(to bottom,var(--bg) 90%,transparent);z-index:10">
+    <div>
+      <div style="font-family:'Playfair Display',serif;font-size:22px;font-weight:600">📋 Today's Plan</div>
+      <div style="font-size:11px;color:var(--ink-soft);letter-spacing:1px;text-transform:uppercase;margin-top:1px">Pick chores · set start time · go</div>
+    </div>
+    <button class="icon-btn" onclick="closeTodoPlan()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+  <div id="todo-pick-phase" style="padding:0 20px calc(var(--safe-bot,0px)+100px)">
+    <div style="background:var(--surface);border:1.5px solid var(--border);border-radius:14px;padding:14px 16px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between">
+      <div>
+        <div style="font-size:13px;font-weight:600;color:var(--ink)">Start time</div>
+        <div style="font-size:11px;color:var(--ink-soft);margin-top:2px">When do you want to begin?</div>
+      </div>
+      <input type="time" id="todo-start-time" style="font-family:'DM Sans',sans-serif;font-size:16px;font-weight:600;color:var(--ink);background:none;border:none;cursor:pointer;outline:none;min-width:90px;text-align:right">
+    </div>
+    <div style="display:flex;gap:8px;margin-bottom:14px">
+      <button id="todo-sort-urgency" onclick="setTodoSort('urgency')" style="flex:1;padding:8px;border:1.5px solid var(--c-due);border-radius:10px;background:rgba(var(--c-due-rgb),.08);font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;color:var(--c-due);cursor:pointer">🔥 Urgent</button>
+      <button id="todo-sort-quick" onclick="setTodoSort('quick')" style="flex:1;padding:8px;border:1.5px solid var(--border);border-radius:10px;background:none;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;color:var(--ink-soft);cursor:pointer">⚡ Quick</button>
+      <button id="todo-sort-room" onclick="setTodoSort('room')" style="flex:1;padding:8px;border:1.5px solid var(--border);border-radius:10px;background:none;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;color:var(--ink-soft);cursor:pointer">📍 Room</button>
+    </div>
+    <div id="todo-shared-banner" style="display:none;font-size:12px;color:var(--ink-soft);background:var(--surface);border:1.5px solid var(--border);border-radius:10px;padding:8px 14px;margin-bottom:14px;line-height:1.6"></div>
+    <div style="font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink-soft);font-weight:500;margin-bottom:10px">Select chores</div>
+    <div style="font-size:11px;color:var(--ink-soft);margin-bottom:10px">Tap to add · tap a planned item to mark done · hold to remove</div>
+    <div id="todo-chore-list"></div>
+    <div style="position:fixed;bottom:calc(var(--safe-bot,0px)+16px);left:16px;right:16px;z-index:20">
+      <button onclick="buildTodoPlan()" id="todo-schedule-btn" style="width:100%;padding:16px;background:var(--ink);color:var(--bg);border:none;border-radius:16px;font-family:'Playfair Display',serif;font-size:16px;font-weight:600;cursor:pointer;opacity:.4;pointer-events:none">
+        Select at least one chore
+      </button>
+    </div>
+  </div>
+  <div id="todo-plan-phase" style="display:none;padding:0 20px calc(var(--safe-bot,0px)+80px)">
+    <div id="todo-timeline"></div>
+    <div style="position:fixed;bottom:calc(var(--safe-bot,0px)+16px);left:16px;right:16px;z-index:20;display:flex;gap:10px">
+      <button onclick="showTodoPick()" style="flex:1;padding:14px;background:var(--surface);color:var(--ink);border:1.5px solid var(--border);border-radius:14px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer">← Edit</button>
+      <button onclick="setTodoAlarms()" style="flex:2;padding:14px;background:var(--c-due);color:#fff;border:none;border-radius:14px;font-family:'Playfair Display',serif;font-size:15px;font-weight:600;cursor:pointer">🔔 Set alarms</button>
+    </div>
+  </div>
+</div>
+
 <script>
+
+
+
 
 
 
@@ -1038,6 +1121,7 @@ const CONFIG = {
   COL_PREREQ:    8,   // H — prerequisite row numbers, comma-separated
   COL_LEGEND:    9,
   DATA_START_ROW: 2,
+  PLAN_SHEET:    'Sheet4',  // shared today's plan — Date|ChoreRow|ChoreName|AddedBy|StartTime|DoneAt|DoneBy
   YOUR_NAME:     'Anthony',
   PARTNER_NAME:  'Kathrina',
 };
@@ -2706,6 +2790,402 @@ function populateRoomDropdownsWithBadges() {
 
 
 
+
+
+// ─── Shared To-Do Planner (Sheet4) ──────────────────────────────────────────
+// Sheet4: A=Date | B=ChoreRow | C=ChoreName | D=AddedBy | E=StartTime | F=DoneAt | G=DoneBy
+let todayPlan      = [];       // [{planRow, choreRow, name, addedBy, startTime, doneAt, doneBy}]
+let todoSortMode   = 'urgency';
+let todoScheduled  = [];       // [{chore, startMin, endMin, planRow}]
+let todoRefreshTimer = null;
+
+const TODAY_STR = () => new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+
+// ── Load ──────────────────────────────────────────────────────────
+async function loadTodayPlan() {
+  if (CONFIG.SHEET_ID.includes('YOUR_')) return;
+  try {
+    const range = encodeURIComponent(`${CONFIG.PLAN_SHEET}!A:G`);
+    const url   = `https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.SHEET_ID}/values/${range}?key=${CONFIG.API_KEY}`;
+    const data  = await (await fetch(url)).json();
+    if (data.error) return;
+    const rows = (data.values || []).slice(1); // skip header
+    const today = TODAY_STR();
+    todayPlan = rows
+      .map((row, i) => ({
+        planRow:   i + 2, // 1-indexed, skip header row
+        date:      row[0] || '',
+        choreRow:  parseInt(row[1]) || 0,
+        name:      row[2] || '',
+        addedBy:   row[3] || '',
+        startTime: row[4] || '',
+        doneAt:    row[5] || '',
+        doneBy:    row[6] || '',
+      }))
+      .filter(r => r.date === today && r.choreRow > 0);
+    renderTodoPlanState();
+  } catch(e) { console.warn('loadTodayPlan:', e); }
+}
+
+async function ensurePlanHeader() {
+  // Write header row if Sheet4 is empty
+  try {
+    const range = encodeURIComponent(`${CONFIG.PLAN_SHEET}!A1:G1`);
+    const url   = `https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.SHEET_ID}/values/${range}?key=${CONFIG.API_KEY}`;
+    const data  = await (await fetch(url)).json();
+    if (!data.values || !data.values[0]) {
+      // Write header
+      const writeUrl = `https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.SHEET_ID}/values/${range}?valueInputOption=RAW`;
+      await fetch(writeUrl, {
+        method: 'PUT',
+        headers: { 'Authorization': `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ values: [['Date','ChoreRow','ChoreName','AddedBy','StartTime','DoneAt','DoneBy']] }),
+      });
+    }
+  } catch {}
+}
+
+// ── Add / remove from shared plan ─────────────────────────────────
+async function addToSharedPlan(chore) {
+  const who = getActiveUser();
+  const row = [TODAY_STR(), chore.sheetRow, chore.name, who, '', '', ''];
+  const range = encodeURIComponent(`${CONFIG.PLAN_SHEET}!A:G`);
+  const url   = `https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.SHEET_ID}/values/${range}:append?valueInputOption=RAW&insertDataOption=INSERT_ROWS`;
+  await fetch(url, {
+    method: 'POST',
+    headers: { 'Authorization': `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ values: [row] }),
+  });
+  await loadTodayPlan();
+}
+
+async function removeFromSharedPlan(planRow) {
+  // Get sheet internal ID first
+  const metaUrl  = `https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.SHEET_ID}?key=${CONFIG.API_KEY}`;
+  const metaData = await (await fetch(metaUrl)).json();
+  const sheetId  = metaData.sheets?.find(s => s.properties.title === CONFIG.PLAN_SHEET)?.properties?.sheetId ?? null;
+  if (sheetId === null) return;
+  await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.SHEET_ID}:batchUpdate`, {
+    method: 'POST',
+    headers: { 'Authorization': `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ requests: [{ deleteDimension: {
+      range: { sheetId, dimension: 'ROWS', startIndex: planRow - 1, endIndex: planRow }
+    }}]}),
+  });
+  await loadTodayPlan();
+}
+
+async function markTodoDone(planRow, choreRow) {
+  const who   = getActiveUser();
+  const stamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  // Write DoneAt (col F) and DoneBy (col G)
+  const colFG = encodeURIComponent(`${CONFIG.PLAN_SHEET}!F${planRow}:G${planRow}`);
+  const url   = `https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.SHEET_ID}/values/${colFG}?valueInputOption=RAW`;
+  await fetch(url, {
+    method: 'PUT',
+    headers: { 'Authorization': `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ values: [[stamp, who]] }),
+  });
+  // Also write chore's last-done date in Sheet1
+  const today = formatDate(new Date());
+  await writeCellToSheet(choreRow, CONFIG.COL_LAST_DONE, today);
+  await writeCellToSheet(choreRow, CONFIG.COL_WHO, who);
+  await loadTodayPlan();
+  loadChores(); // refresh main list
+}
+
+// ── Render helpers ─────────────────────────────────────────────────
+function isPicked(choreRow) {
+  return todayPlan.some(r => r.choreRow === choreRow);
+}
+function isDonePlan(choreRow) {
+  return todayPlan.some(r => r.choreRow === choreRow && r.doneAt);
+}
+function getPlanEntry(choreRow) {
+  return todayPlan.find(r => r.choreRow === choreRow) || null;
+}
+
+function sortedTodoChores() {
+  let chores = [...allChores];
+  if (todoSortMode === 'urgency') return chores.sort((a,b) => b.ratio - a.ratio);
+  if (todoSortMode === 'quick')   return chores.filter(c=>c.duration>0).sort((a,b)=>a.duration-b.duration)
+                                         .concat(chores.filter(c=>!c.duration));
+  if (todoSortMode === 'room')    return chores.sort((a,b)=>(a.room||'').localeCompare(b.room||''));
+  return chores;
+}
+
+function renderTodoPlanState() {
+  renderTodoPickList();
+  renderTodoSharedBanner();
+  updateTodoScheduleBtn();
+}
+
+function renderTodoSharedBanner() {
+  const el = document.getElementById('todo-shared-banner');
+  if (!el) return;
+  const total = todayPlan.length;
+  const done  = todayPlan.filter(r => r.doneAt).length;
+  if (!total) { el.textContent = ''; el.style.display='none'; return; }
+  el.style.display = 'block';
+  const others = [...new Set(todayPlan.map(r=>r.addedBy))].filter(n=>n!==getActiveUser());
+  el.innerHTML = `<span style="font-weight:600;color:var(--ink)">${done}/${total} done</span>`
+    + (others.length ? ` · ${others[0]} also on the plan` : '')
+    + (done===total&&total>0 ? ' 🎉' : '');
+}
+
+function renderTodoPickList() {
+  const el = document.getElementById('todo-chore-list');
+  if (!el) return;
+  const chores = sortedTodoChores();
+  el.innerHTML = '';
+
+  // Section: On today's plan
+  const planned = chores.filter(c => isPicked(c.sheetRow));
+  const rest    = chores.filter(c => !isPicked(c.sheetRow));
+
+  if (planned.length) {
+    el.innerHTML += `<div style="font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink-soft);font-weight:500;margin:4px 0 10px">On today's plan</div>`;
+    planned.forEach(c => renderTodoChoreRow(el, c, true));
+    el.innerHTML += `<div style="font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink-soft);font-weight:500;margin:14px 0 10px">Add more</div>`;
+  }
+  rest.forEach(c => renderTodoChoreRow(el, c, false));
+}
+
+function renderTodoChoreRow(container, c, inPlan) {
+  const entry   = getPlanEntry(c.sheetRow);
+  const done    = entry?.doneAt || false;
+  const addedBy = entry?.addedBy || '';
+  const doneBy  = entry?.doneBy || '';
+  const color   = done ? 'var(--c-fresh)'
+                : c.ratio >= 1 ? 'var(--c-over)'
+                : c.ratio >= 0.85 ? 'var(--c-due)'
+                : c.ratio >= 0.65 ? 'var(--c-soon)' : 'rgba(255,255,255,.15)';
+  const rLabel  = roomName(c.room);
+  const durTxt  = c.duration ? c.duration + ' min' : '';
+
+  const row = document.createElement('div');
+  row.className = 'todo-chore-row' + (inPlan ? ' selected' : '') + (done ? ' done' : '');
+  row.dataset.row = c.sheetRow;
+
+  const metaLine = [
+    rLabel ? '📍 '+rLabel : '',
+    durTxt,
+    addedBy && addedBy !== getActiveUser() ? 'Added by '+addedBy : '',
+    done ? '✓ Done by '+doneBy : '',
+  ].filter(Boolean).join(' · ');
+
+  row.innerHTML = `
+    <div class="todo-chore-check" style="${done ? 'background:var(--c-fresh);border-color:var(--c-fresh);color:#fff' : ''}">${inPlan ? '✓' : ''}</div>
+    <div style="flex:1;min-width:0;${done?'opacity:.6':''}">
+      <div style="font-size:14px;font-weight:500;color:var(--ink);${done?'text-decoration:line-through':''}">${c.name}</div>
+      ${metaLine ? `<div style="font-size:11px;color:var(--ink-soft);margin-top:2px">${metaLine}</div>` : ''}
+    </div>
+    <div style="width:6px;height:28px;border-radius:3px;background:${color};flex-shrink:0"></div>`;
+
+  if (done) {
+    // Tapping done item does nothing (already done)
+    row.style.cursor = 'default';
+  } else if (inPlan) {
+    // Long-press = remove; tap = mark done
+    let pressTimer = null;
+    row.addEventListener('touchstart', () => {
+      pressTimer = setTimeout(() => {
+        pressTimer = null;
+        const entry = getPlanEntry(c.sheetRow);
+        if (!entry) return;
+        showToast('Removing from plan…');
+        ensureToken().then(() => removeFromSharedPlan(entry.planRow));
+      }, 700);
+    }, { passive: true });
+    row.addEventListener('touchend', () => {
+      if (pressTimer) {
+        clearTimeout(pressTimer);
+        pressTimer = null;
+        // Tap on planned item = mark done
+        const entry = getPlanEntry(c.sheetRow);
+        if (!entry) return;
+        showToast('Marking done…');
+        ensureToken().then(() => markTodoDone(entry.planRow, c.sheetRow).then(() => {
+          haptic(40); showToast(c.name + ' ✓ done!');
+        }));
+      }
+    });
+    row.innerHTML += `<div style="font-size:10px;color:var(--ink-soft);margin-left:6px;flex-shrink:0;writing-mode:vertical-lr;transform:rotate(180deg)">hold to remove</div>`;
+  } else {
+    // Tap = add to plan
+    row.addEventListener('click', () => {
+      if (!isTokenValid()) { showToast('Sign in first'); initOAuth(); return; }
+      showToast('Adding to plan…');
+      ensureToken().then(() => addToSharedPlan(c));
+    });
+  }
+
+  container.appendChild(row);
+}
+
+function updateTodoScheduleBtn() {
+  const btn = document.getElementById('todo-schedule-btn');
+  if (!btn) return;
+  const pending = todayPlan.filter(r => !r.doneAt);
+  if (!pending.length) {
+    btn.textContent = todayPlan.length ? 'All done! 🎉' : 'Add chores to plan';
+    btn.style.opacity = '.4'; btn.style.pointerEvents = 'none';
+  } else {
+    const total = pending.reduce((s, r) => {
+      const c = allChores.find(ch => ch.sheetRow === r.choreRow);
+      return s + (c?.duration || 0);
+    }, 0);
+    btn.textContent = `Schedule ${pending.length} remaining` + (total ? ` · ~${total} min` : '');
+    btn.style.opacity = '1'; btn.style.pointerEvents = '';
+  }
+}
+
+// ── Open / close ──────────────────────────────────────────────────
+function openTodoPlan() {
+  const screen = document.getElementById('todo-screen');
+  screen.style.display = 'block';
+  const now = new Date();
+  now.setMinutes(Math.ceil(now.getMinutes()/15)*15, 0, 0);
+  const hh = String(now.getHours()).padStart(2,'0');
+  const mm = String(now.getMinutes()).padStart(2,'0');
+  document.getElementById('todo-start-time').value = hh + ':' + mm;
+  showTodoPick();
+  loadTodayPlan();
+  // Auto-refresh every 30s
+  if (todoRefreshTimer) clearInterval(todoRefreshTimer);
+  todoRefreshTimer = setInterval(loadTodayPlan, 30000);
+}
+
+function closeTodoPlan() {
+  document.getElementById('todo-screen').style.display = 'none';
+  if (todoRefreshTimer) { clearInterval(todoRefreshTimer); todoRefreshTimer = null; }
+}
+
+function showTodoPick() {
+  document.getElementById('todo-pick-phase').style.display  = 'block';
+  document.getElementById('todo-plan-phase').style.display  = 'none';
+}
+function showTodoPlanPhase() {
+  document.getElementById('todo-pick-phase').style.display  = 'none';
+  document.getElementById('todo-plan-phase').style.display  = 'block';
+}
+
+function setTodoSort(mode) {
+  todoSortMode = mode;
+  ['urgency','quick','room'].forEach(m => {
+    const btn = document.getElementById('todo-sort-'+m);
+    if (!btn) return;
+    const active = m === mode;
+    btn.style.borderColor = active ? 'var(--c-due)' : 'var(--border)';
+    btn.style.background  = active ? 'rgba(181,112,58,.12)' : 'none';
+    btn.style.color       = active ? 'var(--c-due)' : 'var(--ink-soft)';
+  });
+  renderTodoPickList();
+}
+
+// ── Schedule ───────────────────────────────────────────────────────
+function buildTodoPlan() {
+  const timeVal = document.getElementById('todo-start-time').value;
+  if (!timeVal) { showToast('Please set a start time'); return; }
+  const [h, m] = timeVal.split(':').map(Number);
+  let cursor = h * 60 + m;
+
+  const pending = todayPlan
+    .filter(r => !r.doneAt)
+    .map(r => allChores.find(c => c.sheetRow === r.choreRow))
+    .filter(Boolean);
+
+  // Sort in current sort order
+  let sorted;
+  if (todoSortMode === 'urgency') sorted = [...pending].sort((a,b) => b.ratio-a.ratio);
+  else if (todoSortMode === 'quick') sorted = [...pending].sort((a,b) => (a.duration||999)-(b.duration||999));
+  else sorted = [...pending].sort((a,b) => (a.room||'').localeCompare(b.room||''));
+
+  todoScheduled = [];
+  sorted.forEach((chore, i) => {
+    const dur = chore.duration || 15;
+    const planEntry = getPlanEntry(chore.sheetRow);
+    todoScheduled.push({ chore, startMin: cursor, endMin: cursor+dur, planRow: planEntry?.planRow });
+    cursor += dur;
+    if (i < sorted.length-1) cursor += TODO_BREAK_MINS;
+  });
+
+  // Write start times back to Sheet4 col E
+  if (isTokenValid()) writeScheduleToSheet();
+
+  renderTodoTimeline();
+  showTodoPlanPhase();
+}
+
+async function writeScheduleToSheet() {
+  try {
+    for (const item of todoScheduled) {
+      if (!item.planRow) continue;
+      const range = encodeURIComponent(`${CONFIG.PLAN_SHEET}!E${item.planRow}`);
+      const url   = `https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.SHEET_ID}/values/${range}?valueInputOption=RAW`;
+      await fetch(url, {
+        method: 'PUT',
+        headers: { 'Authorization': `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ values: [[minsToTimeStr(item.startMin)]] }),
+      });
+    }
+  } catch {}
+}
+
+function minsToTimeStr(mins) {
+  const h=Math.floor(mins/60)%24, m=mins%60;
+  const ampm=h>=12?'pm':'am', h12=h%12||12;
+  return h12+':'+String(m).padStart(2,'0')+ampm;
+}
+
+function renderTodoTimeline() {
+  const el=document.getElementById('todo-timeline');
+  if (!el||!todoScheduled.length) return;
+  const total=todoScheduled[todoScheduled.length-1].endMin-todoScheduled[0].startMin;
+  el.innerHTML=`<div style="font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink-soft);font-weight:500;margin:4px 0 16px">${todoScheduled.length} chores · ~${total} min</div>`;
+  todoScheduled.forEach(({chore, startMin, endMin, planRow}, i) => {
+    const color=chore.ratio>=1?'var(--c-over)':chore.ratio>=0.85?'var(--c-due)':chore.ratio>=0.65?'var(--c-soon)':'var(--c-fresh)';
+    const rLabel=roomName(chore.room), dur=endMin-startMin;
+    el.innerHTML+=`<div class="todo-timeline-item">
+      <div class="todo-time-bubble">${minsToTimeStr(startMin).replace(':','<br>')}</div>
+      <div class="todo-timeline-card" style="border-color:${color}30">
+        <div style="font-size:14px;font-weight:600;color:var(--ink)">${chore.name}</div>
+        ${rLabel?'<div style="font-size:11px;color:var(--ink-soft);margin-top:2px">📍 '+rLabel+'</div>':''}
+        <div style="font-size:11px;color:var(--ink-soft);margin-top:2px">⏱ ${dur} min · ends ${minsToTimeStr(endMin)}</div>
+      </div>
+    </div>`;
+    if (i<todoScheduled.length-1)
+      el.innerHTML+=`<div class="todo-break-row"><div style="width:40px;text-align:center">☕</div><div>${TODO_BREAK_MINS} min break</div></div>`;
+  });
+}
+
+async function setTodoAlarms() {
+  if (!todoScheduled.length) return;
+  let perm='default';
+  if ('Notification' in window) perm=await Notification.requestPermission();
+  let set=0;
+  todoScheduled.forEach(({chore, startMin}) => {
+    const alarm=new Date(); alarm.setHours(Math.floor(startMin/60), startMin%60, 0, 0);
+    const ms=alarm.getTime()-Date.now();
+    if (ms<=0) return;
+    if (perm==='granted') {
+      setTimeout(()=>new Notification('🏠 '+chore.name, {
+        body: minsToTimeStr(startMin)+(roomName(chore.room)?' · '+roomName(chore.room):''),
+        tag: 'chore-'+chore.sheetRow,
+      }), ms);
+      set++;
+    }
+  });
+  if (perm==='granted') showToast(`🔔 ${set} alarm${set!==1?'s':''} set!`);
+  else if (perm==='denied') showToast('Notifications blocked — allow in browser settings');
+  else showToast('Notifications unavailable — screenshot your plan');
+}
+
+// Remove old localStorage-only functions (replaced by Sheet4)
+function saveTodoPicks() {} // no-op — now handled by Sheet4
+function restoreTodoPicks() {} // no-op
+
+
 </script>
 </body>
-</html>
+  </html>
