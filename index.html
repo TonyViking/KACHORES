@@ -1124,6 +1124,7 @@
 
 
 
+
 var sortMode = "urgency";
 var groupByRoom = false;
 
@@ -1946,21 +1947,12 @@ function toggleOneOffForm(isOneOff) {
 }
 
 function openAddChoreTodo() {
-  // Open add-chore sheet on top of the todo planner screen
+  // Elevate z-index so add sheet appears above todo screen (z-index:100)
   const overlay = document.getElementById('add-overlay');
   const sheet   = document.getElementById('add-sheet');
   if (overlay) overlay.style.zIndex = '200';
   if (sheet)   sheet.style.zIndex   = '201';
   openAddChore();
-  // Reset z-index when the sheet closes
-  const origClose = window._origCloseAddChore || closeAddChore;
-  window._origCloseAddChore = closeAddChore;
-  window._todoCloseHook = function() {
-    if (overlay) overlay.style.zIndex = '';
-    if (sheet)   sheet.style.zIndex   = '';
-    origClose();
-    window._todoCloseHook = null;
-  };
 }
 
 function openAddChore() {
@@ -1983,9 +1975,10 @@ function openAddChore() {
 }
 
 function closeAddChore() {
-  if (window._todoCloseHook) { window._todoCloseHook(); return; }
-  document.getElementById('add-overlay').classList.remove('open');
-  document.getElementById('add-sheet').classList.remove('open');
+  const overlay = document.getElementById('add-overlay');
+  const sheet   = document.getElementById('add-sheet');
+  if (overlay) { overlay.classList.remove('open'); overlay.style.zIndex = ''; }
+  if (sheet)   { sheet.classList.remove('open');   sheet.style.zIndex   = ''; }
 }
 
 async function submitNewChore() {
@@ -3138,6 +3131,9 @@ function openTodoPlan() {
 }
 
 function closeTodoPlan() {
+  // Close any open add-chore sheet first to prevent orphaned overlay
+  const addOverlay = document.getElementById('add-overlay');
+  if (addOverlay && addOverlay.classList.contains('open')) closeAddChore();
   document.getElementById('todo-screen').style.display = 'none';
   if (todoRefreshTimer) { clearInterval(todoRefreshTimer); todoRefreshTimer = null; }
 }
@@ -3352,6 +3348,7 @@ async function saveNewRoom() {
     showToast('Failed: ' + e.message);
   }
 }
+
 
 
 </script>
