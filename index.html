@@ -1123,6 +1123,7 @@
 
 
 
+
 var sortMode = "urgency";
 var groupByRoom = false;
 
@@ -1168,7 +1169,7 @@ const OAUTH_CLIENT_ID = '910424254552-q29kncg9tni3a7nqcvqbd3kjm1kuche0.apps.goog
 const SCOPES = 'https://www.googleapis.com/auth/spreadsheets';
 
 // ─── Legend cache ─────────────────────────────────
-const LEGEND_KEY    = 'chores_legend_v1';
+const LEGEND_KEY    = 'chores_legend_v2'; // v2 = Sheet3 two-col format
 const LEGEND_TTL_MS = 24 * 60 * 60 * 1000;
 
 function saveLegendCache(legend) {
@@ -1277,18 +1278,19 @@ function roomName(codes) {
 // ─── Legend parsing ───────────────────────────────
 function parseLegend(rows) {
   // Reads Sheet3: col A = room code, col B = room name
-  // e.g. row: ['k', 'Kitchen'] or ['bt', 'Bathroom']
-  // Also supports old Sheet1 col I format: 'k = Kitchen' (for migration)
+  // e.g. ['k', 'Kitchen'] or ['bt', 'Bathroom']
+  // Skips header rows and supports old col I format for migration.
+  const SKIP = new Set(['code','room','name','label','legend','key','id']);
   const legend = {};
   rows.forEach(row => {
     const a = (row[0] || '').trim();
     const b = (row[1] || '').trim();
-    if (!a) return;
+    if (!a || SKIP.has(a.toLowerCase())) return; // skip headers
     if (b) {
-      // Sheet3 format: code in col A, name in col B
+      // Sheet3 two-column format
       legend[a.toLowerCase()] = b;
     } else {
-      // Old col I format: 'k = Kitchen'
+      // Old single-column format: 'k = Kitchen'
       const match = a.match(/^([^\s=]+)\s*=\s*(.+)$/);
       if (match) legend[match[1].toLowerCase()] = match[2].trim();
     }
@@ -1342,8 +1344,13 @@ async function loadChores(forceRefresh = false) {
       const choreData  = await choreRes.json();
       const legendData = await legendRes.json();
       if (choreData.error)  throw new Error(choreData.error.message);
-      const legendRows = (legendData.values || []).filter(r => r[0] && r[1]); // skip header/empty
+      const legendRows = (legendData.values || []).filter(r => r[0]); // include single-col for migration
       roomLegend = parseLegend(legendRows);
+      // Fallback: if Sheet3 is empty, parse col I from Sheet1 for backwards compat
+      if (!Object.keys(roomLegend).length) {
+        const colI = (choreData.values || []).map(r => [r[8] || '']).filter(r => r[0].includes('='));
+        if (colI.length) roomLegend = parseLegend(colI);
+      }
       saveLegendCache(roomLegend);
       populateRoomDropdowns();
       parseAndCacheChores(choreData.values || []);
@@ -3345,6 +3352,7 @@ async function saveNewRoom() {
     showToast('Failed: ' + e.message);
   }
 }
+
 
 </script>
 </body>
